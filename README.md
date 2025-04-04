@@ -4,13 +4,13 @@ A utility mod for Tabletop Simulator that makes host-only UI available to promot
 
 # Installation
 
-Follow installation instructions for BepInEx 5: https://docs.bepinex.dev/articles/user_guide/installation/index.html\
+Follow installation instructions for BepInEx 5: https://docs.bepinex.dev/articles/user_guide/installation/index.html \
 **BepInEx 6 is not supported.** Make sure to check the version on the top right.
 
 Download the latest [release](https://github.com/SoundOfScooting/TTS-Unleashed/releases) of Unleashed or [build](#compilation) one yourself.\
 Copy `Unleashed.dll` to the folder `[GAME]/BepInEx/plugins/`.
 
-*(optional)* Download ConfigurationManager for BepInEx 5: https://github.com/BepInEx/BepInEx.ConfigurationManager/releases\
+*(optional)* Download ConfigurationManager for BepInEx 5: https://github.com/BepInEx/BepInEx.ConfigurationManager/releases \
 This plugin lets you edit Unleashed's [settings file](#settings-file) while in-game.\
 Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 
