@@ -1,5 +1,9 @@
-[*.cs]
+root = true
+
+[*]
 end_of_line  = lf
 indent_style = tab
 indent_size  = tab
-tab_size     = 4
+tab_width    = 4
+insert_final_newline = true
+

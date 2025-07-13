@@ -427,7 +427,7 @@ public static class Patches
 	[HarmonyPatch(typeof(GameMode), nameof(GameMode.SpawnName))]
 	private static bool GameModeSpawnNamePrefix(GameMode __instance, string ObjectName, Vector3 SpawnPos, bool bLocalSpawn, ref GameObject __result)
 	{
-		// @gold
+		// #gold
 		if (!bLocalSpawn && Network.isClient)
 			return true;
 
@@ -509,7 +509,7 @@ public static class Patches
 							);
 						@this.Close();
 					});
-					// @todo: is this correct?
+					// #todo: is this correct?
 					Language.UpdateUILabel(UICustomImage.Instance.HeaderLabel, (
 						tableName == "Custom Square"
 							? "Custom Table Square"
@@ -896,7 +896,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.Update))]
-	private static void PointerUpdatePrefix(Pointer __instance) // HACK
+	private static void PointerUpdatePrefix(Pointer __instance) // #hack
 	{
 		if      (zInput.GetButtonUp("Grab"))
 		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
@@ -968,7 +968,7 @@ public static class Patches
 	[HarmonyPatch(typeof(ManagerPhysicsObject), nameof(ManagerPhysicsObject.UpdateGrabbedNPO))]
 	private static void ManagerPhysicsObjectUpdateGrabbedNPOIL(ILContext il)
 	{
-		// @todo: held tilt rotation offset
+		// #todo: held tilt rotation offset
 		ILCursor c = new(il);
 		for (int i = 1; i <= 4; i++)
 			c.GotoNext(MoveType.After,
@@ -1019,7 +1019,7 @@ public static class Patches
 	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
 	private static bool ToolVectorUpdateVectorErasePrefix(ToolVector __instance)
 	{
-		// @todo: somehow preserve overlap order of lines?
+		// #todo: somehow preserve overlap order of lines?
 			// redrawn lines are all on top, but at least in relative order to each other
 		if (__instance.VectorActionDown())
 		{
@@ -1201,7 +1201,7 @@ public static class Patches
 		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
 
 #if TRUE_ULTIMATE_POWER
-		// @todo: either support or remove Scripting but keep GUID
+		// #todo: either support or remove Scripting but keep GUID
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualScripting, Network.isServer && !string.IsNullOrEmpty(component.GUID));
 			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualScripting))),
@@ -1210,7 +1210,7 @@ public static class Patches
 		c.EmitDelegate(bool(bool isServer) => true);
 #endif
 
-		// @gold
+		// #gold
 		c.GotoNext(MoveType.Before,
 			// SetActive(((Component)NetworkInstance.GUIContextualGoldBool.get_transform().get_parent()).get_gameObject(), Network.isServer && SteamManager.bKickstarterGold);
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer))),

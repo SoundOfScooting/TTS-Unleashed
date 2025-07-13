@@ -15,7 +15,7 @@ public static class Commands
 			type
 		);
 
-	public static void CommandHelp(ChatMessageType type, bool displayAll) // @global
+	public static void CommandHelp(ChatMessageType type, bool displayAll) // #global
 	{
 		Chat.Log("Game Console Help, do not type <>, ex. /kick Batman", Colour.Purple, type);
 		LogCommand(type, Colour.GreenHex, "/help <opt. -a>", "Show this help message, -a to list extra commands");
@@ -85,7 +85,7 @@ public static class Commands
 		}
 		if (Network.isAdmin && Chat.MessageEqualCmd(message, "/execute ", out rest))
 		{
-			// @idea: Compat.ExecuteLuaScript(rest);
+			// #idea: Compat.ExecuteLuaScript(rest);
 			LuaGlobalScriptManager.Instance.RPCExecuteScript(rest);
 			return false;
 		}

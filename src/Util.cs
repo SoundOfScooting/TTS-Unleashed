@@ -4,20 +4,6 @@ using System.Reflection;
 
 namespace Unleashed
 {
-	public static class UZUtil
-	{
-		// https://stackoverflow.com/a/457708
-		public static bool TypeSatisfies(Type type, Type toSatisfy)
-		{
-			while (type != null && type != typeof(object)) {
-				var cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
-				if (toSatisfy == cur)
-					return true;
-				type = type.BaseType;
-			}
-			return false;
-		}
-	}
 	public static class Extensions
 	{
 		public static bool IsBlinded(this PlayerManager @this, int ID) =>
@@ -49,8 +35,6 @@ namespace Unleashed
 
 	public static class ActivatorX
 	{
-		// public static T CreateInstance<T>() =>
-		// 	Activator.CreateInstance<T>();
 		public static T CreateInstance<T>(bool nonPublic) =>
 			(T) Activator.CreateInstance(typeof(T), nonPublic);
 		public static T CreateInstance<T>(params object[] args) =>
@@ -65,56 +49,68 @@ namespace Unleashed
 
 	public static class EnumX // partially implemented in .NET 5
 	{
-		public static string Format<TEnum>(TEnum  value, string format) =>
+		public static string Format<TEnum>(TEnum value, string format) where TEnum: struct, Enum =>
 			Enum.Format(typeof(TEnum), value, format);
-		public static string Format<TEnum>(object value, string format) =>
+		public static string Format<TEnum>(object value, string format) where TEnum: struct, Enum =>
 			Enum.Format(typeof(TEnum), value, format);
-		public static string GetName<TEnum>(TEnum  value) =>
+		public static string GetName<TEnum>(TEnum value) where TEnum: struct, Enum =>
 			Enum.GetName(typeof(TEnum), value);
-		public static string GetName<TEnum>(object value) =>
+		public static string GetName<TEnum>(object value) where TEnum: struct, Enum =>
 			Enum.GetName(typeof(TEnum), value);
-		public static string[] GetNames<TEnum>() =>
+		public static string[] GetNames<TEnum>() where TEnum: struct, Enum =>
 			Enum.GetNames(typeof(TEnum));
-		public static Type GetUnderlyingType<TEnum>() =>
+		public static Type GetUnderlyingType<TEnum>() where TEnum: struct, Enum =>
 			Enum.GetUnderlyingType(typeof(TEnum));
-		// public static Array GetValues<TEnum>() =>
+		// public static Array GetValues<TEnum>() where TEnum: struct, Enum =>
 		// 	Enum.GetValues(typeof(TEnum));
-		public static TEnum[] GetValues<TEnum>() =>
+		public static TEnum[] GetValues<TEnum>() where TEnum: struct, Enum =>
 			(TEnum[]) Enum.GetValues(typeof(TEnum));
-		public static bool IsDefined<TEnum>(TEnum  value) =>
+		public static bool IsDefined<TEnum>(TEnum value) where TEnum: struct, Enum =>
 			Enum.IsDefined(typeof(TEnum), value);
-		public static bool IsDefined<TEnum>(object value) =>
+		public static bool IsDefined<TEnum>(object value) where TEnum: struct, Enum =>
 			Enum.IsDefined(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value) =>
+		public static TEnum Parse<TEnum>(string value) where TEnum: struct, Enum =>
 			(TEnum) Enum.Parse(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value, bool ignoreCase) =>
+		public static TEnum Parse<TEnum>(string value, bool ignoreCase) where TEnum: struct, Enum =>
 			(TEnum) Enum.Parse(typeof(TEnum), value, ignoreCase);
 		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(ulong value) =>
+		public static TEnum ToObject<TEnum>(ulong value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
 		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(uint value) =>
+		public static TEnum ToObject<TEnum>(uint value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
 		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(ushort value) =>
+		public static TEnum ToObject<TEnum>(ushort value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
 		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(sbyte value) =>
+		public static TEnum ToObject<TEnum>(sbyte value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(object value) =>
+		public static TEnum ToObject<TEnum>(object value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(long value) =>
+		public static TEnum ToObject<TEnum>(long value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(int value) =>
+		public static TEnum ToObject<TEnum>(int value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(byte value) =>
+		public static TEnum ToObject<TEnum>(byte value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(short value) =>
+		public static TEnum ToObject<TEnum>(short value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		// public static bool TryParse<TEnum>(string value, out TEnum result) where TEnum : struct =>
-		// 	Enum.TryParse(value, out result);
-		// public static bool TryParse<TEnum>(string value, bool ignoreCase, out TEnum result) where TEnum : struct =>
-		// 	Enum.TryParse(value, ignoreCase, out result);
 	}
-
 }
+
+// namespace Unleashed
+// {
+// 	internal static class RuntimeHelpersX
+// 	{
+// 		public static T[] GetSubArray<T>(T[] array, Range range)
+// 		{
+// 			if (array is null)
+// 				throw new ArgumentNullException(nameof(array));
+// 			var (offset, length) = range.GetOffsetAndLength(array.Length);
+// 			var dest = (T[]) Array.CreateInstance(array.GetType().GetElementType(), length);
+// 			Array.Copy(array, offset, dest, 0, length);
+// 			return dest;
+// 		}
+// 	}
+// }
+

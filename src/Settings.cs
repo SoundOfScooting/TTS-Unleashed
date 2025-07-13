@@ -32,7 +32,7 @@ public static class Settings
 	{
 		public required Section Section { get; init; }
 		public required string Key { get; init; }
-		// @todo: obsolete (section,key) pairs
+		// #todo: obsolete (section,key) pairs
 
 		public string Description { get; init; }
 		public required T DefaultValue { get; init; }
@@ -401,19 +401,6 @@ public static class Settings
 		loaded = true;
 		config.SaveOnConfigSet = false;
 
-		// foreach (var field in typeof(Settings).GetFields(AccessTools.all))
-		// {
-		// 	if (field.FieldType.IsGenericType &&
-		// 		// field.FieldType.GetGenericTypeDefinition() == typeof(Setting<>)
-		// 		UZUtil.TypeSatisfies(field.FieldType, typeof(Setting<>))
-		// 	){
-		// 		var valueType = field.FieldType.GenericTypeArguments[0];
-		// 		typeof(Setting<>)
-		// 			.MakeGenericType(valueType)
-		// 			.GetMethod(nameof(Setting<>.Bind))
-		// 			.Invoke(field.GetValue(null), [ config ]);
-		// 	}
-		// }
 		foreach (var field in typeof(Settings).GetFields(AccessTools.all))
 		if      (field.GetValue(null) is IConfigBind setting)
 			setting.Bind(config);
@@ -422,7 +409,7 @@ public static class Settings
 		config.Save();
 	}
 }
-public static class ConfigFileExtensions
+public static class ConfigFileX
 {
 	public static ConfigEntry<T> BindX<T>(this ConfigFile @this, string section, string key,  T defaultValue, string description = "", AcceptableValueBase acceptableValues = null, params object[] tags) =>
 		@this.BindX(new(section, key), defaultValue, new ConfigDescription(description, acceptableValues, tags));
@@ -439,13 +426,13 @@ public static class ConfigFileExtensions
 	// public static ConfigEntry<T> BindX<T>(this ConfigFile @this, string section, string key,  T defaultValue, ConfigDescription description) =>
 	// 	@this.BindX(new(section, key), defaultValue, description);
 
-	// should reverse patch
+	// #todo: reverse patch?
 	public static ConfigEntry<T> BindX<T>(this ConfigFile @this, ConfigDefinition definition, T defaultValue, ConfigDescription description)
 	{
 		if (!TomlTypeConverter.CanConvert(typeof(T)))
 			throw new ArgumentException(
 				$"Type {typeof(T)} is not supported by the config system. Supported types: " +
-				string.Join(",", [.. TomlTypeConverter.GetSupportedTypes().Select(x => x.Name)])
+				string.Join(",", TomlTypeConverter.GetSupportedTypes().Select(x => x.Name))
 			);
 
 		var this_T = new Traverse(@this);

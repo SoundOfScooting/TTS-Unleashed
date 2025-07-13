@@ -19,7 +19,7 @@ public class PlayerStateX
 	public static PlayerStateX Host =>
 		PlayerManager.Instance.PlayerStateFromID(NetworkPlayer.SERVER_ID).X();
 
-	// @todo: apparently CWT is broken in this Unity version?
+	// #todo: apparently CWT is broken in this Unity version?
 	public static void StartDisconnected() =>
 		CWT = new();
 	[HarmonyPostfix]
@@ -75,7 +75,7 @@ public static class Compat
 				@this.RPC_X(RPCTarget.Server, ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
 			return;
 		}
-		// @todo: wrong
+		// #todo: wrong
 		var action = tiltRotationDelta switch
 		{
 			>= 1 and <= 11 => PlayerAction.FlipIncrementalRight,
@@ -97,12 +97,12 @@ public static class Compat
 
 		var luaGameObjectScript = npo.luaGameObjectScript;
 		var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.stringColor;
-		// @todo: wrong
+		// #todo: wrong
 		if (!luaGameObjectScript || luaGameObjectScript.CheckObjectRotate(heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex))
 		{
 			npo.X().HeldTiltRotationIndex = num;
 			npo.DisableFastDragWhileAnimating();
-			// @todo: wrong
+			// #todo: wrong
 			EventManager.TriggerObjectRotate(npo, heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex);
 		}
 	}

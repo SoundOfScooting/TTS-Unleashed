@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using HarmonyLib;
 using Mono.Cecil.Cil;
@@ -33,7 +34,7 @@ public static class MainUI
 
 	public static void AssignLocalTRS(this GameObject @this, GameObject src)
 	{
-		@this.transform.parent = src.transform.parent;
+		@this.transform.parent        = src.transform.parent;
 		@this.transform.localPosition = src.transform.localPosition;
 		@this.transform.localRotation = src.transform.localRotation;
 		@this.transform.localScale    = src.transform.localScale;
@@ -47,7 +48,9 @@ public static class MainUI
 		return positions;
 	}
 
-	// AddComponent workarounds for inadequate GetCopyOf
+	/// <summary>
+	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+	/// </summary>
 	public static UISprite AddComponent(this GameObject go, UISprite toAdd)
 	{
 		var comp  = go.AddComponent<UISprite>(toAdd);
@@ -55,13 +58,20 @@ public static class MainUI
 		comp.SetDimensions(toAdd.width, toAdd.height);
 		return comp;
 	}
+	/// <summary>
+	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+	/// </summary>
 	public static UIButton AddComponent(this GameObject go, UIButton toAdd)
 	{
-		var comp         = go.AddComponent<UIButton>(toAdd);
-		comp.tweenTarget = go; // toAdd.tweenTarget;
+		var comp = go.AddComponent<UIButton>(toAdd);
+		if (toAdd.tweenTarget)
+			comp.tweenTarget = go;
 		comp.OnInit();
 		return comp;
 	}
+	/// <summary>
+	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+	/// </summary>
 	public static UILabel AddComponent(this GameObject go, UILabel toAdd)
 	{
 		var comp      = go.AddComponent<UILabel>(toAdd);
@@ -382,10 +392,10 @@ public class UINameButtonX : MonoBehaviour
 		c.MoveAfterLabels();
 		c.Emit(OpCodes.Ldarg_0);
 		c.EmitDelegate(void(UIPopupList __instance) =>
-			UICamera.Notify(__instance.gameObject, "PopupListShow", null)
+			UICamera.Notify(__instance.gameObject, nameof(UZOnPopupListShow), null)
 		);
 	}
-	public void PopupListShow()
+	public void UZOnPopupListShow()
 	{
 		var isHotseat   = NetworkUI.Instance.bHotseat;
 		var isOwnButton = @base.id == (
@@ -534,19 +544,19 @@ public class UIColorSelectionX : MonoBehaviour
 [HarmonyPatch]
 public static class UICustomObjectX
 {
-	// @idea: would be nice to use deck import UI for cards to access extra options
-	// @idea: edit each ui panel to add inaccesible parameters
+	// #idea: would be nice to use deck import UI for cards to access extra options
+	// #idea: edit each ui panel to add inaccesible parameters
 	private const bool DEBUG_COMPAT = false;
 
-	private class Comp : MonoBehaviour // want: Comp<T>
+	private class Data : MonoBehaviour // want: Data<T>
 	{
 		// want: List<Action<T>>
 		public readonly List<Delegate> OnImportFakeQueue = [];
-		// @todo? onCancel
+		// #todo? onCancel
 	}
-	private static Comp X<T>(this T @this) where T : UICustomObject<T> =>
-		@this.gameObject.GetOrAddComponent<Comp>();
-	// private static bool GetX<T>(this T @this, out Comp thisX) where T : UICustomObject<T> =>
+	private static Data X<T>(this T @this) where T : UICustomObject<T> =>
+		@this.gameObject.GetOrAddComponent<Data>();
+	// private static bool GetX<T>(this T @this, out Data thisX) where T : UICustomObject<T> =>
 	// 	@this.TryGetComponent(out thisX);
 	// private static void ClearX<T>(this T @this) where T : UICustomObject<T>
 	// {
@@ -586,6 +596,7 @@ public static class UICustomObjectX
 		}
 		return false;
 	}
+	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.OnEnable))]
 	private static bool BaseOnEnablePrefix(object __instance) =>
@@ -609,6 +620,7 @@ public static class UICustomObjectX
 		return false;
 	}
 
+	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Update))]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
@@ -619,6 +631,7 @@ public static class UICustomObjectX
 		if (@this.TargettingFake())
 			@this.X().OnImportFakeQueue.RemoveAt(0);
 	}
+	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Close))]
 	private static void BaseClosePrefix(object __instance) =>
@@ -646,9 +659,9 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(CustomDeck),         nameof(CustomDeck        .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomDice),         nameof(CustomDice        .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomImage),        nameof(CustomImage       .bCustomUI), MethodType.Setter)]
-	[HarmonyPatch(typeof(CustomJigsawPuzzle), nameof(CustomJigsawPuzzle.bCustomUI), MethodType.Setter)] // @todo: fully support
+	[HarmonyPatch(typeof(CustomJigsawPuzzle), nameof(CustomJigsawPuzzle.bCustomUI), MethodType.Setter)] // #todo: fully support
 	[HarmonyPatch(typeof(CustomMesh),         nameof(CustomMesh        .bCustomUI), MethodType.Setter)]
-	[HarmonyPatch(typeof(CustomPDF),          nameof(CustomPDF         .bCustomUI), MethodType.Setter)] // @todo: fully support
+	[HarmonyPatch(typeof(CustomPDF),          nameof(CustomPDF         .bCustomUI), MethodType.Setter)] // #todo: fully support
 	[HarmonyPatch(typeof(CustomSky),          nameof(CustomSky         .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomTile),         nameof(CustomTile        .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomToken),        nameof(CustomToken       .bCustomUI), MethodType.Setter)]
@@ -660,10 +673,11 @@ public static class UICustomObjectX
 		);
 		c.Next.Operand     = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
 	}
+	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
 	private static bool CheckUpdateMatchingCustomObjectsPrefix() =>
-		Network.isServer; // @idea: implement for client?
+		Network.isServer; // #idea: implement for client?
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
@@ -810,7 +824,7 @@ public static class UICustomObjectX
 			return false;
 		}
 		Compat.ExecuteLuaScript(
-			__instance.TargetCustomObject.NPO.GUID is null // @todo: better table detection?
+			__instance.TargetCustomObject.gameObject == ManagerPhysicsObject.Instance.Table
 				? $"""
 				Tables.setCustomURL({ __instance.CustomImageURL.LuaEncode() })
 				"""
@@ -834,7 +848,7 @@ public static class UICustomObjectX
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
-		// @bug: (base game) CustomImageSecondaryURL is not trimmed
+		// #bug: (base game) CustomImageSecondaryURL is not trimmed
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))
 		{
 			Chat.LogError("You must supply a custom image URL.");
@@ -925,8 +939,8 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	private static void TileStartPostfix(UICustomTile __instance) =>
 		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && PlayerStateX.Host.IsModded;
-	// @todo: GetCustomObject parity
-	// @todo: relocate to dedicated Lua fixes/additions
+	// #todo: GetCustomObject parity
+	// #todo: relocate to dedicated Lua fixes/additions
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.SetCustomObject))]
 	private static void LuaGameObjectScriptSetCustomObjectPostfix(LuaGameObjectScript __instance, MoonSharp.Interpreter.Table Params)
@@ -1189,7 +1203,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		gameObject.AddComponent<TweenColor>();
 
 		var baseImagesObject = baseObject.transform.Find("Images").gameObject;
-		var imagesObject     = new GameObject("Images");
+		var imagesObject     = new GameObject(baseImagesObject.name);
 		imagesObject.AssignLocalTRS(baseImagesObject);
 		imagesObject.transform.parent = transform;
 
@@ -1203,7 +1217,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		foreach (var collider in hand.Stash.Colliders)
 		// if      (collider.bounds.Contains(pos with { y = collider.bounds.center.y }))
 		// if      (collider.ClosestPoint(pos = pos with { y = collider.bounds.center.y }) == pos)
-		if      ((collider.ClosestPoint(pos = pos with { y = collider.bounds.center.y }) - pos).magnitude < 1f /* 1e-5f */) 
+		if      ((collider.ClosestPoint(pos = pos with { y = collider.bounds.center.y }) - pos).magnitude < 1f /* 1e-5f */)
 			return true;
 		return false;
 	}
@@ -1211,7 +1225,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 	public void OnStartContextual()
 	{
 		gameObject.SetActive(false);
-		if (!Network.isAdmin) // @compat
+		if (!Network.isAdmin) // #compat
 			return;
 
 		var player = LuaGlobalScriptManager.Instance.GlobalPlayer.GetPlayer(NetworkID.ID);
@@ -1302,11 +1316,11 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			case Type.ObjectStash:
 			{
 				bool anyInHand = false;
-				// bool anyStash  = false; // @stash
+				// bool anyStash  = false; // #stash
 				foreach (var obj in player.GetSelectedObjects())
 				{
+					// if (anyStash = obj.NPO.IsHandZoneStash) // #stash
 					if (anyInHand = obj.NPO.CurrentPlayerHand)
-					// if (anyStash = obj.NPO.IsHandZoneStash) // @stash
 						break;
 				}
 				if (anyInHand)
@@ -1315,7 +1329,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 					Label.text = $"            {(
 						shiftDown
 							? "Swap "
-						// @stash
+						// #stash
 						// : anyStash
 						// 	? "Draw Stash & "
 						: ""
@@ -1325,7 +1339,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				break;
 			}
 			default:
-				throw new NotImplementedException("Unreachable!");
+				throw new UnreachableException();
 		}
 
 	}
@@ -1498,7 +1512,7 @@ LuaPrintObject(player.getHandStash())
 				);
 				break;
 			default:
-				throw new NotImplementedException("Unreachable!");
+				throw new UnreachableException();
 		}
 	}
 }

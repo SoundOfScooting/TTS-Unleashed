@@ -1,3 +1,7 @@
+# dev
+
+* Renamed assembly from `Unleashed.dll` to `edu.sos.unleashed.dll`. To update, delete the old one and add the renamed one.
+
 # v0.1.0
 
 * Added version number to the title screen

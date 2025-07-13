@@ -8,7 +8,7 @@ Follow installation instructions for BepInEx 5: https://docs.bepinex.dev/article
 **BepInEx 6 is not supported.** Make sure to check the version on the top right.
 
 Download the latest [release](https://github.com/SoundOfScooting/TTS-Unleashed/releases) of Unleashed or [build](#compilation) one yourself.\
-Copy `Unleashed.dll` to the folder `[GAME]/BepInEx/plugins/`.
+Copy `edu.sos.unleashed.dll` to the folder `[GAME]/BepInEx/plugins/`.
 
 *(optional)* Download ConfigurationManager for BepInEx 5: https://github.com/BepInEx/BepInEx.ConfigurationManager/releases \
 This plugin lets you edit Unleashed's [settings file](#settings-file) while in-game.\
@@ -19,7 +19,7 @@ Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 Unleashed is compiled using .NET 9 targetting netstandard2.0.
 
 Copy or symlink all DLL files mentioned in `[REPO]/Unleashed.csproj` from the `[GAME]/Tabletop_Simulator_Data/Managed` folder to the `[REPO]/libs/` folder.\
-Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/bin/Debug/Unleashed.dll`.\
+Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/bin/Debug/edu.sos.unleashed.dll`.\
 To disable test features, run `dotnet build -p:TRUE_ULTIMATE_POWER=0` instead.
 
 # Feature overview
@@ -112,7 +112,7 @@ For example: `3/2 Metal` for a metal domino with 3 on the top and 2 on the botto
 
 ### Tables
 
-*(new)* Added action `Edit` to `Custom Rectangle` and `Custom Square` that lets you edit the URL as a client or as the host.
+*(new)* Added action `Edit` to `Custom Rectangle` and `Custom Square` that lets you edit the URL as a client or as the host.\
 *(new)* Added unused table `Round Plastic`.
 
 ### Backgrounds
@@ -186,7 +186,7 @@ Modded host and client: *(new)* When rotating held objects, if you hold Ctrl, th
 
 ### Draw tool
 
-See [Enable Pixel Paint](#section-general).
+See [Enable Pixel Draw](#section-general).
 
 BUGFIX: Pressing right click to cancel drawing actually erases the line for all players instead of just yourself.
 
@@ -199,7 +199,7 @@ See [Enable Fast Flick](#section-general). -->
 
 ### Decal tool
 
-Client players can add/edit/delete decals to the decal list.
+Client players can add/edit/delete decals in the decal list *(formerly host-only*).
 
 ## Contextual
 
