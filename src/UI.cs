@@ -29,7 +29,7 @@ public static class MainUI
 	{
 		GUIEndTurnX.StartConnected();
 		ToolVectorX.StartConnected();
-		UZContextualStash.StartConnected();
+		UIContextualX.StartConnected();
 	}
 
 	public static void AssignLocalTRS(this GameObject @this, GameObject src)
@@ -1139,6 +1139,52 @@ public static class UIFinderX
 	}
 }
 
+[HarmonyPatch]
+public static class UIContextualX
+{
+	public static void StartConnected() =>
+		UZContextualStash.StartConnected();
+
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(UIContextual), nameof(UIContextual.Awake))]
+	private static void AwakePostfix(UIContextual __instance)
+	{
+		if (__instance.nameInput)
+		{
+			EventDelegate.Add(__instance.nameInput.onChange, __instance.DelayReposition);
+
+			__instance.nameInput.onReturnKey    = UIInput.OnReturnKey.NewLine; // Submit
+			__instance.nameInput.characterLimit = 1024; // 2048 == descriptionInput.characterLimit
+
+			var descLabel = __instance.descriptionInput.label;
+			var nameLabel = __instance.nameInput       .label;
+			nameLabel.maxLineCount   = 8; // 16 == descLabel.maxLineCount
+			nameLabel.overflowMethod = UILabel.Overflow.ResizeHeight;
+			nameLabel.pivot          = UIWidget.Pivot.Top;
+			nameLabel.leftAnchor  .Set(null, descLabel.leftAnchor  .relative, descLabel.leftAnchor  .absolute);
+			nameLabel.bottomAnchor.Set(null, descLabel.bottomAnchor.relative, descLabel.bottomAnchor.absolute);
+			nameLabel.rightAnchor .Set(null, descLabel.rightAnchor .relative, descLabel.rightAnchor .absolute);
+			nameLabel.topAnchor   .Set(nameLabel.transform.parent,         1, descLabel.topAnchor   .absolute);
+			nameLabel.ResetAndUpdateAnchors();
+
+			var descSprite = __instance.descriptionInput.GetComponent<UISprite>();
+			var nameSprite = __instance.nameInput       .GetComponent<UISprite>();
+			nameSprite.SetAnchor(nameLabel.gameObject,
+				descSprite.leftAnchor .absolute,
+				descSprite.topAnchor  .absolute * -1, // descSprite.bottomAnchor.absolute
+				descSprite.rightAnchor.absolute,
+				descSprite.topAnchor  .absolute
+			);
+		}
+	}
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(UIContextual), nameof(UIContextual.OnDestroy))]
+	private static void OnDestroyPostfix(UIContextual __instance)
+	{
+		if (__instance.nameInput)
+			EventDelegate.Remove(__instance.nameInput.onChange, __instance.DelayReposition);
+	}
+}
 public interface IUZContextual
 {
 	void OnStartContextual();

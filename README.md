@@ -232,6 +232,8 @@ BUG: This feature is buggy *(just like the regular `Show Hand` button)*.
 Admin-only: `Physics` context option is available on objects *(formerly host-only)*.\
 BUG: The UI might not update client-side but it does apply server-side.
 
+`Name` field supports inserting multiple lines just like the `Description` field.
+
 ## Chat commands
 
 ### Modified commands
