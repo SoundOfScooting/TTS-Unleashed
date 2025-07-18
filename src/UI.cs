@@ -548,9 +548,8 @@ public static class UICustomObjectX
 	// #idea: edit each ui panel to add inaccesible parameters
 	private const bool DEBUG_COMPAT = false;
 
-	private class Data : MonoBehaviour // want: Data<T>
+	private class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
 	{
-		// want: List<Action<T>>
 		public readonly List<Delegate> OnImportFakeQueue = [];
 		// #todo? onCancel
 	}
@@ -1118,7 +1117,7 @@ public static class UIGridMenuDecalsX
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(DecalManager), nameof(DecalManager.RPCRemoveDecalPallet))]
-	private static void DecalManagerRPCRemoveDecalPallet()
+	private static void DecalManagerRPCRemoveDecalPalletPostfix()
 	{
 		if (Network.isClient && NetworkUI.Instance.GUIDecals.activeInHierarchy)
 			NetworkUI.Instance.GUIDecals.GetComponent<UIGridMenuDecals>().Reload();

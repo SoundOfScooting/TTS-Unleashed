@@ -64,8 +64,8 @@ public static class Patches
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
 	private static void NetworkUIConnectedToServerPrefix()
 	{
-		if (Settings.EntryNickname.Value is not (null or []))
-			NetworkUI.Instance.SetPlayerName(Settings.EntryNickname.Value);
+		if (Settings.EntryNickname.Value is [_, ..] nickname)
+			NetworkUI.Instance.SetPlayerName(nickname);
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
@@ -310,7 +310,7 @@ public static class Patches
 	};
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitComponents))]
-	private static void UIGridMenuDecalsInitComponentsPrefix(UIGridMenuObjects __instance)
+	private static void UIGridMenuObjectsInitComponentsPrefix(UIGridMenuObjects __instance)
 	{
 		var cardsFolder = __instance.ComponentsButtons.First(x => x.Name == "Cards");
 		cardsFolder.ComponentButtons.AddRange([

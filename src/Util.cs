@@ -6,6 +6,8 @@ namespace Unleashed
 {
 	public static class Extensions
 	{
+		public static void Deconstruct<T>(this T @this, out T @out) => @out = @this;
+
 		public static bool IsBlinded(this PlayerManager @this, int ID) =>
 			@this.PlayersDictionary.TryGetValue(Compat.PlayerID(ID), out var playerState) &&
 			playerState.blind;

@@ -40,8 +40,8 @@ public static class Events
 			MainUI.StartConnected();
 			return;
 		}
-		if (!addingAllPlayers && Settings.EntryAutoJoinMessage.Value is not (null or []))
-			Chat.SendChatMessage(Settings.EntryAutoJoinMessage.Value);
+		if (!addingAllPlayers && Settings.EntryAutoJoinMessage.Value is [_, ..] autoJoin)
+			Chat.SendChatMessage(autoJoin);
 
 		if (Network.isServer && Settings.AutoPromoteIDs.Contains(playerState.steamId))
 			Wait.Frames(() =>
