@@ -116,15 +116,22 @@ public static class Compat
 
 	// public static string LuaEscape(string aText) =>
 	// 	I2.Loc.SimpleJSON.JSONNode.Escape(aText);
-	public static string LuaEncode(this string @this)
+	public static string LuaEncode(string @string)
 	{
 		var escape = "";
-		while (@this.Contains($"]{ escape }]"))
+		while (@string.Contains($"]{ escape }]"))
 			escape += "=";
-		return $"[{ escape }[{ @this }]{ escape }]";
+		return $"[{ escape }[{ @string }]{ escape }]";
 	}
-	public static string LuaEncode(this bool @this) =>
-		@this.ToString().ToLower();
+	public static string LuaEncode(bool @bool) =>
+		@bool.ToString().ToLower();
+	public static string LuaEncode(object @object) =>
+		@object switch {
+			string x => LuaEncode(x),
+			bool   x => LuaEncode(x),
+			_ => @object.ToString(),
+		};
+
 	public const string LuaGetPlayerBySteamID =
 		$"""
 		local function {nameof(LuaGetPlayerBySteamID)}(steam_id)
@@ -146,7 +153,7 @@ public static class Compat
 		ExecuteLuaScript(
 			$"""
 			{LuaGetPlayerBySteamID}
-			local player = {nameof(LuaGetPlayerBySteamID)}("{steamId}")
+			local player = {nameof(LuaGetPlayerBySteamID)}({ LuaEncode(steamId) })
 			if player then
 				player.promote()
 			end
@@ -164,7 +171,7 @@ public static class Compat
 		ExecuteLuaScript(
 			$"""
 			{LuaGetPlayerBySteamID}
-			local player = {nameof(LuaGetPlayerBySteamID)}("{steamId}")
+			local player = {nameof(LuaGetPlayerBySteamID)}({ LuaEncode(steamId) })
 			if player then
 				player.kick()
 			end
@@ -188,16 +195,16 @@ public static class Compat
 		}
 		ExecuteLuaScript(
 			$$"""
-			for _,guid in ipairs({ {{ guids.Select(x => $"'{x}'") }} }) do
+			for _,guid in ipairs({ {{ guids.Join(LuaEncode) }} }) do
 				local obj = getObjectFromGUID(guid)
 				if obj then
-					obj.use_gravity      = {{ rigidbodyState.UseGravity.LuaEncode() }}
-					obj.mass             = {{ rigidbodyState.Mass }}
-					obj.drag             = {{ rigidbodyState.Drag }}
-					obj.angular_drag     = {{ rigidbodyState.AngularDrag }}
-					obj.static_friction  = {{ physicsMaterialState.StaticFriction }}
-					obj.dynamic_friction = {{ physicsMaterialState.DynamicFriction }}
-					obj.bounciness       = {{ physicsMaterialState.Bounciness }}
+					obj.use_gravity      = {{ LuaEncode(rigidbodyState.UseGravity) }}
+					obj.mass             = {{ LuaEncode(rigidbodyState.Mass) }}
+					obj.drag             = {{ LuaEncode(rigidbodyState.Drag) }}
+					obj.angular_drag     = {{ LuaEncode(rigidbodyState.AngularDrag) }}
+					obj.static_friction  = {{ LuaEncode(physicsMaterialState.StaticFriction) }}
+					obj.dynamic_friction = {{ LuaEncode(physicsMaterialState.DynamicFriction) }}
+					obj.bounciness       = {{ LuaEncode(physicsMaterialState.Bounciness) }}
 				end
 			end
 			"""

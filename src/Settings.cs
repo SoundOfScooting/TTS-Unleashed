@@ -342,18 +342,18 @@ public static class Settings
 		SettingLoaded = value =>
 		{
 			AutoPromoteIDs = value.Split([',', ' '], StringSplitOptions.RemoveEmptyEntries);
-			EntryAutoPromoteIDs.Value = string.Join(", ", AutoPromoteIDs);
+			EntryAutoPromoteIDs.Value = AutoPromoteIDs.Join();
 		},
 	};
 	private static void DrawAutoPromoteIDs(ConfigEntryBase entry)
 	{
-		var display = CacheAutoPromoteIDs ??= string.Join("\n", AutoPromoteIDs);
+		var display = CacheAutoPromoteIDs ??= AutoPromoteIDs.Join(delimiter: "\n");
 		var changed = GUILayout.TextArea(display, GUILayout.ExpandWidth(true));
 //		var changed = GUILayout.TextArea(display, GUILayout.Width(125));
 		if (changed != display)
 		{
 			AutoPromoteIDs            = changed.Split([',', ' ', '\n'], StringSplitOptions.RemoveEmptyEntries);
-			EntryAutoPromoteIDs.Value = string.Join(", ", AutoPromoteIDs);
+			EntryAutoPromoteIDs.Value = AutoPromoteIDs.Join();
 			CacheAutoPromoteIDs       = null;
 		}
 		GUILayout.Space(5);
@@ -432,7 +432,7 @@ public static class ConfigFileX
 		if (!TomlTypeConverter.CanConvert(typeof(T)))
 			throw new ArgumentException(
 				$"Type {typeof(T)} is not supported by the config system. Supported types: " +
-				string.Join(",", TomlTypeConverter.GetSupportedTypes().Select(x => x.Name))
+				TomlTypeConverter.GetSupportedTypes().Join(x => x.Name)
 			);
 
 		var this_T = new Traverse(@this);

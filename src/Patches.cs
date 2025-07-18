@@ -503,8 +503,8 @@ public static class Patches
 						if (Network.isAdmin)
 							Compat.ExecuteLuaScript(
 								$"""
-								Tables.setTable("{ tableName }");
-								Tables.setCustomURL({ @this.CustomImageURL.LuaEncode() })
+								Tables.setTable    ({ Compat.LuaEncode(tableName) });
+								Tables.setCustomURL({ Compat.LuaEncode(@this.CustomImageURL) })
 								"""
 							);
 						@this.Close();
@@ -577,7 +577,7 @@ public static class Patches
 					if (Network.isAdmin)
 						Compat.ExecuteLuaScript(
 							$"""
-							Backgrounds.setCustomURL({ @this.CustomImageURL.LuaEncode() })
+							Backgrounds.setCustomURL({ Compat.LuaEncode(@this.CustomImageURL) })
 							"""
 						);
 					@this.Close();
@@ -822,14 +822,14 @@ public static class Patches
 		Compat.ExecuteLuaScript(
 			$"""
 			{Compat.LuaGetPlayerBySteamID}
-			local target = {nameof(Compat.LuaGetPlayerBySteamID)}("{target.steamId}")
-			local seated = {nameof(Compat.LuaGetPlayerBySteamID)}("{seated.steamId}")
-			if target and seated then
-				seated.changeColor('Grey')
-				target.changeColor('{__instance.label}')
+			local {nameof(target)} = {nameof(Compat.LuaGetPlayerBySteamID)}({ Compat.LuaEncode(target.steamId) })
+			local {nameof(seated)} = {nameof(Compat.LuaGetPlayerBySteamID)}({ Compat.LuaEncode(seated.steamId) })
+			if {nameof(target)} and {nameof(seated)} then
+				{nameof(seated)}.changeColor("Grey")
+				{nameof(target)}.changeColor({ Compat.LuaEncode(seated.stringColor) })
 				{(
 					zInput.GetButton("Shift") && target.stringColor != "Grey"
-						? $"seated.changeColor('{target.stringColor}')"
+						? $"{nameof(seated)}.changeColor({ Compat.LuaEncode(target.stringColor) })"
 						: "----"
 				)}
 			end
