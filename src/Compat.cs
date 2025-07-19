@@ -118,6 +118,8 @@ public static class Compat
 	// 	I2.Loc.SimpleJSON.JSONNode.Escape(aText);
 	public static string LuaEncode(string @string)
 	{
+		if (@string is null)
+			return "nil";
 		var escape = "";
 		while (@string.Contains($"]{ escape }]"))
 			escape += "=";
@@ -127,6 +129,7 @@ public static class Compat
 		@bool.ToString().ToLower();
 	public static string LuaEncode(object @object) =>
 		@object switch {
+			null     => "nil",
 			string x => LuaEncode(x),
 			bool   x => LuaEncode(x),
 			_ => @object.ToString(),
@@ -140,6 +143,7 @@ public static class Compat
 					return player
 				end
 			end
+			return nil
 		end
 		""";
 
