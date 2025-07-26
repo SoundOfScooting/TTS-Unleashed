@@ -103,12 +103,11 @@ public class RemoteX : BaseNetworkAttribute
 		);
 		validationFunctions.Add(
 			$"{Main.PLUGIN_GUID}/Turns.SetPlayerTurn",
-			player => PlayerStateX.Host.IsModded
-				? player.isAdmin || (
-					Turns.Instance.turnsState.PassTurns &&
-					Turns.Instance.IsTurn(PlayerManager.Instance.PlayerStateFromID(player.id).stringColor)
-				)
-				: player.isAdmin
+			player => player.isAdmin || (
+				PlayerStateX.Host.IsModded &&
+				Turns.Instance.turnsState.PassTurns &&
+				Turns.Instance.IsTurn(PlayerManager.Instance.PlayerStateFromID(player.id).stringColor)
+			)
 		);
 
 		// [Remote(Permission.Server)]
@@ -119,9 +118,10 @@ public class RemoteX : BaseNetworkAttribute
 		);
 		validationFunctions.Add(
 			$"{Main.PLUGIN_GUID}/Pointer.SetPhysics",
-			player => PlayerStateX.Host.IsModded
-				? validationFunctions["Permissions/Contextual"](player)
-				: player.isServer
+			player => player.isServer || (
+				PlayerStateX.Host.IsModded &&
+				validationFunctions["Permissions/Contextual"](player)
+			)
 		);
 	}
 

@@ -332,8 +332,7 @@ public static class Patches
 						else if (
 							!int.TryParse(input, out front_id) &&
 							!Card_CardID.TryGetValue(input, out front_id)
-						)
-							return null;
+						) return null;
 
 						return $"{Main.PLUGIN_GUID}/Card" +
 							$"/SetupCard/{front_id}";
@@ -447,6 +446,7 @@ public static class Patches
 		while  (part.MoveNext())
 		switch (part.Current)
 		{
+			default: return false;
 			case "SetupCard":
 				if (!part.MoveNext() || !int.TryParse(part.Current, out var front_id))
 					return false;
@@ -460,8 +460,8 @@ public static class Patches
 				if (!part.MoveNext() || !bool.TryParse(part.Current, out var bAltSounds) ||
 					!part.MoveNext() || !int .TryParse(part.Current, out var MeshInt) ||
 					!part.MoveNext() || !int .TryParse(part.Current, out var MatInt)
-				)
-					return false;
+				) return false;
+
 				var npo = __result.GetComponent<NetworkPhysicsObject>();
 				// npo.SetObject(bAltSounds, MeshInt, MatInt); // without isClient
 				npo.UseAltSounds = bAltSounds;
@@ -470,8 +470,6 @@ public static class Patches
 				if (npo.materialSyncScript && MatInt != -1)
 					npo.materialSyncScript.SetMaterial(MatInt);
 				break;
-			default:
-				return false;
 		}
 		return false;
 	}
@@ -801,8 +799,7 @@ public static class Patches
 		if (!Network.isAdmin ||
 			!zInput.GetButton("Ctrl") && !zInput.GetButton("Shift") ||
 			!PlayerManager.Instance.ColourInUse(__instance.label)
-		)
-			return true;
+		) return true;
 
 		var targetID = Compat.PlayerID(UIColorSelection.id);
 		var seatedID = PlayerManager.Instance.IDFromColour(__instance.colour);

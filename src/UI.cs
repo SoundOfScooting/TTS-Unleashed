@@ -1279,6 +1279,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		shiftDown  = zInput.GetButton("Shift");
 		switch (type)
 		{
+			default: throw new UnreachableException();
 			case Type.GlobalUnlock:
 			{
 				if (ctrlDown)
@@ -1383,8 +1384,6 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				}
 				break;
 			}
-			default:
-				throw new UnreachableException();
 		}
 
 	}
@@ -1489,6 +1488,7 @@ LuaPrintObject(player.getHandStash())
 	{
 		switch (type)
 		{
+			default: throw new UnreachableException();
 			case Type.GlobalUnlock:
 				Compat.ExecuteLuaScript(
 					$"""
@@ -1561,8 +1561,6 @@ LuaPrintObject(player.getHandStash())
 					"""
 				);
 				break;
-			default:
-				throw new UnreachableException();
 		}
 	}
 }
