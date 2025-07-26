@@ -28,7 +28,7 @@ Requirements for each feature are listed.\
 Many features require the client to be an admin *(server host or promoted player)*.\
 Some features require both the host and client to be modded.
 
-NOTE: As of right now, singleplayer hotseat games are not tested for compatibility.
+**NOTE:** As of right now, singleplayer hotseat games are not tested for compatibility.
 
 ## Settings file
 
@@ -71,19 +71,19 @@ This eases right clicking UI elements, but prevents mouse panning over large pan
 Fully implements the unfinished pixel draw tool, an apparent vector-based rework of the removed pixel paint tool.\
 It is located under the draw toolbar between the circle and erase tools.\
 Each pixel drawn is one vector line.\
-NOTE: If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
+**NOTE:** If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
 
 `Enable Fast Flick` *(default `true`)*\
 Flicking an object when not the host no longer requires two clicks *(previously the first click would only highlight the object)*.\
-BUG: This allows you to try *(and fail)* to flick objects that you are prevented from selecting by Lua scripts.
+**BUG:** This allows you to try *(and fail)* to flick objects that you are prevented from selecting by Lua scripts.
 
 `Enable Fast Commands` *(default `true`)*\
 If shift is not held down, the 'Help' control instead starts typing a command in chat.\
 Best used when 'Help' is bound to `/`.
 
 `Intercept Lua Virus` *(default `true`)*\
-Host-only: Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
-NOTE: This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
+**Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
+**NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
 https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
 
 `Auto Join Message`\
@@ -98,14 +98,14 @@ Invalid IDs do nothing, so you can write comments.
 
 ### Components
 
-Modded host and client: *(new)* Added object `Cards/Specific Card`, which opens a dialog to enter a card name.\
+**Modded host and client:** *(new)* Added object `Cards/Specific Card`, which opens a dialog to enter a card name.\
 The format is `[symbol][suit]`, where `[symbol]` is one of `A`, `K`, `Q`, `J`, `10` through `2`, and `[suit]` is one of `C`, `D`, `S`, `H`.\
 For example: `AS` for Ace of Spades.
 
-Modded host and client: *(new)* Added objects `Chess/Gold/* Gold` and `Dice/Gold/D* Gold` if you have the Kickstarter Gold reward.\
+**Modded host and client:** *(new)* Added objects `Chess/Gold/* Gold` and `Dice/Gold/D* Gold` if you have the Kickstarter Gold reward.\
 *(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
 
-Modded host and client: *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog to enter a domino type.\
+**Modded host and client:** *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog to enter a domino type.\
 The format is `[top]/[bottom] (material)`, where `[top]` and `[bottom]` are integers 0-6, and `(material)` is optional and one of `Plastic`, `Metal`, `Gold`.\
 For example: `3/2 Metal` for a metal domino with 3 on the top and 2 on the bottom.\
 *(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
@@ -134,23 +134,23 @@ Right click opens a drop-down dialog window to pick a home.
 
 While in the color selection UI, if you right click a color/`Hand`, the camera home isn't changed, but your current camera still gets reset to that zone.
 
-NOTE: If Camera #0 has been saved, it overrides the camera home.
+**NOTE:** If Camera #0 has been saved, it overrides the camera home.
 
 ## Turns
 
-Admin-only: The turn star icon next to a player's name that skips their turn can be clicked *(formerly host-only)*.\
-Admin-only: If you right click the turn star or end turn button, you will pass the turn to the previous player instead of the next one.
+**Admin-only:** The turn star icon next to a player's name that skips their turn can be clicked *(formerly host-only)*.\
+**Admin-only:** If you right click the turn star or end turn button, you will pass the turn to the previous player instead of the next one.
 
 ## Name button context menu
 
-The popup list shows "Extra:" options when opened with right click instead of left click.
+The popup list shows "*Extra:*" options when opened with right click instead of left click.
 
-Extra: Admin-only: *(new)* `Start Turns` is available on all players when turns are disabled *(starting them with that player)*.\
-Extra: Admin-only: *(new)* `Stop Turns` and `Reverse Turns` are available on all players when turns are enabled.
+*Extra:* **Admin-only:** *(new)* `Start Turns` is available on all players when turns are disabled.\
+*Extra:* **Admin-only:** *(new)* `Stop Turns` and `Reverse Turns` are available on all players when turns are enabled.
 
-BUGFIX: Modded host and client: `Pass Turn` actually works when not promoted.
+*BUGFIX:* **Modded host and client:** `Pass Turn` actually works when not promoted.
 
-Admin-only: `Change Color` is available on all players *(formerly host-only)*.\
+**Admin-only:** `Change Color` is available on all players *(formerly host-only)*.\
 `Change Color` can be clicked again on the same player to cancel color selection.\
 If you right click `Change Color`, a drop-down dialog window to pick a color opens.\
 If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain seated while picking a color instead of switching to Grey *(see [Color selection](#color-selection))*.
@@ -158,18 +158,18 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 `Change Team` is available on all players *(formerly host-only)*.\
 *(new)* `Blindfold`/`Unblindfold` is available on all players.
 
-Admin-only: `Promote`/`Demote` and `Kick` are available on non-host players *(formerly host-only)*.
+**Admin-only:** `Promote`/`Demote` and `Kick` are available on non-host players *(formerly host-only)*.
 
-Admin-only: *(new)* `Server Mute` and `Server Unmute` are available on all players.\
-NOTE: If you are the host, `Mute`/`Unmute` now only apply client-side only like they do for clients.
+**Admin-only:** *(new)* `Server Mute` and `Server Unmute` are available on all players.\
+**NOTE:** If you are the host, `Mute`/`Unmute` now only apply client-side only like they do for clients.
 
 ## Color selection
 
-Admin-only: The color Black can be chosen in the UI.\
+**Admin-only:** The color Black can be chosen in the UI.\
 *(Formerly host-only, but could be bypassed using the console.)*
 
 <table>
-	Admin-only: If you hold Shift/Ctrl, colors that are already occupied can be chosen.
+	<b>Admin-only:</b> If you hold Shift/Ctrl, colors that are already occupied can be chosen.
 	<tr>
 		<td>Shift</td><td>Swap the colors of the target and seated players.</td>
 	</tr>
@@ -182,16 +182,16 @@ Admin-only: The color Black can be chosen in the UI.\
 
 ### Grab tool
 
-Modded host and client: *(new)* When rotating held objects, if you hold Ctrl, the objects are rotated around their 3rd axis *(previously only Alt for 2nd axis)*.
+**Modded host and client:** *(new)* When rotating held objects, if you hold Ctrl, the objects are rotated around their 3rd axis *(previously only Alt for 2nd axis)*.
 
 ### Draw tool
 
 See [Enable Pixel Draw](#section-general).
 
-BUGFIX: Pressing right click to cancel drawing actually erases the line for all players instead of just yourself.
+*BUGFIX:* Pressing right click to cancel drawing actually erases the line for all players instead of just yourself.
 
 *(new)* Pressing right click while erasing stops erasing and redraws all lines that were erased since you started.\
-NOTE: As of right now the overlap order of the redrawn lines is preserved, but the redrawn lines appear above all other lines.
+**NOTE:** As of right now the overlap order of the redrawn lines is preserved, but the redrawn lines appear above all other lines.
 
 <!-- ### Flick tool
 
@@ -205,32 +205,32 @@ Client players can add/edit/delete decals in the decal list *(formerly host-only
 
 ### Global context menu
 
-Admin-only: *(new)* `Draw Stash` is available when applicable in the global menu, which draws all objects from a hand stash back to its hand.\
+**Admin-only:** *(new)* `Draw Stash` is available when applicable in the global menu, which draws all objects from a hand stash back to its hand.\
 If you hold Ctrl, the target is all hand stashes.\
 Otherwise, if you hover over a hand stash, the target is that one.\
 Otherwise, the target is your own hand stash.\
 If you hold Shift, the objects in the hand stash are instead swapped with the ones in the hand *(renames to `Swap Stash`)*.\
-BUG: This feature is not well-behaved with non-card objects.
+**BUG:** This feature is not well-behaved with non-card objects.
 
 ### Object context menu
 
-Admin-only: *(new)* `Stash` is available on selected objects in hands, which moves them into their hand stashes until redrawn.\
+**Admin-only:** *(new)* `Stash` is available on selected objects in hands, which moves them into their hand stashes until redrawn.\
 If you hold Shift, the selected objects in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.\
-BUG: This feature is not well-behaved with non-card objects.
+**BUG:** This feature is not well-behaved with non-card objects.
 
-Modded host and client: `Material` will include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
+**Modded host and client:** `Material` will include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
 *(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
 
-Admin-only: `Custom` context option is available on objects *(formerly host-only)*.\
+**Admin-only:** `Custom` context option is available on objects *(formerly host-only)*.\
 Clients cannot automatically update matching custom objects.\
 `Custom Jigsaw` and `Custom PDF` might work but are not fully supported yet for clients.\
 If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect Ratio" changed by clients.
 
 `Show Hand` context option is available on objects in any hand, not just your own.\
-BUG: This feature is buggy *(just like the regular `Show Hand` button)*.
+**BUG:** This feature is buggy *(just like the regular `Show Hand` button)*.
 
-Admin-only: `Physics` context option is available on objects *(formerly host-only)*.\
-BUG: The UI might not update client-side but it does apply server-side.
+**Admin-only:** `Physics` context option is available on objects *(formerly host-only)*.\
+**BUG:** The UI might not update client-side but it does apply server-side.
 
 `Name` field supports inserting multiple lines just like the `Description` field.
 
@@ -243,10 +243,10 @@ Command list slightly modified.\
 `/help -a` *(new)*\
 Lists hidden commands in addition to the regular ones.
 
-Admin-only: `/kick <name>`, `/ban <name>`, `/promote <name>` *(formerly host-only)*\
+**Admin-only:** `/kick <name>`, `/ban <name>`, `/promote <name>` *(formerly host-only)*\
 As of right now, the player name is case-insensitive but must include all characters.
 
-Admin-only: `/execute <lua script>` *(formerly host-only)*\
+**Admin-only:** `/execute <lua script>` *(formerly host-only)*\
 Equivalent to the `lua <lua script>` console command.
 
 ### New commands

@@ -33,5 +33,5 @@
 * Added UI for pixel draw and renamed config option
 * Fixed right click to cancel drawing
 
-# v0.0.0 
+# v0.0.0
 
