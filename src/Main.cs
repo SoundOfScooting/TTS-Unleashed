@@ -54,7 +54,6 @@ public sealed class Main : BaseUnityPlugin
 			Events.Load();
 
 			Log.LogInfo(">> Reticulating splines...");
-			// SingleplayerNoSteam.Load();
 
 			Log.LogInfo(">> Load complete. <<");
 		}
