@@ -3,6 +3,8 @@
 		<AssemblyName>edu.sos.unleashed</AssemblyName>
 		<Product>Unleashed</Product>
 		<Version>0.1.0</Version>
+
+		<ProjectDir>src</ProjectDir>
 		<RootNamespace>Unleashed</RootNamespace>
 
 		<TargetFramework>netstandard2.0</TargetFramework>
