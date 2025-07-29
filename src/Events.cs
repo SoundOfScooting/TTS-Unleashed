@@ -40,6 +40,9 @@ public static class Events
 			MainUI.StartConnected();
 			return;
 		}
+		if (NetworkUI.Instance.bHotseat)
+			return;
+
 		if (!addingAllPlayers && Settings.EntryAutoJoinMessage.Value is [_, ..] autoJoin)
 			Chat.SendChatMessage(autoJoin);
 
