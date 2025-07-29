@@ -1,6 +1,7 @@
 # dev
 
 * Renamed assembly from `Unleashed.dll` to `edu.sos.unleashed.dll`. To update, delete the old one and add the renamed one.
+* Added setting `Menu Holiday`
 * Object `Name` field supports multiple lines
 
 # v0.1.0
