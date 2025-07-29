@@ -46,6 +46,10 @@ Nickname changes only take effect when joining a new server.
 `Menu Cursor Color` *(default `Purple`)*\
 The color of the cursor on the main menu.
 
+`Menu Holiday`\
+The holiday logo that appears on the main menu.\
+One of: `Default`, `Thanksgiving`, `Christmas`, `Halloween`, `Random`, `All`
+
 `Initial Player Color` *(default `White`)*\
 The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI.
 

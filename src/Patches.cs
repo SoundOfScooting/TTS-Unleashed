@@ -60,6 +60,25 @@ public static class Patches
 	}
 
 	[HarmonyPrefix]
+	[HarmonyPatch(typeof(UIHoliday), nameof(UIHoliday.Start))]
+	private static bool UIHolidayStartPrefix(UIHoliday __instance)
+	{
+		if (Settings.EntryMenuHoliday.Value == Settings.ValueMenuHoliday.Default)
+			return true;
+		foreach (UIHoliday.HolidayDate holiday in __instance.Holidays)
+			holiday.Target.SetActive(false);
+
+		if (Settings.EntryMenuHoliday.Value == Settings.ValueMenuHoliday.Random)
+			__instance.Holidays[UnityEngine.Random.Range(0, __instance.Holidays.Count)].Target.SetActive(true);
+		else foreach (UIHoliday.HolidayDate holiday in __instance.Holidays)
+			holiday.Target.SetActive(
+				Settings.EntryMenuHoliday.Value == Settings.ValueMenuHoliday.All ||
+				Settings.EntryMenuHoliday.Value.ToString() == holiday.Target.name
+			);
+		return false;
+	}
+
+	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Network),   nameof(Network  .InitializeServer))]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
 	private static void NetworkUIConnectedToServerPrefix()

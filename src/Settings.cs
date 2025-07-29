@@ -175,6 +175,35 @@ public static class Settings
 		},
 	};
 #endif
+	public enum ValueMenuHoliday
+	{
+		Default,
+		Thanksgiving,
+		Christmas,
+		Halloween,
+		Random,
+		All,
+	}
+	public static readonly Setting<ValueMenuHoliday> EntryMenuHoliday = new()
+	{
+		Section     = Section.General,
+		Key         = "Menu Holiday",
+		Description =
+			"""
+			The holiday logo that appears on the main menu.
+			""",
+		DefaultValue   = ValueMenuHoliday.Default,
+		Attributes     = new() { Order = OrderByLine() },
+		SettingChanged = (sender, args) =>
+		{
+			if (Network.peerType == NetworkPeerMode.Disconnected)
+				NetworkUI.Instance.GUIDisconnected.transform
+					.Find("TTS Logo/Holidays")
+					.GetComponent<UIHoliday>()
+					.Start();
+		},
+	};
+
 	public static readonly Setting<string> EntryInitPlayerColour = new()
 	{
 		Section     = Section.General,
@@ -187,7 +216,6 @@ public static class Settings
 		AcceptableValues = new AcceptableValueList<string>([.. Colour.AllPlayerLabels, "Choose", "Dialog"]),
 		Attributes       = new() { Order = OrderByLine() },
 	};
-
 	public enum ValueInitBackground
 	{
 		Museum    = 8,
