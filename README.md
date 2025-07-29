@@ -43,7 +43,7 @@ To close the settings window, either press the `Close` button or click outside t
 A nickname used instead of your Steam display name.\
 Nickname changes only take effect when joining a new server.
 
-`Menu Player Color` *(default `Purple`)*\
+`Menu Cursor Color` *(default `Purple`)*\
 The color of the cursor on the main menu.
 
 `Initial Player Color` *(default `White`)*\

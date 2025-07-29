@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
+using NewNet;
 using Steamworks;
 using UnityEngine;
 
@@ -21,6 +22,14 @@ public static class Settings
 	}
 	public static string FormatSection(Section section) =>
 		$"{(int) section}: {section}";
+	public static string TrimSectionFormat(string section)
+	{
+		var i = section.IndexOf(":");
+		if ((i >= 0) && int.TryParse(section[..i], out _))
+			section = section[(i + 1)..].TrimStart();
+		return section;
+	}
+
 	public static int OrderByLine([CallerLineNumber] int line = default) =>
 		-line;
 
@@ -32,7 +41,7 @@ public static class Settings
 	{
 		public required Section Section { get; init; }
 		public required string Key { get; init; }
-		// #todo: obsolete (section,key) pairs
+		public (string Section, string Key)[] MigrateFrom { get; init; } = [];
 
 		public string Description { get; init; }
 		public required T DefaultValue { get; init; }
@@ -51,13 +60,17 @@ public static class Settings
 		public ConfigEntry<T> Entry { get; private set; }
 		public T Value
 		{
-			get => Entry.Value;
+			get => Entry is null ? DefaultValue : Entry.Value;
 			set => Entry.Value = value;
 		}
 
 		public void Bind(ConfigFile config)
 		{
 			Entry = config.BindX(FormatSection(Section), Key, DefaultValue, Description, AcceptableValues, Tags);
+			foreach (var from in MigrateFrom)
+			if      (config.MigrateEntryX(new(from.Section, from.Key), out T value))
+				Entry.Value = value;
+
 			Entry.SettingChanged += SettingChanged;
 			SettingLoaded?.Invoke(Value);
 		}
@@ -67,7 +80,7 @@ public static class Settings
 		private const string DebugDescription = "!! DEBUG SETTING - USE AT YOUR OWN RISK !!";
 
 		[SetsRequiredMembers]
-		public DebugSetting([CallerLineNumber] int line = default) : base()
+		public DebugSetting([CallerLineNumber] int line = default)
 		{
 			Section     = Section.Debug;
 			Description = DebugDescription;
@@ -122,10 +135,13 @@ public static class Settings
 		Attributes   = new() { Order = OrderByLine() },
 	};
 
-	public static readonly Setting<string> EntryMenuPlayerColour = new()
+	public static readonly Setting<string> EntryMenuCursorColour = new()
 	{
 		Section     = Section.General,
-		Key         = "Menu Player Color",
+		Key         = "Menu Cursor Color",
+		MigrateFrom = [
+			("General", "Menu Player Color")
+		],
 		Description =
 			"""
 			The color of the cursor on the main menu.
@@ -133,7 +149,32 @@ public static class Settings
 		DefaultValue     = Main.PluginColour.Label,
 		AcceptableValues = new AcceptableValueList<string>(Colour.AllPlayerLabels),
 		Attributes       = new() { Order = OrderByLine() },
+		SettingChanged   = (sender, args) => {
+			if (Network.peerType == NetworkPeerMode.Disconnected)
+				Utilities.SetCursor(
+					NetworkUI.Instance.StringColorToCursorTexture(EntryMenuCursorColour.Value),
+					NetworkUI.HardwareCursorOffest
+				);
+		},
 	};
+#if TRUE_ULTIMATE_POWER
+	public static readonly Setting<string> EntryMenuErrorColour = new()
+	{
+		Section     = Section.General,
+		Key         = "Menu Error Color",
+		Description =
+			"""
+			The color of the cursor on the main menu if the mod failed to load.
+			""",
+		DefaultValue     = Main.ErrorColour.Label,
+		AcceptableValues = new AcceptableValueList<string>(Colour.AllPlayerLabels),
+		Attributes       = new()
+		{
+			Order = OrderByLine(),
+			IsAdvanced = true,
+		},
+	};
+#endif
 	public static readonly Setting<string> EntryInitPlayerColour = new()
 	{
 		Section     = Section.General,
@@ -261,8 +302,8 @@ public static class Settings
 			Each pixel drawn is one vector line.
 			NOTE: If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
 			""",
-		DefaultValue = true,
-		Attributes   = new() { Order = OrderByLine() },
+		DefaultValue   = true,
+		Attributes     = new() { Order = OrderByLine() },
 		SettingChanged = (sender, args) =>
 			ToolVectorX.UpdateUI(),
 	};
@@ -426,6 +467,47 @@ public static class ConfigFileX
 	// public static ConfigEntry<T> BindX<T>(this ConfigFile @this, string section, string key,  T defaultValue, ConfigDescription description) =>
 	// 	@this.BindX(new(section, key), defaultValue, description);
 
+	private static Dictionary<ConfigDefinition, ConfigEntryBase> Entries(this ConfigFile @this) =>
+		new Traverse(@this).Property<Dictionary<ConfigDefinition, ConfigEntryBase>>("Entries").Value;
+	private static Dictionary<ConfigDefinition, string> OrphanedEntries(this ConfigFile @this) =>
+		new Traverse(@this).Property<Dictionary<ConfigDefinition, string>>("OrphanedEntries").Value;
+	private static bool TryGetPair<T>(Dictionary<ConfigDefinition, T> dict, ConfigDefinition def, out KeyValuePair<ConfigDefinition, T> pair)
+	{
+		foreach (var pair2 in dict)
+		if      (def.Key == pair2.Key.Key && Settings.TrimSectionFormat(def.Section) == Settings.TrimSectionFormat(pair2.Key.Section))
+		{
+			pair = pair2;
+			return true;
+		}
+		pair = default;
+		return false;
+	}
+	public static bool MigrateEntryX<T>(this ConfigFile @this, ConfigDefinition oldDefinition, out T value)
+	{
+		var OrphanedEntries = @this.OrphanedEntries();
+		if (!TryGetPair(OrphanedEntries, oldDefinition, out var pair))
+		{
+			value = default;
+			return false;
+		}
+		try
+		{
+			value = TomlTypeConverter.ConvertToValue<T>(pair.Value);
+		}
+		catch (Exception e)
+		{
+			new Traverse(typeof(BepInEx.Logging.Logger))
+				.Method("Log", [
+					BepInEx.Logging.LogLevel.Warning,
+					$"""Config value of setting "{pair.Key}" could not be parsed and will be ignored. Reason: {e.Message}; Value: {pair.Value}"""
+				])
+				.GetValue();
+			value = default;
+			return false;
+		}
+		OrphanedEntries.Remove(pair.Key);
+		return true;
+	}
 	// #todo: reverse patch?
 	public static ConfigEntry<T> BindX<T>(this ConfigFile @this, ConfigDefinition definition, T defaultValue, ConfigDescription description)
 	{
@@ -438,33 +520,9 @@ public static class ConfigFileX
 		var this_T = new Traverse(@this);
 		lock (this_T.Field("_ioLock").GetValue())
 		{
-			var Entries         = this_T.Property("Entries")        .GetValue<Dictionary<ConfigDefinition, ConfigEntryBase>>();
-			var OrphanedEntries = this_T.Property("OrphanedEntries").GetValue<Dictionary<ConfigDefinition, string>>();
+			var Entries         = @this.Entries();
+			var OrphanedEntries = @this.OrphanedEntries();
 
-			static bool TryGetPair<T2>(Dictionary<ConfigDefinition, T2> dict, ConfigDefinition def, out KeyValuePair<ConfigDefinition, T2> pair)
-			{
-				foreach (var pair2 in dict)
-				if      (def.Key == pair2.Key.Key)
-				{
-					var section1 = def.Section;
-					int i = section1.IndexOf(":");
-					if ((i >= 0) && int.TryParse(section1[..i], out _))
-						section1 = section1[(i + 1) .. ].TrimStart();
-
-					var section2 = pair2.Key.Section;
-					i = section2.IndexOf(":");
-					if ((i >= 0) && int.TryParse(section2[..i], out _))
-						section2 = section2[(i + 1) .. ].TrimStart();
-
-					if (section1 == section2)
-					{
-						pair = pair2;
-						return true;
-					}
-				}
-				pair = default;
-				return false;
-			}
 			if (TryGetPair(Entries, definition, out var pair))
 				return (ConfigEntry<T>) pair.Value;
 

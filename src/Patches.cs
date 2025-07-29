@@ -121,21 +121,6 @@ public static class Patches
 	}
 
 	[HarmonyILManipulator]
-	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Init))]
-	private static void NetworkUIInitIL(ILContext il)
-	{
-		ILCursor c = new(il);
-		c.GotoNext(MoveType.Before,
-			// Utilities.SetCursor(WhiteCursorTexture, HardwareCursorOffest);
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.WhiteCursorTexture)))
-		);
-		c.MoveAfterLabels();
-		c.Remove();
-		c.EmitDelegate(Texture2D(NetworkUI __instance) =>
-			__instance.StringColorToCursorTexture(Settings.EntryMenuPlayerColour.Value)
-		);
-	}
-	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ServerInitialized))]
 	private static void NetworkUIServerInitializedIL(ILContext il)
 	{

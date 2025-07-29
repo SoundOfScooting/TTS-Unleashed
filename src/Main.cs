@@ -2,6 +2,8 @@ using System;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using MonoMod.Cil;
+using UnityEngine;
 
 namespace Unleashed;
 
@@ -9,7 +11,6 @@ namespace Unleashed;
 	#warning TICK TOCK...
 #endif
 
-// omit [HarmonyPatch]
 [BepInPlugin(PLUGIN_GUID, PLUGIN_NAME, PLUGIN_VERSION)]
 [BepInProcess("Tabletop Simulator.exe")]
 [BepInDependency(CONFIG_MANAGER_GUID, BepInDependency.DependencyFlags.SoftDependency)]
@@ -40,7 +41,8 @@ public sealed class Main : BaseUnityPlugin
 
 			Log.LogInfo(">> Patching...");
 			Harmony = new(PLUGIN_GUID);
-			Harmony.PatchAll(typeof(Main)); // ensure error message
+			Harmony.PatchAll(typeof(PatchMenuSplash));
+			Harmony.PatchAll(typeof(PatchMenuCursor));
 			Harmony.PatchAll();
 
 			Log.LogInfo(">> Configuring...");
@@ -62,15 +64,41 @@ public sealed class Main : BaseUnityPlugin
 		}
 	}
 
-	[HarmonyPostfix]
-	[HarmonyPatch(typeof(Chat), nameof(Chat.SingletonInit))]
-	private static void Splash()
+	private static class PatchMenuSplash
 	{
-		Chat.LogSystem($"--[[ {PLUGIN_NAME} v{PLUGIN_VERSION} ]]--", PluginColour, true);
-		if (loadErrors != null)
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(Chat), nameof(Chat.SingletonInit))]
+		private static void Splash()
 		{
-			Chat.LogSystem("Errors occurred while loading", ErrorColour, true);
-			Chat.LogSystem(loadErrors, ErrorColour);
+			Chat.LogSystem($"--[[ {PLUGIN_NAME} v{PLUGIN_VERSION} ]]--", PluginColour, true);
+			if (loadErrors is not null)
+			{
+				Chat.LogSystem("Errors occurred while loading!", ErrorColour, true);
+				Chat.LogSystem(loadErrors, ErrorColour);
+			}
+		}
+	}
+	private static class PatchMenuCursor
+	{
+		[HarmonyILManipulator]
+		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Init))]
+		private static void CursorColor(ILContext il)
+		{
+			ILCursor c = new(il);
+			c.GotoNext(MoveType.Before,
+				// Utilities.SetCursor(WhiteCursorTexture, HardwareCursorOffest);
+				x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.WhiteCursorTexture)))
+			);
+			c.MoveAfterLabels();
+			c.Remove();
+			c.EmitDelegate(Texture2D(NetworkUI __instance) =>
+				__instance.StringColorToCursorTexture(
+#if TRUE_ULTIMATE_POWER
+					loadErrors is not null ? Settings.EntryMenuErrorColour.Value :
+#endif
+					Settings.EntryMenuCursorColour.Value
+				)
+			);
 		}
 	}
 }
