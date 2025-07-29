@@ -16,6 +16,7 @@ namespace Unleashed;
 [BepInDependency(CONFIG_MANAGER_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Main : BaseUnityPlugin
 {
+	public const string PLUGIN_REPO    = "https://github.com/SoundOfScooting/TTS-Unleashed";
 	public const string PLUGIN_GUID    = PluginInfo.PLUGIN_GUID;
 	public const string PLUGIN_NAME    = PluginInfo.PLUGIN_NAME;
 	public const string PLUGIN_VERSION = PluginInfo.PLUGIN_VERSION;
@@ -42,6 +43,7 @@ public sealed class Main : BaseUnityPlugin
 			Log.LogInfo(">> Patching...");
 			Harmony = new(PLUGIN_GUID);
 			Harmony.PatchAll(typeof(PatchMenuSplash));
+			Harmony.PatchAll(typeof(PatchMenuVersion));
 			Harmony.PatchAll(typeof(PatchMenuCursor));
 			Harmony.PatchAll();
 
@@ -76,6 +78,47 @@ public sealed class Main : BaseUnityPlugin
 				Chat.LogSystem("Errors occurred while loading!", ErrorColour, true);
 				Chat.LogSystem(loadErrors, ErrorColour);
 			}
+		}
+	}
+	private static class PatchMenuVersion
+	{
+		[HarmonyPostfix]
+		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
+		private static void VersionNumber()
+		{
+			var hotfixLabel = NetworkUI.Instance.GUIDisconnected.transform
+				.Find("Version/Version Hotfix")
+				.GetComponent<UILabel>();
+			var numberLabel = NetworkUI.Instance.GUIDisconnected.transform
+				.Find("Version/Version Number")
+				.GetComponent<UILabel>();
+
+			var gameObject = new GameObject("Version Modded");
+			gameObject.AssignLocalTRS(numberLabel.gameObject);
+
+			var moddedLabel   = gameObject.AddComponent(numberLabel.GetComponent<UILabel>());
+			moddedLabel.color = loadErrors is not null ? ErrorColour : PluginColour;
+			moddedLabel.text  = $"+{PLUGIN_ABBR} v{PLUGIN_VERSION}";
+			moddedLabel.SetAnchor(NetworkUI.Instance.GUIUIRoot,
+				numberLabel.leftAnchor  .relative, numberLabel.leftAnchor  .absolute,
+				numberLabel.bottomAnchor.relative, numberLabel.bottomAnchor.absolute,
+				numberLabel.rightAnchor .relative, numberLabel.rightAnchor .absolute,
+				numberLabel.topAnchor   .relative, numberLabel.topAnchor   .absolute
+			);
+			moddedLabel.ResetAndUpdateAnchors();
+			var dy = numberLabel.bottomAnchor.absolute - hotfixLabel.bottomAnchor.absolute;
+			hotfixLabel.bottomAnchor.absolute -= dy;
+			hotfixLabel.topAnchor   .absolute -= dy;
+			hotfixLabel.ResetAndUpdateAnchors();
+			numberLabel.bottomAnchor.absolute -= dy;
+			numberLabel.topAnchor   .absolute -= dy;
+			numberLabel.ResetAndUpdateAnchors();
+
+			gameObject.AddComponent(numberLabel.GetComponent<BoxCollider2D>());
+			gameObject.AddComponent(numberLabel.GetComponent<UIButton>());
+			gameObject.AddComponent(numberLabel.GetComponent<UIOpenURL>())
+				.URL = $"{PLUGIN_REPO}/releases/tag/v{PLUGIN_VERSION}";
+			gameObject.AddComponent<TweenColor>();
 		}
 	}
 	private static class PatchMenuCursor

@@ -17,13 +17,7 @@ public static class MainUI
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
 	private static void StartDisconnected()
 	{
-		// relocate?
 		PlayerStateX.StartDisconnected();
-
-		var numberLabel = NetworkUI.Instance.GUIDisconnected.transform
-			.Find("Version/Version Number")
-			.GetComponent<UILabel>();
-		numberLabel.text += $" {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR} v{Main.PLUGIN_VERSION}[-]";
 	}
 	public static void StartConnected()
 	{
@@ -67,6 +61,8 @@ public static class MainUI
 		if (toAdd.tweenTarget)
 			comp.tweenTarget = go;
 		comp.OnInit();
+		comp.hover   = toAdd.hover;
+		comp.pressed = toAdd.pressed;
 		return comp;
 	}
 	/// <summary>
@@ -208,7 +204,7 @@ public class UZCameraHome : MonoBehaviour
 		gameObject.AddComponent<TweenColor>();
 		// I2.Loc.Localize
 
-		var labelObject = new GameObject("Label");
+		var labelObject = new GameObject(@base.ThisLabelObject.name);
 		labelObject.AssignLocalTRS(@base.ThisLabelObject);
 		labelObject.transform.parent        = transform;
 		labelObject.transform.localPosition = new(0f, -2f, 0f);
