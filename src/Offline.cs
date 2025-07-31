@@ -36,7 +36,7 @@ public static class Offline
 		if (NoSteam && Singleplayer)
 		{
 			NetworkEvents.TriggerServerInitializing();
-			return false; 
+			return false;
 		}
 		return true;
 	}

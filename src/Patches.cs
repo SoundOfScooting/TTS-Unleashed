@@ -79,9 +79,9 @@ public static class Patches
 	}
 
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(Network),   nameof(Network  .InitializeServer))]
-	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
-	private static void NetworkUIConnectedToServerPrefix()
+	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerServerInitialized))]
+	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerConnectingToServer))]
+	private static void NetworkEventsTriggerServerInitializedPrefix()
 	{
 		if (Settings.EntryNickname.Value is [_, ..] nickname)
 			NetworkUI.Instance.SetPlayerName(nickname);
