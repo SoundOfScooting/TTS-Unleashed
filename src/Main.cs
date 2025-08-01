@@ -38,22 +38,22 @@ public sealed class Main : BaseUnityPlugin
 		Log      = Logger;
 		try
 		{
-//			Debug.developerConsoleVisible = true;
+			// Debug.developerConsoleVisible = true;
 
-			Log.LogInfo(">> Patching...");
+			Log.LogInfo(">> Spinning up...");
 			Harmony = new(PLUGIN_GUID);
 			Harmony.PatchAll(typeof(PatchMenuSplash));
 			Harmony.PatchAll(typeof(PatchMenuVersion));
 			Harmony.PatchAll(typeof(PatchMenuCursor));
-			Harmony.PatchAll();
 
 			Log.LogInfo(">> Configuring...");
 			Settings.Load();
 
-			Log.LogInfo(">> Hooking events...");
-			Events.Load();
+			Log.LogInfo(">> Patching...");
+			Harmony.PatchAll(typeof(Main).Assembly);
 
 			Log.LogInfo(">> Reticulating splines...");
+			Events.Load();
 
 			Log.LogInfo(">> Load complete. <<");
 		}
