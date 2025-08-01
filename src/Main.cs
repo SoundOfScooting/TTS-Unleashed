@@ -99,10 +99,10 @@ public sealed class Main : BaseUnityPlugin
 			moddedLabel.color = loadErrors is not null ? ErrorColour : PluginColour;
 			moddedLabel.text  = $"+{PLUGIN_ABBR} v{PLUGIN_VERSION}";
 			moddedLabel.SetAnchor(NetworkUI.Instance.GUIUIRoot,
-				numberLabel.leftAnchor  .relative, numberLabel.leftAnchor  .absolute,
-				numberLabel.bottomAnchor.relative, numberLabel.bottomAnchor.absolute,
-				numberLabel.rightAnchor .relative, numberLabel.rightAnchor .absolute,
-				numberLabel.topAnchor   .relative, numberLabel.topAnchor   .absolute
+				left:   numberLabel.leftAnchor  .relative, numberLabel.leftAnchor  .absolute,
+				bottom: numberLabel.bottomAnchor.relative, numberLabel.bottomAnchor.absolute,
+				right:  numberLabel.rightAnchor .relative, numberLabel.rightAnchor .absolute,
+				top:    numberLabel.topAnchor   .relative, numberLabel.topAnchor   .absolute
 			);
 			moddedLabel.ResetAndUpdateAnchors();
 			var dy = numberLabel.bottomAnchor.absolute - hotfixLabel.bottomAnchor.absolute;

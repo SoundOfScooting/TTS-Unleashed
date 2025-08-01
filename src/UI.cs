@@ -1159,10 +1159,10 @@ public static class UIContextualX
 			var descSprite = __instance.descriptionInput.GetComponent<UISprite>();
 			var nameSprite = __instance.nameInput       .GetComponent<UISprite>();
 			nameSprite.SetAnchor(nameLabel.gameObject,
-				descSprite.leftAnchor .absolute,
-				descSprite.topAnchor  .absolute * -1, // descSprite.bottomAnchor.absolute
-				descSprite.rightAnchor.absolute,
-				descSprite.topAnchor  .absolute
+				left:   descSprite.leftAnchor .absolute,
+				bottom: descSprite.topAnchor  .absolute * -1,
+				right:  descSprite.rightAnchor.absolute,
+				top:    descSprite.topAnchor  .absolute
 			);
 		}
 	}
