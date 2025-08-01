@@ -210,7 +210,7 @@ public static class Settings
 		Key         = "Initial Player Color",
 		Description =
 			"""
-			The initial player color after server creation, or Choose/Dialog to open the color selection UI.
+			The initial player color after server creation, or Choose/Dialog to open the color selection UI/dialog window.
 			""",
 		DefaultValue     = Colour.White.Label,
 		AcceptableValues = new AcceptableValueList<string>([.. Colour.AllPlayerLabels, "Choose", "Dialog"]),
@@ -253,7 +253,7 @@ public static class Settings
 		Key         = "Initial Background",
 		Description =
 			"""
-			The initial background after server creation, or Random for a random one.
+			The initial background after server creation, or Random.
 			""",
 		DefaultValue = ValueInitBackground.Random,
 		Attributes   = new() { Order = OrderByLine() },
@@ -264,7 +264,7 @@ public static class Settings
 		Key         = "Initial Table",
 		Description =
 			"""
-			The initial table after server creation, or Random for a random one.
+			The initial table after server creation, or Random.
 			""",
 		DefaultValue = ValueInitTable.Random,
 		Attributes   = new() { Order = OrderByLine() },

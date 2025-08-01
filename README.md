@@ -51,13 +51,13 @@ The holiday logo that appears on the main menu.\
 One of: `Default`, `Thanksgiving`, `Christmas`, `Halloween`, `Random`, `All`
 
 `Initial Player Color` *(default `White`)*\
-The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI.
+The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI/dialog window.
 
 `Initial Background` *(default `Random`)*\
-The initial background after server creation, or `Random` for a random one.
+The initial background after server creation, or `Random`.
 
 `Initial Table` *(default `Random`)*\
-The initial table after server creation, or `Random` for a random one.
+The initial table after server creation, or `Random`.
 
 `Invert Horizontal 3P Controls` *(default `false`)*\
 Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.\
@@ -102,14 +102,14 @@ Invalid IDs do nothing, so you can write comments.
 
 ### Components
 
-**Modded host and client:** *(new)* Added object `Cards/Specific Card`, which opens a dialog to enter a card name.\
+**Modded host and client:** *(new)* Added object `Cards/Specific Card`, which opens a dialog window to enter a card name.\
 The format is `[symbol][suit]`, where `[symbol]` is one of `A`, `K`, `Q`, `J`, `10` through `2`, and `[suit]` is one of `C`, `D`, `S`, `H`.\
 For example: `AS` for Ace of Spades.
 
 **Modded host and client:** *(new)* Added objects `Chess/Gold/* Gold` and `Dice/Gold/D* Gold` if you have the Kickstarter Gold reward.\
 *(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
 
-**Modded host and client:** *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog to enter a domino type.\
+**Modded host and client:** *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog window to enter a domino type.\
 The format is `[top]/[bottom] (material)`, where `[top]` and `[bottom]` are integers 0-6, and `(material)` is optional and one of `Plastic`, `Metal`, `Gold`.\
 For example: `3/2 Metal` for a metal domino with 3 on the top and 2 on the bottom.\
 *(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
@@ -134,7 +134,7 @@ Controls which hand zone the camera starts at and gets reset to when pressing Sp
 Possible options are `Hand` *(your current seat)*, `Grey` *(the "first" hand zone, usually White's)*, or a particular color *(that color's main hand zone)*.
 
 Left click opens the color selection UI *(to pick `Hand`, click again while the UI is open)*.\
-Right click opens a drop-down dialog window to pick a home.
+Right click opens a dialog window to pick a home.
 
 While in the color selection UI, if you right click a color/`Hand`, the camera home isn't changed, but your current camera still gets reset to that zone.
 
@@ -156,7 +156,7 @@ The popup list shows "*Extra:*" options when opened with right click instead of 
 
 **Admin-only:** `Change Color` is available on all players *(formerly host-only)*.\
 `Change Color` can be clicked again on the same player to cancel color selection.\
-If you right click `Change Color`, a drop-down dialog window to pick a color opens.\
+If you right click `Change Color`, a dialog window to pick a color opens.\
 If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain seated while picking a color instead of switching to Grey *(see [Color selection](#color-selection))*.
 
 `Change Team` is available on all players *(formerly host-only)*.\
@@ -169,8 +169,7 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 
 ## Color selection
 
-**Admin-only:** The color Black can be chosen in the UI.\
-*(Formerly host-only, but could be bypassed using the console.)*
+**Admin-only:** The color Black can be chosen in the UI *(formerly host-only, but could be bypassed using the system console)*.
 
 <table>
 	<b>Admin-only:</b> If you hold Shift/Ctrl, colors that are already occupied can be chosen.
