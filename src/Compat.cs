@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
+using MonoMod.Cil;
 using NewNet;
 using UnityEngine;
 using NPO_X = Unleashed.NetworkPhysicsObjectX;
@@ -19,9 +20,12 @@ public class PlayerStateX
 	public static PlayerStateX Host =>
 		PlayerManager.Instance.PlayerStateFromID(NetworkPlayer.SERVER_ID).X();
 
-	// #todo: apparently CWT is broken in this Unity version?
 	public static void StartDisconnected() =>
 		CWT = new();
+	public static void StartConnected() =>
+		PlayerManager.Instance.MyPlayerState().X().IsModded = true;
+
+	// #todo: apparently CWT is broken in this Unity version?
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.Remove))]
 	private static void RemovePostfix(PlayerState playerState) =>
@@ -31,6 +35,7 @@ public class NetworkPhysicsObjectX : MonoBehaviour
 {
 	public int HeldTiltRotationIndex;
 }
+
 [HarmonyPatch]
 public static class Compat
 {
@@ -52,6 +57,66 @@ public static class Compat
 
 	public static int PlayerID(int id) =>
 		(id == -1) ? NetworkID.ID : id;
+
+	public static void StartDisconnected() =>
+		PlayerStateX.StartDisconnected();
+	public static void StartConnected() =>
+		PlayerStateX.StartConnected();
+
+	private const string VERSION_HEADER = $"\n{Main.PLUGIN_GUID} V";
+
+	[HarmonyILManipulator]
+	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
+	private static void ConnectedToServerIL(ILContext il)
+	{
+		ILCursor c = new(il);
+		c.GotoNext(MoveType.After,
+			// base.networkView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(NetworkUI), nameof(NetworkUI.VersionNumber)))
+		);
+		c.EmitDelegate(string(string VersionNumber) =>
+			VersionNumber + VERSION_HEADER + Main.PLUGIN_VERSION
+		);
+	}
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
+	private static void RegisterPrefix(ref NetworkPlayer __state) =>
+		__state = Network.sender;
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
+	private static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
+	{
+		var sender = __state;
+		int s = versionnum.IndexOf(VERSION_HEADER);
+		if (s < 0)
+			return;
+
+		s += VERSION_HEADER.Length;
+		int e = versionnum.IndexOf("\n", s);
+		if (e < 0)
+			e = versionnum.Length;
+
+		var clientVersion = new Version(versionnum[s..e]);
+		var hostVersion   = Main.Instance.Info.Metadata.Version;
+		if (clientVersion.Major != hostVersion.Major || clientVersion.Minor != hostVersion.Minor)
+		{
+			Chat.SendChat($"{Colour.YellowHex}{name} is running incompatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
+			return;
+		}
+		// Chat.SendChat($"{Colour.GreenHex}{name} is running compatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
+		Wait.Frames(() =>
+		{
+			try
+			{
+				PlayerManager.Instance.PlayerStateFromID(sender.id).X().IsModded = true;
+				AchievementManager.Instance.RPC_X(sender, RPCSetIsModded, NetworkPlayer.SERVER_ID);
+			}
+			catch (Exception e)
+			{
+				Chat.Log(e.ToString(), Colour.Red);
+			}
+		});
+	}
 
 	// [RemoteX(Permission.Server)]
 	// public static void RPCSetPlayerStateX(AchievementManager _, ushort id, PlayerStateX playerX)

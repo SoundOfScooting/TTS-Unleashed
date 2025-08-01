@@ -13,12 +13,6 @@ namespace Unleashed;
 [HarmonyPatch]
 public static class MainUI
 {
-	[HarmonyPostfix]
-	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
-	private static void StartDisconnected()
-	{
-		PlayerStateX.StartDisconnected();
-	}
 	public static void StartConnected()
 	{
 		GUIEndTurnX.StartConnected();

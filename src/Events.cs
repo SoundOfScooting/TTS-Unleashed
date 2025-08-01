@@ -8,6 +8,18 @@ namespace Unleashed;
 [HarmonyPatch]
 public static class Events
 {
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
+	private static void StartDisconnected()
+	{
+		Compat.StartDisconnected();
+	}
+	private static void StartConnected()
+	{
+		Compat.StartConnected();
+		MainUI.StartConnected();
+	}
+
 	private static bool addingAllPlayers; // annoying
 
 	public static void Load()
@@ -22,22 +34,19 @@ public static class Events
 	private static void OnConnectedToServer()
 	{
 		addingAllPlayers = true;
-		// failsafe
-		Wait.Time(() => addingAllPlayers = false, 5f);
+		Wait.Time(() => addingAllPlayers = false, 5f); // failsafe
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UINotepad), nameof(UINotepad.UpdateNotepadRPC))]
 	private static void UpdateNotepadRPCPrefix() =>
-		// rpc from server in NetworkUI.OnPlayerConnect after all players added
-		addingAllPlayers = false;
+		addingAllPlayers = false; // rpc from server in NetworkUI.OnPlayerConnect after all players added
 
 	private static void OnPlayersAdd(PlayerState playerState)
 	{
 		// Chat.Log($"OnPlayersAdd {playerState.id}", Main.PluginColour);
 		if (playerState.id == NetworkID.ID)
 		{
-			playerState.X().IsModded = true;
-			MainUI.StartConnected();
+			StartConnected();
 			return;
 		}
 		if (NetworkUI.Instance.bHotseat)
