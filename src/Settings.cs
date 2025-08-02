@@ -32,6 +32,8 @@ public static class Settings
 
 	public static int OrderByLine([CallerLineNumber] int line = default) =>
 		-line;
+	public static string IdentityObjectConverter(object @object) => $"{@object}";
+	public static object IdentityStringConverter(string @string) => $"{@string}";
 
 	private interface IConfigBind
 	{
@@ -132,7 +134,12 @@ public static class Settings
 			Nickname changes only take effect when joining a new server.
 			""",
 		DefaultValue = "",
-		Attributes   = new() { Order = OrderByLine() },
+		Attributes   = new()
+		{
+			Order    = OrderByLine(),
+			ObjToStr = IdentityObjectConverter,
+			StrToObj = IdentityStringConverter,
+		},
 	};
 
 	public static readonly Setting<string> EntryMenuCursorColour = new()
@@ -383,7 +390,12 @@ public static class Settings
 			Leave empty for no message.
 			""",
 		DefaultValue = "",
-		Attributes   = new() { Order = OrderByLine() },
+		Attributes   = new()
+		{
+			Order    = OrderByLine(),
+			ObjToStr = IdentityObjectConverter,
+			StrToObj = IdentityStringConverter,
+		},
 	};
 	private static string   CacheAutoPromoteIDs;
 	public  static string[] AutoPromoteIDs { get; private set; }
