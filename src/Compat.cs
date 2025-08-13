@@ -252,7 +252,7 @@ public static class Compat
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.SetPhysics))]
 	private static bool SetPhysicsPrefix(Pointer __instance, int HoverObjectId, RigidbodyState rigidbodyState, PhysicsMaterialState physicsMaterialState)
 	{
-		if (Network.isServer && PlayerStateX.Host.IsModded)
+		if (Network.isServer || PlayerStateX.Host.IsModded)
 			return true;
 
 		List<string> guids = [];
