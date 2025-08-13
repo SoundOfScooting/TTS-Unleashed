@@ -1210,6 +1210,8 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			.CreateComponents(Type.ObjectStash);
 	}
 
+	private const string LABEL_PADDING = "            ";
+
 	private UISprite Icon;
 	private UILabel Label;
 
@@ -1231,7 +1233,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			transform.parent = NetworkUI.Instance.GUIContextualMenu.transform.Find("Table");
 
 		(Label = gameObject.AddComponent(baseObject.GetComponent<UILabel>()))
-			.text = "            ???";
+			.text = LABEL_PADDING + "???";
 		gameObject.AddComponent(baseObject.GetComponents<UIButton>()[0])
 			.onClick = [new(OnClickContextual)];
 		gameObject.AddComponent(baseObject.GetComponent<BoxCollider2D>());
@@ -1278,7 +1280,8 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 					if      (hand.Stash)
 					{
 						Icon.spriteName = "Icon-Toggle";
-						Label.text = "            Unlock Stash [b](All)[/b]";
+						Label.text = LABEL_PADDING +
+							"Unlock Stash [b](All)[/b]";
 						PlayerScript.PointerScript.SetActive(gameObject, true);
 						return;
 					}
@@ -1290,23 +1293,24 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				{
 					target = LuaPlayer.GetHandPlayer(hand.TriggerLabel);
 					Icon.spriteName = "Icon-Toggle";
-					Label.text =
-						$"            {(
+					Label.text = LABEL_PADDING +
+						$"{(
 							hand.Stash.IsGrabbable ? "Lock" : "Unlock"
 						)} Stash {(
-							hand.TriggerColour != Colour.White
-								? hand.TriggerColour.Hex
-								: "")
-						}[b]({hand.TriggerLabel})[/b][-]";
+							hand.TriggerColour == Colour.White
+								? ""
+							: hand.TriggerColour.Hex
+						)}[b]({hand.TriggerLabel})[/b][-]";
 					PlayerScript.PointerScript.SetActive(gameObject, true);
 					return;
 				}
-				break;
+				return;
 			}
 			case Type.GlobalDraw:
 			{
 				Icon.spriteName = "Icon-DrawCard6";
-				Label.text = $"            {(shiftDown ? "Swap " : "Draw ")}Stash";
+				Label.text = LABEL_PADDING +
+					$"{(shiftDown ? "Swap " : "Draw ")}Stash";
 				if (ctrlDown)
 				{
 					foreach (var hand in HandZone.GetHandZones())
@@ -1322,7 +1326,12 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				if      (PositionHoverOverStash(pos, hand))
 				{
 					target = LuaPlayer.GetHandPlayer(hand.TriggerLabel);
-					Label.text += $" {(hand.TriggerColour != Colour.White ? hand.TriggerColour.Hex : "")}[b]({hand.TriggerLabel})[/b][-]";
+					Label.text +=
+						$" {(
+							hand.TriggerColour == Colour.White
+								? ""
+							: hand.TriggerColour.Hex
+						)}[b]({hand.TriggerLabel})[/b][-]";
 					PlayerScript.PointerScript.SetActive(gameObject, true);
 					return;
 				}
@@ -1331,7 +1340,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 					PlayerScript.PointerScript.SetActive(gameObject, true);
 					return;
 				}
-				break;
+				return;
 			}
 			// case Type.ObjectDraw:
 			// {
@@ -1342,7 +1351,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			// 		if (hand && hand.NPO.IsHandZoneStash)
 			// 		{
 			// 			Icon.spriteName = "Icon-DrawCard6";
-			// 			Label.text = $"            Draw Stash";
+			// 			Label.text = LABEL_PADDING + "Draw Stash";
 			// 			PlayerScript.PointerScript.SetActive(gameObject, true);
 			// 			return;
 			// 		}
@@ -1362,37 +1371,22 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				if (anyInHand)
 				{
 					Icon.spriteName = "Icon-DrawCard6";
-					Label.text = $"            {(
-						shiftDown
-							? "Swap "
-						// #stash
-						// : anyStash
-						// 	? "Draw Stash & "
-						: ""
-					)}Stash";
+					Label.text = LABEL_PADDING +
+						$"{(
+							shiftDown
+								? "Swap "
+							// #stash
+							// : anyStash
+							// 	? "Draw Stash & "
+							: ""
+						)}Stash";
 					PlayerScript.PointerScript.SetActive(gameObject, true);
 				}
-				break;
+				return;
 			}
 		}
-
 	}
 
-/*
-local function LuaPrintObject(obj)
-	if not obj then
-		print("(nil)")
-	else
-		for _,key in ipairs({
-			--[[ add keys here ]]--
-		}) do
-			print(key, ": ", stash[key])
-		end
-	end
-end
-print("---------------------")
-LuaPrintObject(player.getHandStash())
-*/
 	public static readonly string LuaAllColors =
 		$"local {nameof(LuaAllColors)} = {{ { Colour.AllPlayerLabels.Join(Compat.LuaEncode) } }}";
 	public static string LuaHandZonePlayers =>
@@ -1458,7 +1452,7 @@ LuaPrintObject(player.getHandStash())
 							--stash.interactable = true
 							{nameof(LuaHideHandStash)}(stash)
 						--end
-						-- @todo: fix card reveal cases:
+						-- // #todo: fix card reveal cases:
 							-- STASH <- CARD (fixed???)
 							-- nothing <- 1  CARD  (fixed)
 							-- nothing <- 2  CARDs (fixed)
