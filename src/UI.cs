@@ -1259,11 +1259,16 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		return false;
 	}
 
-	public void OnStartContextual()
+	void IUZContextual.OnStartContextual()
 	{
 		gameObject.SetActive(false);
+		if (OnStartContextual())
+			PlayerScript.PointerScript.SetActive(gameObject, true);
+	}
+	private bool OnStartContextual()
+	{
 		if (!Network.isAdmin) // #compat
-			return;
+			return false;
 
 		var player = LuaGlobalScriptManager.Instance.GlobalPlayer.GetPlayer(NetworkID.ID);
 		target     = player;
@@ -1282,10 +1287,9 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 						Icon.spriteName = "Icon-Toggle";
 						Label.text = LABEL_PADDING +
 							"Unlock Stash [b](All)[/b]";
-						PlayerScript.PointerScript.SetActive(gameObject, true);
-						return;
+						return true;
 					}
-					return;
+					return false;
 				}
 				if      (player.GetPointerPosition() is {} pos)
 				foreach (var hand in HandZone.GetHandZones())
@@ -1301,10 +1305,9 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 								? ""
 							: hand.TriggerColour.Hex
 						)}[b]({hand.TriggerLabel})[/b][-]";
-					PlayerScript.PointerScript.SetActive(gameObject, true);
-					return;
+					return true;
 				}
-				return;
+				return false;
 			}
 			case Type.GlobalDraw:
 			{
@@ -1317,9 +1320,9 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 					if      (hand.Stash || (shiftDown && hand.GetHandObjects().Count > 0))
 					{
 						Label.text += " [b](All)[/b]";
-						PlayerScript.PointerScript.SetActive(gameObject, true);
+						return true;
 					}
-					return;
+					return false;
 				}
 				if      (player.GetPointerPosition() is {} pos)
 				foreach (var hand in HandZone.GetHandZones())
@@ -1332,15 +1335,11 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 								? ""
 							: hand.TriggerColour.Hex
 						)}[b]({hand.TriggerLabel})[/b][-]";
-					PlayerScript.PointerScript.SetActive(gameObject, true);
-					return;
+					return true;
 				}
 				if (player.GetHandStash() || (shiftDown && player.GetHandObjects().Count > 0))
-				{
-					PlayerScript.PointerScript.SetActive(gameObject, true);
-					return;
-				}
-				return;
+					return true;
+				return false;
 			}
 			// case Type.ObjectDraw:
 			// {
@@ -1352,11 +1351,10 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			// 		{
 			// 			Icon.spriteName = "Icon-DrawCard6";
 			// 			Label.text = LABEL_PADDING + "Draw Stash";
-			// 			PlayerScript.PointerScript.SetActive(gameObject, true);
-			// 			return;
+			// 			return true;
 			// 		}
 			// 	}
-			// 	return;
+			// 	return false;
 			// }
 			case Type.ObjectStash:
 			{
@@ -1380,9 +1378,9 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 							// 	? "Draw Stash & "
 							: ""
 						)}Stash";
-					PlayerScript.PointerScript.SetActive(gameObject, true);
+					return true;
 				}
-				return;
+				return false;
 			}
 		}
 	}
@@ -1466,9 +1464,9 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 	{
 		if (PlayerScript.PointerScript)
 			PlayerScript.PointerScript.ResetInfoObject();
-		ActionStash(type, target, ctrlDown, shiftDown);
+		InvokeAction();
 	}
-	public static void ActionStash(Type type, LuaPlayer target, bool ctrlDown, bool shiftDown)
+	private void InvokeAction()
 	{
 		switch (type)
 		{
