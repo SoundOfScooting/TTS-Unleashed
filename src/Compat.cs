@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MonoMod.Cil;
@@ -172,37 +171,11 @@ public static class Compat
 		}
 	}
 
-	public static string LastExecutedLuaScript = "";
-	public static void ExecuteLuaScript(string lua)
-	{
-		LastExecutedLuaScript = lua;
-		LuaGlobalScriptManager.Instance.RPCExecuteScript(lua);
-	}
-
-	// public static string LuaEscape(string aText) =>
-	// 	I2.Loc.SimpleJSON.JSONNode.Escape(aText);
-	public static string LuaEncode(string @string)
-	{
-		if (@string is null)
-			return "nil";
-		var escape = "";
-		while (@string.Contains($"]{ escape }]"))
-			escape += "=";
-		return $"[{ escape }[{ @string }]{ escape }]";
-	}
-	public static string LuaEncode(bool @bool) =>
-		@bool.ToString().ToLower();
-	public static string LuaEncode(object @object) =>
-		@object switch {
-			null     => "nil",
-			string x => LuaEncode(x),
-			bool   x => LuaEncode(x),
-			_ => @object.ToString(),
-		};
-
-	public const string LuaGetPlayerBySteamID =
+	// #todo: not usable in hotseat
+	public static readonly Lua.Variable LuaGetPlayerBySteamID = new(
+		nameof(LuaGetPlayerBySteamID),
 		$"""
-		local function {nameof(LuaGetPlayerBySteamID)}(steam_id)
+		function (steam_id)
 			for _,player in ipairs(Player.getPlayers()) do
 				if player.steam_id == steam_id then
 					return player
@@ -210,7 +183,26 @@ public static class Compat
 			end
 			return nil
 		end
-		""";
+		"""
+	);
+	public static readonly Lua.Variable LuaChangePlayerColorSeated = new(
+		nameof(LuaChangePlayerColorSeated),
+		$"""
+		function (target, seated, swap)
+			if target and seated then
+				local target_color = target.color
+				local seated_color = seated.color
+
+				seated.changeColor("Grey")
+				target.changeColor(seated_color)
+
+				if swap and (target_color ~= "Grey") then
+					seated.changeColor(target_color)
+				end
+			end
+		end
+		"""
+	);
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
@@ -219,10 +211,9 @@ public static class Compat
 		if (Network.isServer || !Network.isAdmin)
 			return true;
 		var steamId = PlayerManager.Instance.SteamIDFromName(name);
-		ExecuteLuaScript(
+		Lua.Execute(
 			$"""
-			{LuaGetPlayerBySteamID}
-			local player = {nameof(LuaGetPlayerBySteamID)}({ LuaEncode(steamId) })
+			local player = { LuaGetPlayerBySteamID }({ steamId })
 			if player then
 				player.promote()
 			end
@@ -237,10 +228,9 @@ public static class Compat
 		if (Network.isServer || !Network.isAdmin)
 			return true;
 		var steamId = PlayerManager.Instance.SteamIDFromName(name);
-		ExecuteLuaScript(
+		Lua.Execute(
 			$"""
-			{LuaGetPlayerBySteamID}
-			local player = {nameof(LuaGetPlayerBySteamID)}({ LuaEncode(steamId) })
+			local player = { LuaGetPlayerBySteamID }({ steamId })
 			if player then
 				player.kick()
 			end
@@ -262,18 +252,18 @@ public static class Compat
 			guids.Add(npo.GUID);
 			npo.HighlightNotify(__instance.PointerDarkColour);
 		}
-		ExecuteLuaScript(
-			$$"""
-			for _,guid in ipairs({ {{ guids.Join(LuaEncode) }} }) do
+		Lua.Execute(
+			$"""
+			for _,guid in ipairs({ Lua.Table(guids) }) do
 				local obj = getObjectFromGUID(guid)
 				if obj then
-					obj.use_gravity      = {{ LuaEncode(rigidbodyState.UseGravity) }}
-					obj.mass             = {{ LuaEncode(rigidbodyState.Mass) }}
-					obj.drag             = {{ LuaEncode(rigidbodyState.Drag) }}
-					obj.angular_drag     = {{ LuaEncode(rigidbodyState.AngularDrag) }}
-					obj.static_friction  = {{ LuaEncode(physicsMaterialState.StaticFriction) }}
-					obj.dynamic_friction = {{ LuaEncode(physicsMaterialState.DynamicFriction) }}
-					obj.bounciness       = {{ LuaEncode(physicsMaterialState.Bounciness) }}
+					obj.use_gravity      = { rigidbodyState.UseGravity }
+					obj.mass             = { rigidbodyState.Mass }
+					obj.drag             = { rigidbodyState.Drag }
+					obj.angular_drag     = { rigidbodyState.AngularDrag }
+					obj.static_friction  = { physicsMaterialState.StaticFriction }
+					obj.dynamic_friction = { physicsMaterialState.DynamicFriction }
+					obj.bounciness       = { physicsMaterialState.Bounciness }
 				end
 			end
 			"""

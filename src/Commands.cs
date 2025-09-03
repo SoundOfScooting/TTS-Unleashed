@@ -85,7 +85,6 @@ public static class Commands
 		}
 		if (Network.isAdmin && Chat.MessageEqualCmd(message, "/execute ", out rest))
 		{
-			// #idea: Compat.ExecuteLuaScript(rest);
 			LuaGlobalScriptManager.Instance.RPCExecuteScript(rest);
 			return false;
 		}
@@ -141,8 +140,7 @@ public static class Commands
 		}
 		if (Chat.MessageEqualCmd(message, $"/{px}copylua"))
 		{
-			// NGUITools.clipboard = Compat.LastExecutedLuaScript;
-			UnityEngine.GUIUtility.systemCopyBuffer = Compat.LastExecutedLuaScript;
+			NGUITools.clipboard = Lua.Latest.Text;
 			Chat.Log("Copied.", Main.PluginColour, type);
 			return false;
 		}

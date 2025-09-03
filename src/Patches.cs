@@ -451,10 +451,10 @@ public static class Patches
 						// 	return;
 						// }
 						if (Network.isAdmin)
-							Compat.ExecuteLuaScript(
+							Lua.Execute(
 								$"""
-								Tables.setTable    ({ Compat.LuaEncode(tableName) });
-								Tables.setCustomURL({ Compat.LuaEncode(@this.CustomImageURL) })
+								Tables.setTable    ({ tableName });
+								Tables.setCustomURL({ @this.CustomImageURL })
 								"""
 							);
 						@this.Close();
@@ -525,9 +525,9 @@ public static class Patches
 						return;
 					}
 					if (Network.isAdmin)
-						Compat.ExecuteLuaScript(
+						Lua.Execute(
 							$"""
-							Backgrounds.setCustomURL({ Compat.LuaEncode(@this.CustomImageURL) })
+							Backgrounds.setCustomURL({ @this.CustomImageURL })
 							"""
 						);
 					@this.Close();
@@ -758,30 +758,14 @@ public static class Patches
 		if ((seatedID == -1) || (seatedID == targetID))
 			return true;
 
-		// var targetLabel = PlayerManager.Instance.PlayersDictionary[targetID].stringColor;
-		// NetworkUI.Instance.CheckColor("Grey",           seatedID);
-		// NetworkUI.Instance.CheckColor(__instance.label, targetID);
-		// if (zInput.GetButton("Shift"))
-		// 	Wait.Frames(
-		// 		() => NetworkUI.Instance.CheckColor(targetLabel, seatedID),
-		// 		2
-		// 	);
 		var target = PlayerManager.Instance.PlayersDictionary[targetID];
 		var seated = PlayerManager.Instance.PlayersDictionary[seatedID];
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$"""
-			{Compat.LuaGetPlayerBySteamID}
-			local {nameof(target)} = {nameof(Compat.LuaGetPlayerBySteamID)}({ Compat.LuaEncode(target.steamId) })
-			local {nameof(seated)} = {nameof(Compat.LuaGetPlayerBySteamID)}({ Compat.LuaEncode(seated.steamId) })
-			if {nameof(target)} and {nameof(seated)} then
-				{nameof(seated)}.changeColor("Grey")
-				{nameof(target)}.changeColor({ Compat.LuaEncode(seated.stringColor) })
-				{(
-					zInput.GetButton("Shift") && target.stringColor != "Grey"
-						? $"{nameof(seated)}.changeColor({ Compat.LuaEncode(target.stringColor) })"
-						: "----"
-				)}
-			end
+			local target = { Compat.LuaGetPlayerBySteamID }({ target.steamId })
+			local seated = { Compat.LuaGetPlayerBySteamID }({ seated.steamId })
+			local swap   = { zInput.GetButton("Shift") }
+			{ Compat.LuaChangePlayerColorSeated }(target, seated, swap)
 			"""
 		);
 		NetworkUI.Instance.bNeedToPickColour = false;
@@ -1218,11 +1202,8 @@ public static class Patches
 			return true;
 		if (script.IndexOf("tcejbo gninwapS", StringComparison.OrdinalIgnoreCase) == -1)
 			return true;
-//		Chat.Log(
 		Chat.SendChat(
-			(__instance.guid == "-1")
-				? $"Infected script executed globally intercepted by {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-]"
-				: $"Infected script executed on object {__instance.GetScriptName()} intercepted by {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-]",
+			$"Infected Lua script {__instance.GetScriptName()} intercepted by {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-]",
 			Main.ErrorColour
 		);
 		return false;

@@ -681,15 +681,15 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom assetbundle URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					assetbundle           = {{ Compat.LuaEncode(__instance.CustomAssetbundleURL) }},
-					assetbundle_secondary = {{ Compat.LuaEncode(__instance.CustomAssetbundleSecondaryURL) }},
-					type                  = {{ Compat.LuaEncode(__instance.TypeInt) }},
-					material              = {{ Compat.LuaEncode(__instance.MaterialInt) }},
+					assetbundle           = {{ __instance.CustomAssetbundleURL }},
+					assetbundle_secondary = {{ __instance.CustomAssetbundleSecondaryURL }},
+					type                  = {{ __instance.TypeInt }},
+					material              = {{ __instance.MaterialInt }},
 				})
 				obj.reload()
 			end
@@ -716,15 +716,15 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a back image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					face     = {{ Compat.LuaEncode(__instance.URLFace) }},
-					back     = {{ Compat.LuaEncode(__instance.URLBack) }},
-					sideways = {{ Compat.LuaEncode(__instance.bSideways) }},
-					type     = {{ Compat.LuaEncode(__instance.TypePopupList.items.IndexOf(__instance.TypePopupList.value)) }},
+					face     = {{ __instance.URLFace }},
+					back     = {{ __instance.URLBack }},
+					sideways = {{ __instance.bSideways }},
+					type     = {{ __instance.TypePopupList.items.IndexOf(__instance.TypePopupList.value) }},
 				})
 				obj.reload()
 			end
@@ -751,20 +751,20 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a back image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					face           = {{ Compat.LuaEncode(__instance.URLFace) }},
-					unique_back    = {{ Compat.LuaEncode(__instance.bUniqueBacks) }},
-					back           = {{ Compat.LuaEncode(__instance.URLBack) }},
-					width          = {{ Compat.LuaEncode(__instance.WidthRange .intValue) }},
-					height         = {{ Compat.LuaEncode(__instance.HeightRange.intValue) }},
-					number         = {{ Compat.LuaEncode(__instance.NumberRange.intValue) }},
-					sideways       = {{ Compat.LuaEncode(__instance.bSideways) }},
-					back_is_hidden = {{ Compat.LuaEncode(__instance.bBackIsHidden) }},
-					type           = {{ Compat.LuaEncode(__instance.TypePopupList.items.IndexOf(__instance.TypePopupList.value)) }},
+					face           = {{ __instance.URLFace }},
+					unique_back    = {{ __instance.bUniqueBacks }},
+					back           = {{ __instance.URLBack }},
+					width          = {{ __instance.WidthRange .intValue }},
+					height         = {{ __instance.HeightRange.intValue }},
+					number         = {{ __instance.NumberRange.intValue }},
+					sideways       = {{ __instance.bSideways }},
+					back_is_hidden = {{ __instance.bBackIsHidden }},
+					type           = {{ __instance.TypePopupList.items.IndexOf(__instance.TypePopupList.value) }},
 				})
 				obj.reload()
 			end
@@ -785,13 +785,13 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					image = {{ Compat.LuaEncode(__instance.CustomImageURL) }},
-					type  = {{ Compat.LuaEncode(__instance.TypeInt) }},
+					image = {{ __instance.CustomImageURL }},
+					type  = {{ __instance.TypeInt }},
 				})
 				obj.reload()
 			end
@@ -812,16 +812,16 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			__instance.TargetCustomObject.gameObject == ManagerPhysicsObject.Instance.Table
-				? $"""
-				Tables.setCustomURL({ Compat.LuaEncode(__instance.CustomImageURL) })
+				? (Lua.Template) $"""
+				Tables.setCustomURL({ __instance.CustomImageURL })
 				"""
-				: $$"""
-				local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+				: (Lua.Template) $$"""
+				local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 				if obj then
 					obj.setCustomObject({
-						image = {{ Compat.LuaEncode(__instance.CustomImageURL) }},
+						image = {{ __instance.CustomImageURL }},
 					})
 					obj.reload()
 				end
@@ -843,14 +843,14 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					image           = {{ Compat.LuaEncode(__instance.CustomImageURL) }},
-					image_secondary = {{ Compat.LuaEncode(__instance.CustomImageSecondaryURL) }},
-					image_scalar    = {{ Compat.LuaEncode(__instance.CustomImageScalar) }},
+					image           = {{ __instance.CustomImageURL }},
+					image_secondary = {{ __instance.CustomImageSecondaryURL }},
+					image_scalar    = {{ __instance.CustomImageScalar }},
 				})
 				obj.reload()
 			end
@@ -874,28 +874,28 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a model URL to create a custom model.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					mesh     = {{ Compat.LuaEncode(__instance.MeshURL) }},
-					diffuse  = {{ Compat.LuaEncode(__instance.DiffuseURL) }},
-					normal   = {{ Compat.LuaEncode(__instance.NormalURL) }},
-					collider = {{ Compat.LuaEncode(__instance.ColliderURL) }},
-					convex   = {{ Compat.LuaEncode(!__instance.NonConvex) }},
-					type     = {{ Compat.LuaEncode(__instance.TypeIndex) }},
-					material = {{ Compat.LuaEncode(__instance.MaterialIndex) }},
-					specular_intensity = {{ Compat.LuaEncode(__instance.CustomShader.SpecularIntensity) }},
+					mesh     = {{ __instance.MeshURL }},
+					diffuse  = {{ __instance.DiffuseURL }},
+					normal   = {{ __instance.NormalURL }},
+					collider = {{ __instance.ColliderURL }},
+					convex   = {{ !__instance.NonConvex }},
+					type     = {{ __instance.TypeIndex }},
+					material = {{ __instance.MaterialIndex }},
+					specular_intensity = {{ __instance.CustomShader.SpecularIntensity }},
 					specular_color     = {
-						r = {{ Compat.LuaEncode(__instance.CustomShader.SpecularColor.r) }},
-						g = {{ Compat.LuaEncode(__instance.CustomShader.SpecularColor.g) }},
-						b = {{ Compat.LuaEncode(__instance.CustomShader.SpecularColor.b) }},
-						a = {{ Compat.LuaEncode(__instance.CustomShader.SpecularColor.a ?? 1) }},
+						r = {{ __instance.CustomShader.SpecularColor.r }},
+						g = {{ __instance.CustomShader.SpecularColor.g }},
+						b = {{ __instance.CustomShader.SpecularColor.b }},
+						a = {{ __instance.CustomShader.SpecularColor.a ?? 1 }},
 					},
-					specular_sharpness = {{ Compat.LuaEncode(__instance.CustomShader.SpecularSharpness) }},
-					fresnel_strength   = {{ Compat.LuaEncode(__instance.CustomShader.FresnelStrength)   }},
-					cast_shadows = {{ Compat.LuaEncode(__instance.CastShadows) }},
+					specular_sharpness = {{ __instance.CustomShader.SpecularSharpness }},
+					fresnel_strength   = {{ __instance.CustomShader.FresnelStrength   }},
+					cast_shadows = {{ __instance.CastShadows }},
 				})
 				obj.reload()
 			end
@@ -916,9 +916,9 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$"""
-			Backgrounds.setCustomURL({ Compat.LuaEncode(__instance.CustomImageURL) })
+			Backgrounds.setCustomURL({ __instance.CustomImageURL })
 			"""
 		);
 		__instance.Close();
@@ -954,17 +954,17 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					image        = {{ Compat.LuaEncode(__instance.CustomImageURL) }},
-					image_bottom = {{ Compat.LuaEncode(__instance.CustomImageSecondaryURL) }},
-					type         = {{ Compat.LuaEncode(__instance.TypeInt) }},
-					thickness    = {{ Compat.LuaEncode(__instance.ThicknessSlider.value * 0.9f + 0.1f) }},
-					stackable    = {{ Compat.LuaEncode(__instance.StackableToggle.value) }},
-					stretch      = {{ Compat.LuaEncode(__instance.StretchToggle  .value) }}, -- modded
+					image        = {{ __instance.CustomImageURL }},
+					image_bottom = {{ __instance.CustomImageSecondaryURL }},
+					type         = {{ __instance.TypeInt }},
+					thickness    = {{ __instance.ThicknessSlider.value * 0.9f + 0.1f }},
+					stackable    = {{ __instance.StackableToggle.value }},
+					stretch      = {{ __instance.StretchToggle  .value }}, -- modded
 				})
 				obj.reload()
 			end
@@ -985,16 +985,16 @@ public static class UICustomObjectX
 			Chat.LogError("You must supply a custom image URL.");
 			return false;
 		}
-		Compat.ExecuteLuaScript(
+		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ Compat.LuaEncode(__instance.TargetCustomObject.NPO.GUID) }})
+			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
 			if obj then
 				obj.setCustomObject({
-					image          = {{ Compat.LuaEncode(__instance.CustomImageURL) }},
-					thickness      = {{ Compat.LuaEncode(__instance.ThicknessSlider    .value * 0.9f + 0.1f) }},
-					merge_distance = {{ Compat.LuaEncode(__instance.MergeDistanceSlider.value * 20f  + 5f) }},
-					stand_up       = {{ Compat.LuaEncode(__instance.StandupToggle  .value) }},
-					stackable      = {{ Compat.LuaEncode(__instance.StackableToggle.value) }},
+					image          = {{ __instance.CustomImageURL }},
+					thickness      = {{ __instance.ThicknessSlider    .value * 0.9f + 0.1f }},
+					merge_distance = {{ __instance.MergeDistanceSlider.value * 20f  + 5f }},
+					stand_up       = {{ __instance.StandupToggle  .value }},
+					stackable      = {{ __instance.StackableToggle.value }},
 				})
 				obj.reload()
 			end
@@ -1385,39 +1385,51 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		}
 	}
 
-	public static readonly string LuaAllColors =
-		$"local {nameof(LuaAllColors)} = {{ { Colour.AllPlayerLabels.Join(Compat.LuaEncode) } }}";
-	public static string LuaHandZonePlayers =>
-		$"local {nameof(LuaHandZonePlayers)} = {{ { HandZone.GetHandZones().Join(hand => $"Player.{hand.TriggerLabel}") } }}";
-	public const string LuaGetPlayerHandObjects =
+	public static readonly Lua.Variable LuaAllColors = new(
+		nameof(LuaAllColors),
+		$"{ Lua.Table(Colour.AllPlayerLabels) }"
+	);
+	public static readonly Lua.Variable LuaHandZonePlayers = new(
+		nameof(LuaHandZonePlayers),
 		$$"""
-		local function {{nameof(LuaGetPlayerHandObjects)}}(player)
+		{}
+		for _,color in ipairs(Player.getAvailableColors()) do
+			table.insert({{ (Lua) nameof(LuaHandZonePlayers) }}, Player[color])
+		end
+		"""
+	);
+	public static readonly Lua.Variable LuaGetPlayerHandObjects = new(
+		nameof(LuaGetPlayerHandObjects),
+		$$"""
+		function (player)
 			return (player.getHandCount() > 0) and player.getHandObjects() or {}
 		end
-		""";
-	public const string LuaGetObjectHandZone =
+		"""
+	);
+	public static readonly Lua.Variable LuaGetObjectHandPlayer = new(
+		nameof(LuaGetObjectHandPlayer),
 		$"""
-		local function {nameof(LuaGetObjectHandZone)}(obj)
-			for _,target in ipairs({nameof(LuaHandZonePlayers)}) do
-				for _,obj2 in ipairs({nameof(LuaGetPlayerHandObjects)}(target)) do
-					if obj == obj2 then
+		function (obj)
+			for _,target in ipairs({ LuaHandZonePlayers }) do
+				for _,obj_ in ipairs({ LuaGetPlayerHandObjects }(target)) do
+					if obj == obj_ then
 						return target
 					end
 				end
 			end
 		end
-		""";
-	public const string LuaTempStashHiderID =
+		"""
+	);
+	public static readonly Lua LuaTempStashHiderID =
+		(Lua.Literal) $"{ Main.PLUGIN_GUID }/{ nameof(LuaTempStashHiderID) }";
+	public static readonly Lua.Variable LuaHideHandStash = new(
+		nameof(LuaHideHandStash),
 		$"""
-		"{Main.PLUGIN_GUID}/{nameof(LuaTempStashHiderID)}"
-		""";
-	public const string LuaHideHandStash =
-		$"""
-		local function {nameof(LuaHideHandStash)}(stash)
-			stash.attachHider({LuaTempStashHiderID}, true, {nameof(LuaAllColors)})
+		function (stash)
+			stash.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
 			local function removeHider()
 				if stash then
-					stash.attachHider({LuaTempStashHiderID}, false)
+					stash.attachHider({ LuaTempStashHiderID }, false)
 				end
 			end
 			Wait.frames(function()
@@ -1430,11 +1442,13 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				)
 			end)
 		end
-		""";
-	public const string LuaMoveObjectToHandStash =
+		"""
+	);
+	public static readonly Lua.Variable LuaMoveObjectToHandStash = new(
+		nameof(LuaMoveObjectToHandStash),
 		$"""
-		local function {nameof(LuaMoveObjectToHandStash)}(obj, target)
-			target = target or {nameof(LuaGetObjectHandZone)}(obj)
+		function (obj, target)
+			target = target or { LuaGetObjectHandPlayer }(obj)
 			if target then
 				local old_stash = target.getHandStash()
 				if obj.moveToHandStash() and obj then
@@ -1444,11 +1458,11 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 							obj.removeFromPlayerSelection(color)
 						end
 						if (obj ~= stash) then
-							obj.attachHider({LuaTempStashHiderID}, true, {nameof(LuaAllColors)})
+							obj.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
 						end
 						--if (obj == stash) or (stash ~= old_stash) then
 							--stash.interactable = true
-							{nameof(LuaHideHandStash)}(stash)
+							{ LuaHideHandStash }(stash)
 						--end
 						-- // #todo: fix card reveal cases:
 							-- STASH <- CARD (fixed???)
@@ -1459,7 +1473,8 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				end
 			end
 		end
-		""";
+		"""
+	);
 	public void OnClickContextual()
 	{
 		if (PlayerScript.PointerScript)
@@ -1472,14 +1487,14 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		{
 			default: throw new UnreachableException();
 			case Type.GlobalUnlock:
-				Compat.ExecuteLuaScript(
+				Lua.Execute(
 					$"""
-					{LuaHandZonePlayers}
-					for _,target in ipairs({(
-						ctrlDown
-							? nameof(LuaHandZonePlayers)
-							: $"{{ Player.{target.color} }}"
-					)}) do
+					local global  = { true }
+					local all     = global and { ctrlDown }
+					local targets =
+						all and { LuaHandZonePlayers }
+						or      { Lua.Table((Lua) $"Player.{ target.color }") }
+					for _,target in ipairs(targets) do
 						if target then
 							local stash = target.getHandStash()
 							if stash then
@@ -1492,53 +1507,27 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 				break;
 			case Type.GlobalDraw:
 			case Type.ObjectStash:
-				var isDraw = type == Type.GlobalDraw;
-				Compat.ExecuteLuaScript(
+				Lua.Execute(
 					$"""
-					{LuaAllColors}
-					{LuaHandZonePlayers}
-					{LuaGetPlayerHandObjects}
-					{LuaGetObjectHandZone}
-					{LuaHideHandStash}
-					{LuaMoveObjectToHandStash}
-					{(
-						isDraw && ctrlDown
-							? $"""
-							for _,target in ipairs({nameof(LuaHandZonePlayers)}) do
-							local player = target
-							"""
-							: $"""
-							local target = nil
-							local player = Player.{target.color}
-							"""
-					)}
-					if player then
-						{(
-							isDraw
-								? shiftDown
-									? $"local objs = {nameof(LuaGetPlayerHandObjects)}(player)"
-									: "----"
-								: "local objs = player.getSelectedObjects()"
-						)}
-						{(
-							isDraw || shiftDown
-								? "player.drawHandStash()"
-								: "----"
-						)}
-					{(
-						!isDraw || shiftDown
-							? $"""
-								for i,obj in ipairs(objs) do
-									{nameof(LuaMoveObjectToHandStash)}(obj, target)
-								end
-							"""
-							: "\t----"
-					)}
-					{(
-						isDraw && ctrlDown
-							? "end"
-							: "----"
-					)}
+					local global  = { type == Type.GlobalDraw }
+					local all     = global and { ctrlDown }
+					local swap    = { shiftDown }
+					local targets =
+						all and { LuaHandZonePlayers }
+						or      { Lua.Table((Lua) $"Player.{ target.color }") }
+					for _,target in ipairs(targets) do
+						if target then
+							local objs =
+								not global and target.getSelectedObjects()
+								or swap    and { LuaGetPlayerHandObjects }(target)
+								or { Lua.Table() }
+							if global or swap then
+								target.drawHandStash()
+							end
+							for _,obj in ipairs(objs) do
+								{ LuaMoveObjectToHandStash }(obj, global and target)
+							end
+						end
 					end
 					"""
 				);
