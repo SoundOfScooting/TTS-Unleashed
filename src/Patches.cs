@@ -1022,7 +1022,7 @@ public static class Patches
 			{
 				ToolVectorX.EraseCancelled = true;
 				ToolVectorX.EraseBuffer.Sort((a, b) =>
-					a.sortingOrder.CompareTo(b.sortingOrder)
+					Comparison.Compare(a.sortingOrder, b.sortingOrder)
 				);
 				List<ToolVector.LineNetworkData> lines = [];
 				foreach (var erased in ToolVectorX.EraseBuffer)

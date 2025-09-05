@@ -160,55 +160,46 @@ public class RemoteX : BaseNetworkAttribute
 		}
 		return CustomRPCMethods;
 	}
+
+	private static readonly List<BepInEx.BaseUnityPlugin> PluginsOrder =
+		Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader)).Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
 	public static void SortAttributesX(List<MethodRPCSort> CustomRPCMethods)
 	{
 		CustomRPCMethods.Sort((a, b) =>
-		{
-			var Chainloader_T = Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader));
-			var plugins       = Chainloader_T.Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
-
-			int asmA  = plugins.FindIndex(p => p?.GetType()?.Assembly == a.method.DeclaringType.Assembly);
-			int asmB  = plugins.FindIndex(p => p?.GetType()?.Assembly == b.method.DeclaringType.Assembly);
-			var comp  = asmA.CompareTo(asmB); // -1 (non-plugin asm) < 0 (first plugin)
-			if (comp != Comparison.EQ)
-				return comp;
-
-			comp = a.uniqueName.CompareTo(b.uniqueName);
-			if (comp != Comparison.EQ)
-				return comp;
-
-			static int compareTypes(IEnumerable<Type> typesA, IEnumerable<Type> typesB)
-			{
-				using var enmA = typesA.GetEnumerator();
-				using var enmB = typesB.GetEnumerator();
-				while (true)
-				{
-					if (!enmA.MoveNext())
-						return Comparison.LT;
-					if (!enmB.MoveNext())
-						return Comparison.GT;
-
-					var comp  = enmA.Current.Name.CompareTo(enmB.Current.Name);
-					if (comp != Comparison.EQ)
-						return comp;
-				}
-			}
-			comp = compareTypes(
+			CompareAssemblies(
+				a.method.DeclaringType.Assembly,
+				b.method.DeclaringType.Assembly
+			)
+			&& Comparison.Compare(a.uniqueName, b.uniqueName)
+			&& CompareParameters(
 				a.method.GetGenericArguments(),
 				b.method.GetGenericArguments()
-			);
-			if (comp != Comparison.EQ)
-				return comp;
-
-			comp = compareTypes(
+			)
+			&& CompareParameters(
 				a.method.GetParameters().Select(p => p.ParameterType),
 				b.method.GetParameters().Select(p => p.ParameterType)
+			)
+		);
+		static Comparison CompareAssemblies(Assembly a, Assembly b) =>
+			Comparison.Compare(
+				// -1 (non-plugin asm) < 0 (first plugin)
+				PluginsOrder.FindIndex(p => p?.GetType()?.Assembly == a),
+				PluginsOrder.FindIndex(p => p?.GetType()?.Assembly == b)
 			);
-			if (comp != Comparison.EQ)
-				return comp;
+		static Comparison CompareParameters(IEnumerable<Type> a, IEnumerable<Type> b)
+		{
+			using var enmA = a.GetEnumerator();
+			using var enmB = b.GetEnumerator();
+			while (true)
+			{
+				if (!enmA.MoveNext()) return Comparison.LT;
+				if (!enmB.MoveNext()) return Comparison.GT;
 
-			return Comparison.EQ;
-		});
+				var cmp = Comparison.Compare(enmA.Current.Name, enmB.Current.Name);
+				if (!cmp)
+					return cmp;
+			}
+		}
 	}
 }
 
