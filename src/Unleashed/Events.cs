@@ -1,6 +1,3 @@
-using HarmonyLib;
-using NewNet;
-
 namespace Unleashed;
 
 [HarmonyPatch]

@@ -3,10 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
-using HarmonyLib;
-using NewNet;
 using Steamworks;
-using UnityEngine;
 
 namespace Unleashed;
 

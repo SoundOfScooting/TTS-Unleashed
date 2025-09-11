@@ -1,9 +1,12 @@
+global using HarmonyLib;
+global using Mono.Cecil.Cil;
+global using MonoMod.Cil;
+global using NewNet;
+global using UnityEngine;
+
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using HarmonyLib;
-using MonoMod.Cil;
-using UnityEngine;
 
 namespace Unleashed;
 

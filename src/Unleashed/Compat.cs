@@ -1,8 +1,4 @@
 using System.Runtime.CompilerServices;
-using HarmonyLib;
-using MonoMod.Cil;
-using NewNet;
-using UnityEngine;
 using NPO_X = Unleashed.NetworkPhysicsObjectX;
 
 namespace Unleashed;

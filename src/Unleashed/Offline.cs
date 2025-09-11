@@ -1,5 +1,3 @@
-using HarmonyLib;
-using NewNet;
 using Steamworks;
 
 namespace Unleashed;

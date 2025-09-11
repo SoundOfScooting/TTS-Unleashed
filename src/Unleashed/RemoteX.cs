@@ -1,7 +1,4 @@
 using System.Reflection;
-using HarmonyLib;
-using MonoMod.Cil;
-using NewNet;
 using MethodRPCSort = NewNet.NetworkView.MethodRPCSort;
 
 namespace Unleashed;
