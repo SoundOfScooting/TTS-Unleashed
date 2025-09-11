@@ -398,7 +398,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Libs
-libs/*
+lib/
 
 # Gitkeep
 !**/.gitkeep

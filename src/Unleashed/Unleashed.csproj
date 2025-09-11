@@ -1,0 +1,13 @@
+<Project>
+
+	<Import Project="../../Configuration.props" />
+
+	<PropertyGroup>
+		<AssemblyName>edu.sos.unleashed</AssemblyName>
+		<Product>Unleashed</Product>
+		<Version>0.1.0</Version>
+
+		<DefineConstants Condition=" '$(TRUE_ULTIMATE_POWER)' != '0' ">$(DefineConstants);TRUE_ULTIMATE_POWER;</DefineConstants>
+	</PropertyGroup>
+
+</Project>
