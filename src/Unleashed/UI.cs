@@ -104,14 +104,14 @@ public class UIPointerRotationSnapX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIPointerRotationSnap), nameof(UIPointerRotationSnap.Awake))]
-	private static void AwakePostfix(UIPointerRotationSnap __instance) =>
+	static void AwakePostfix(UIPointerRotationSnap __instance) =>
 		__instance.gameObject.GetOrAddComponent<UIPointerRotationSnapX>();
 
-	private UIPointerRotationSnap @base;
-	private void Awake() =>
+	UIPointerRotationSnap @base;
+	void Awake() =>
 		@base = GetComponent<UIPointerRotationSnap>();
 
-	private void OnAltClick()
+	void OnAltClick()
 	{
 		@base.bMouse1 = true;
 		UICamera.current.SpoofNotifyOnClick(gameObject);
@@ -128,13 +128,13 @@ public class UZCameraHome : MonoBehaviour
 		Grey, Black,
 	}
 
-	private UILabel Label;
+	UILabel Label;
 
 	public static UZCameraHome Instance { get; private set; }
 	public static string GUIColorText { get; private set; }
 
-	public static bool ForceResetCameraRotation;
-	private Home mCurrent;
+	public static bool ForceResetCameraRotation { get; set; }
+	Home mCurrent;
 	public static Home Current
 	{
 		get => Instance ? Instance.mCurrent : default;
@@ -148,7 +148,7 @@ public class UZCameraHome : MonoBehaviour
 			CameraController.Instance.ResetCameraRotation();
 		}
 	}
-	private bool mNeedToPickHome;
+	bool mNeedToPickHome;
 	public static bool NeedToPickHome
 	{
 		get => Instance && Instance.mNeedToPickHome;
@@ -173,9 +173,9 @@ public class UZCameraHome : MonoBehaviour
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UITopBar), nameof(UITopBar.Awake))]
-	private static void AwakePostfix() =>
-		new GameObject("02 CameraHome", typeof(UZCameraHome));
-	private void Awake()
+	static void AwakePostfix() =>
+		_ = new GameObject("02 CameraHome", typeof(UZCameraHome));
+	void Awake()
 	{
 		CreateComponents();
 		Instance = this;
@@ -183,7 +183,7 @@ public class UZCameraHome : MonoBehaviour
 		// Current = (Home) PlayerPrefs.GetInt(HomePref, (int) Value.Hand);
 		Current = Home.Hand;
 	}
-	private void CreateComponents()
+	void CreateComponents()
 	{
 		var @base = Resources
 			.FindObjectsOfTypeAll<UIPointerRotationSnap>()
@@ -205,7 +205,7 @@ public class UZCameraHome : MonoBehaviour
 		Label = labelObject.AddComponent(@base.ThisLabelObject.GetComponent<UILabel>());
 	}
 
-	private void OnClick()
+	void OnClick()
 	{
 		if (NeedToPickHome)
 		{
@@ -214,7 +214,7 @@ public class UZCameraHome : MonoBehaviour
 		}
 		NeedToPickHome = true;
 	}
-	private void OnAltClick()
+	void OnAltClick()
 	{
 		if (NeedToPickHome)
 		{
@@ -239,7 +239,7 @@ public class UZCameraHome : MonoBehaviour
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(CameraController), nameof(CameraController.DelayResetCameraRotation))]
-	private static void DelayResetCameraRotationPrefix(CameraController __instance, ref string colourLabel, ref CameraState __state)
+	static void DelayResetCameraRotationPrefix(CameraController __instance, ref string colourLabel, ref CameraState __state)
 	{
 		__state = null;
 		if (ForceResetCameraRotation)
@@ -262,7 +262,7 @@ public class UZCameraHome : MonoBehaviour
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(CameraController), nameof(CameraController.DelayResetCameraRotation))]
-	private static void DelayResetCameraRotationPostfix(CameraController __instance, CameraState __state)
+	static void DelayResetCameraRotationPostfix(CameraController __instance, CameraState __state)
 	{
 		if (__state != null)
 			__instance.CameraStates[0] = __state;
@@ -277,7 +277,7 @@ public class GUIEndTurnX : MonoBehaviour
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Turns), nameof(Turns.GUIEndTurn))]
-	private static void GUIEndTurnIL(ILContext il)
+	static void GUIEndTurnIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -286,7 +286,7 @@ public class GUIEndTurnX : MonoBehaviour
 		c.Next.Operand =     AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
 	}
 
-	private void OnAltClick()
+	void OnAltClick()
 	{
 		if (!Network.isAdmin/* && !Turns.Instance.turnsState.PassTurns*/)
 			return;
@@ -302,24 +302,24 @@ public class UIStarTurnX : GUIEndTurnX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.Awake))]
-	private static void AwakePostfix(UIStarTurn __instance) =>
+	static void AwakePostfix(UIStarTurn __instance) =>
 		__instance.gameObject.GetOrAddComponent<UIStarTurnX>();
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.OnClick))]
-	private static bool OnClickReplace()
+	static bool OnClickReplace()
 	{
 		if (Network.isAdmin)
 			Turns.Instance.GUIEndTurn();
 		return false;
 	}
 
-	private void Awake() =>
+	void Awake() =>
 		EventManager.OnPlayerPromoted += OnPlayerPromoted;
-	private void OnDestroy() =>
+	void OnDestroy() =>
 		EventManager.OnPlayerPromoted -= OnPlayerPromoted;
 
-	private void OnPlayerPromoted(bool isPromoted, int id)
+	void OnPlayerPromoted(bool isPromoted, int id)
 	{
 		if (id == NetworkID.ID)
 			GetComponent<UITooltipScript>().Tooltip = isPromoted
@@ -333,18 +333,18 @@ public class UINameButtonX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
-	private static void StartPostfix(UINameButton __instance) =>
+	static void StartPostfix(UINameButton __instance) =>
 		__instance.gameObject.GetOrAddComponent<UINameButtonX>();
 
-	private UINameButton @base;
-	private void Awake()
+	UINameButton @base;
+	void Awake()
 	{
 		@base = GetComponent<UINameButton>();
 		@base.DoNotConfirm.AddRange([ "Start Turns", "Reverse Turns", "Stop Turns" ]);
 	}
 
 	public bool Extra;
-	private void OnAltClick()
+	void OnAltClick()
 	{
 		if (!UIPopupList.isOpen)
 		{
@@ -356,7 +356,7 @@ public class UINameButtonX : MonoBehaviour
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.UpdateDropDown))]
-	private static bool UpdateDropDownReplace(UINameButton __instance)
+	static bool UpdateDropDownReplace(UINameButton __instance)
 	{
 		// ???
 		if (PlayerManager.Instance.PlayersDictionary.TryGetValue(__instance.id, out var playerState))
@@ -369,7 +369,7 @@ public class UINameButtonX : MonoBehaviour
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(UIPopupList), nameof(UIPopupList.Show))]
-	private static void ShowIL(ILContext il)
+	static void ShowIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -477,22 +477,22 @@ public class UIColorSelectionX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Start))]
-	private static void StartPostfix(UIColorSelection __instance) =>
+	static void StartPostfix(UIColorSelection __instance) =>
 		__instance.gameObject.GetOrAddComponent<UIColorSelectionX>();
 
-	private bool   restartTooltip;
-	private string originalTooltip;
+	bool   restartTooltip;
+	string originalTooltip;
 
-	private UIColorSelection @base;
-	private UITooltipScript  tooltip;
-	private void Awake()
+	UIColorSelection @base;
+	UITooltipScript  tooltip;
+	void Awake()
 	{
 		@base           = GetComponent<UIColorSelection>();
 		tooltip         = GetComponent<UITooltipScript>();
 		originalTooltip = tooltip.Tooltip;
 	}
 
-	private void OnEnable()
+	void OnEnable()
 	{
 		restartTooltip = true;
 
@@ -501,7 +501,7 @@ public class UIColorSelectionX : MonoBehaviour
 		// fix Black LockObject not reappearing
 		@base.LockObject.SendMessage("OnEnable");
 	}
-	private void OnAltClick()
+	void OnAltClick()
 	{
 		if (UZCameraHome.NeedToPickHome)
 		{
@@ -511,7 +511,7 @@ public class UIColorSelectionX : MonoBehaviour
 		}
 	}
 
-	private void Update()
+	void Update()
 	{
 		if (restartTooltip || (
 			zInput.GetButtonDown("Ctrl")  || zInput.GetButtonUp("Ctrl") ||
@@ -536,18 +536,18 @@ public static class UICustomObjectX
 {
 	// #idea: would be nice to use deck import UI for cards to access extra options
 	// #idea: edit each ui panel to add inaccesible parameters
-	private const bool DEBUG_COMPAT = false;
+	const bool DEBUG_COMPAT = false;
 
-	private class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
+	class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
 	{
 		public readonly List<Delegate> OnImportFakeQueue = [];
 		// #todo? onCancel
 	}
-	private static Data X<T>(this T @this) where T : UICustomObject<T> =>
+	static Data X<T>(this T @this) where T : UICustomObject<T> =>
 		@this.gameObject.GetOrAddComponent<Data>();
-	// private static bool GetX<T>(this T @this, out Data thisX) where T : UICustomObject<T> =>
+	// static bool GetX<T>(this T @this, out Data thisX) where T : UICustomObject<T> =>
 	// 	@this.TryGetComponent(out thisX);
-	// private static void ClearX<T>(this T @this) where T : UICustomObject<T>
+	// static void ClearX<T>(this T @this) where T : UICustomObject<T>
 	// {
 	// 	if (@this.GetX(out var thisX))
 	// 		UnityEngine.Object.Destroy(thisX);
@@ -560,7 +560,7 @@ public static class UICustomObjectX
 		QueueFake<UICustomImage>(@this, onImport);
 	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport) =>
 		QueueFake<UICustomSky>(@this, onImport);
-	private static void QueueFake<T>(this T @this, Action<T> onImport) where T : UICustomObject<T>
+	static void QueueFake<T>(this T @this, Action<T> onImport) where T : UICustomObject<T>
 	{
 		if (@this.X().OnImportFakeQueue.Contains(onImport))
 			return;
@@ -570,12 +570,12 @@ public static class UICustomObjectX
 		@this.TargetCustomObject = null;
 		@this.gameObject.SetActive(true);
 	}
-	private static object Invoke(object @this, string method) =>
+	static object Invoke(object @this, string method) =>
 		AccessTools.Method(typeof(UICustomObjectX), method)
 			.MakeGenericMethod([@this.GetType()])
 			.Invoke(null, [@this]);
 
-	private static bool BaseOnEnableFake<T>(this T @this) where T : UICustomObject<T>
+	static bool BaseOnEnableFake<T>(this T @this) where T : UICustomObject<T>
 	{
 		if (@this.TargettingFake())
 		{
@@ -588,11 +588,11 @@ public static class UICustomObjectX
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.OnEnable))]
-	private static bool BaseOnEnablePrefix(object __instance) =>
+	static bool BaseOnEnablePrefix(object __instance) =>
 		!(bool) Invoke(__instance, nameof(BaseOnEnableFake));
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.OnEnable))]
-	private static bool ImageOnEnablePrefix(UICustomImage __instance)
+	static bool ImageOnEnablePrefix(UICustomImage __instance)
 	{
 		if (!__instance.BaseOnEnableFake())
 			return true;
@@ -601,7 +601,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomSky), nameof(UICustomSky.OnEnable))]
-	private static bool SkyOnEnablePrefix(UICustomSky __instance)
+	static bool SkyOnEnablePrefix(UICustomSky __instance)
 	{
 		if (!__instance.BaseOnEnableFake())
 			return true;
@@ -613,9 +613,9 @@ public static class UICustomObjectX
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Update))]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
-	private static bool BaseUpdatePrefix(object __instance) =>
+	static bool BaseUpdatePrefix(object __instance) =>
 		!(bool) Invoke(__instance, nameof(TargettingFake));
-	private static void BaseCloseFake<T>(this T @this) where T : UICustomObject<T>
+	static void BaseCloseFake<T>(this T @this) where T : UICustomObject<T>
 	{
 		if (@this.TargettingFake())
 			@this.X().OnImportFakeQueue.RemoveAt(0);
@@ -623,10 +623,10 @@ public static class UICustomObjectX
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Close))]
-	private static void BaseClosePrefix(object __instance) =>
+	static void BaseClosePrefix(object __instance) =>
 		Invoke(__instance, nameof(BaseCloseFake));
 
-	private static bool ImportFake<T>(this T @this) where T : UICustomObject<T>
+	static bool ImportFake<T>(this T @this) where T : UICustomObject<T>
 	{
 		if (@this.TargettingFake() && @this.X().OnImportFakeQueue is [{} onImport, ..])
 		{
@@ -639,7 +639,7 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.Import))]
 	[HarmonyPatch(typeof(UICustomSky),   nameof(UICustomSky  .Import))]
 	[HarmonyPriority(Priority.HigherThanNormal)]
-	private static bool ImportFakePrefix(object __instance) =>
+	static bool ImportFakePrefix(object __instance) =>
 		!(bool) Invoke(__instance, nameof(ImportFake));
 
 	[HarmonyILManipulator]
@@ -654,7 +654,7 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(CustomSky),          nameof(CustomSky         .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomTile),         nameof(CustomTile        .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomToken),        nameof(CustomToken       .bCustomUI), MethodType.Setter)]
-	private static void AllowAdminIL(ILContext il)
+	static void AllowAdminIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -665,12 +665,12 @@ public static class UICustomObjectX
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
-	private static bool CheckUpdateMatchingCustomObjectsPrefix() =>
+	static bool CheckUpdateMatchingCustomObjectsPrefix() =>
 		Network.isServer; // #idea: implement for client?
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
-	private static bool AssetbundleImportPrefix(UICustomAssetbundle __instance, bool __runOriginal)
+	static bool AssetbundleImportPrefix(UICustomAssetbundle __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -700,7 +700,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomCard), nameof(UICustomCard.Import))]
-	private static bool CardImportPrefix(UICustomCard __instance, bool __runOriginal)
+	static bool CardImportPrefix(UICustomCard __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -735,7 +735,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomDeck), nameof(UICustomDeck.Import))]
-	private static bool DeckImportPrefix(UICustomDeck __instance, bool __runOriginal)
+	static bool DeckImportPrefix(UICustomDeck __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -775,7 +775,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomDice), nameof(UICustomDice.Import))]
-	private static bool DiceImportPrefix(UICustomDice __instance, bool __runOriginal)
+	static bool DiceImportPrefix(UICustomDice __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -802,7 +802,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.Import))]
-	private static bool ImageImportPrefix(UICustomImage __instance, bool __runOriginal)
+	static bool ImageImportPrefix(UICustomImage __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -832,7 +832,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImageDouble), nameof(UICustomImageDouble.Import))]
-	private static bool ImageDoubleImportPrefix(UICustomImageDouble __instance, bool __runOriginal)
+	static bool ImageDoubleImportPrefix(UICustomImageDouble __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -861,7 +861,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomMesh), nameof(UICustomMesh.Import))]
-	private static bool MeshImportPrefix(UICustomMesh __instance, bool __runOriginal)
+	static bool MeshImportPrefix(UICustomMesh __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -906,7 +906,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomSky), nameof(UICustomSky.Import))]
-	private static bool SkyImportPrefix(UICustomSky __instance, bool __runOriginal)
+	static bool SkyImportPrefix(UICustomSky __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -926,13 +926,13 @@ public static class UICustomObjectX
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
-	private static void TileStartPostfix(UICustomTile __instance) =>
+	static void TileStartPostfix(UICustomTile __instance) =>
 		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && PlayerStateX.Host.IsModded;
 	// #todo: GetCustomObject parity
 	// #todo: relocate to dedicated Lua fixes/additions
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.SetCustomObject))]
-	private static void LuaGameObjectScriptSetCustomObjectPostfix(LuaGameObjectScript __instance, MoonSharp.Interpreter.Table Params)
+	static void LuaGameObjectScriptSetCustomObjectPostfix(LuaGameObjectScript __instance, MoonSharp.Interpreter.Table Params)
 	{
 		if (Params == null)
 			return;
@@ -944,7 +944,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.Import))]
-	private static bool TileImportPrefix(UICustomTile __instance, bool __runOriginal)
+	static bool TileImportPrefix(UICustomTile __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -975,7 +975,7 @@ public static class UICustomObjectX
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomToken), nameof(UICustomToken.Import))]
-	private static bool TileImportPrefix(UICustomToken __instance, bool __runOriginal)
+	static bool TileImportPrefix(UICustomToken __instance, bool __runOriginal)
 	{
 		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
 			return __runOriginal;
@@ -1087,7 +1087,7 @@ public static class UIGridMenuDecalsX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIGridMenuDecals), nameof(UIGridMenuDecals.Init))]
-	private static void InitPostfix(UIGridMenuDecals __instance)
+	static void InitPostfix(UIGridMenuDecals __instance)
 	{
 		__instance.AddDecalButton.GetComponent<UIDisableIfNotServer>().enabled = false;
 		__instance.AddDecalButton.gameObject.SetActive(true);
@@ -1095,7 +1095,7 @@ public static class UIGridMenuDecalsX
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(UIGridMenu.GridButtonDecal), MethodType.Constructor)]
-	private static void UIGridMenuGridButtonDecalCtorIL(ILContext il)
+	static void UIGridMenuGridButtonDecalCtorIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -1107,7 +1107,7 @@ public static class UIGridMenuDecalsX
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(DecalManager), nameof(DecalManager.RPCRemoveDecalPallet))]
-	private static void DecalManagerRPCRemoveDecalPalletPostfix()
+	static void DecalManagerRPCRemoveDecalPalletPostfix()
 	{
 		if (Network.isClient && NetworkUI.Instance.GUIDecals.activeInHierarchy)
 			NetworkUI.Instance.GUIDecals.GetComponent<UIGridMenuDecals>().Reload();
@@ -1119,7 +1119,7 @@ public static class UIFinderX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIFinder), nameof(UIFinder.Start))]
-	private static void StartPostfix(UIFinder __instance)
+	static void StartPostfix(UIFinder __instance)
 	{
 		var closeButton = __instance.finder.transform
 			.Find("Close Button").gameObject;
@@ -1136,7 +1136,7 @@ public static class UIContextualX
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIContextual), nameof(UIContextual.Awake))]
-	private static void AwakePostfix(UIContextual __instance)
+	static void AwakePostfix(UIContextual __instance)
 	{
 		if (__instance.nameInput)
 		{
@@ -1168,7 +1168,7 @@ public static class UIContextualX
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIContextual), nameof(UIContextual.OnDestroy))]
-	private static void OnDestroyPostfix(UIContextual __instance)
+	static void OnDestroyPostfix(UIContextual __instance)
 	{
 		if (__instance.nameInput)
 			EventDelegate.Remove(__instance.nameInput.onChange, __instance.DelayReposition);
@@ -1210,18 +1210,18 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			.CreateComponents(Type.ObjectStash);
 	}
 
-	private const string LABEL_PADDING = "            ";
+	const string LABEL_PADDING = "            ";
 
-	private UISprite Icon;
-	private UILabel Label;
+	UISprite Icon;
+	UILabel Label;
 
 	// Constant state
-	private Type type;
+	Type type;
 	// Temporary state
-	private bool ctrlDown, shiftDown;
-	private LuaPlayer target;
+	bool ctrlDown, shiftDown;
+	LuaPlayer target;
 
-	private void CreateComponents(Type type)
+	void CreateComponents(Type type)
 	{
 		this.type = type;
 
@@ -1265,7 +1265,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 		if (OnStartContextual())
 			PlayerScript.PointerScript.SetActive(gameObject, true);
 	}
-	private bool OnStartContextual()
+	bool OnStartContextual()
 	{
 		if (!Network.isAdmin) // #compat
 			return false;
@@ -1481,7 +1481,7 @@ public class UZContextualStash : MonoBehaviour, IUZContextual
 			PlayerScript.PointerScript.ResetInfoObject();
 		InvokeAction();
 	}
-	private void InvokeAction()
+	void InvokeAction()
 	{
 		switch (type)
 		{

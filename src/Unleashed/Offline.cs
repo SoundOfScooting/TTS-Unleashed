@@ -15,12 +15,12 @@ public static class Offline
 	[HarmonyPatch(typeof(SteamUser),        nameof(SteamUser.GetSteamID))]
 	[HarmonyPatch(typeof(SteamManager),     nameof(SteamManager.StringToSteamID))]
 	[HarmonyPatch(typeof(UIProfilePotrait), nameof(UIProfilePotrait.OnClick))]
-	private static bool SkipNoSteam() =>
+	static bool SkipNoSteam() =>
 		!NoSteam; // returns default
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(SteamLobbyManager), nameof(SteamLobbyManager.Start))]
-	private static bool StartPrefix(SteamLobbyManager __instance)
+	static bool StartPrefix(SteamLobbyManager __instance)
 	{
 		if (NoSteam)
 		{
@@ -31,7 +31,7 @@ public static class Offline
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Network), nameof(Network.InitializeServer))]
-	private static bool InitializeServerPrefix()
+	static bool InitializeServerPrefix()
 	{
 		if (NoSteam && Singleplayer)
 		{

@@ -15,7 +15,7 @@ public static class Patches
 #if TRUE_ULTIMATE_POWER
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Init))]
-	private static void SteamManagerInitIL(ILContext il)
+	static void SteamManagerInitIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -35,7 +35,7 @@ public static class Patches
 	}
 	// [HarmonyPrefix]
 	// [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.IsSubscribedApp))]
-	// private static bool SteamManagerIsSubscribedAppPrefix(ref bool __result)
+	// static bool SteamManagerIsSubscribedAppPrefix(ref bool __result)
 	// {
 	// 	if (Settings.DebugAllDLC.Value)
 	// 	{
@@ -49,7 +49,7 @@ public static class Patches
 	[HarmonyPrefix]
 //	[HarmonyPatch(typeof(Developer), nameof(Developer.HasName))]
 	[HarmonyPatch(typeof(Developer), nameof(Developer.HasSteamID))]
-	private static bool DeveloperHasPrefix(ref bool __result)
+	static bool DeveloperHasPrefix(ref bool __result)
 	{
 		if (Settings.DebugDeveloperMode.Value)
 		{
@@ -61,7 +61,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIHoliday), nameof(UIHoliday.Start))]
-	private static bool UIHolidayStartPrefix(UIHoliday __instance)
+	static bool UIHolidayStartPrefix(UIHoliday __instance)
 	{
 		if (Settings.EntryMenuHoliday.Value == Settings.ValueMenuHoliday.Default)
 			return true;
@@ -81,7 +81,7 @@ public static class Patches
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerServerInitialized))]
 	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerConnectingToServer))]
-	private static void NetworkEventsTriggerServerInitializedPrefix()
+	static void NetworkEventsTriggerServerInitializedPrefix()
 	{
 		if (Settings.EntryNickname.Value is [_, ..] nickname)
 			NetworkUI.Instance.SetPlayerName(nickname);
@@ -89,7 +89,7 @@ public static class Patches
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ServerInitialized))]
-	private static void NetworkUIServerInitializedIL(ILContext il)
+	static void NetworkUIServerInitializedIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -169,7 +169,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Update))]
-	private static void NetworkUIUpdateIL(ILContext il)
+	static void NetworkUIUpdateIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -190,12 +190,12 @@ public static class Patches
 		});
 	}
 
-	private const string TagHost = $"{Main.PLUGIN_GUID}/Host";
-	private const string TagGold = $"{Main.PLUGIN_GUID}/Gold";
+	const string TagHost = $"{Main.PLUGIN_GUID}/Host";
+	const string TagGold = $"{Main.PLUGIN_GUID}/Gold";
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenu.GridButton), nameof(UIGridMenu.GridButton.IsSearched))]
-	private static bool UIGridMenuGridButtonIsSearchedPrefix(UIGridMenu.GridButton __instance, ref bool __result)
+	static bool UIGridMenuGridButtonIsSearchedPrefix(UIGridMenu.GridButton __instance, ref bool __result)
 	{
 		if (__instance.Tags.Contains(TagHost) && !PlayerStateX.Host.IsModded)
 			return __result = false;
@@ -234,11 +234,11 @@ public static class Patches
 		public override void Spawn(Vector3 spawnPos) =>
 			OnSpawn(this, spawnPos, base.Spawn);
 	}
-	private static readonly List<string> RandomNames =
+	static readonly List<string> RandomNames =
 	[
 		"RANDOM", "RAND",
 	];
-	private static readonly Dictionary<string, int> Card_CardID = new()
+	static readonly Dictionary<string, int> Card_CardID = new()
 	{
 		{ "KC", 0  }, { "QC", 1  }, { "JC", 2  }, { "AC", 3  }, { "10C", 4  }, { "9C", 10 }, { "8C", 11 }, { "7C", 12 }, { "6C", 13 }, { "5C", 14 }, { "4C", 20 }, { "3C", 21 }, { "2C", 22 },
 		{ "KD", 5  }, { "QD", 6  }, { "JD", 7  }, { "AD", 8  }, { "10D", 9  }, { "9D", 15 }, { "8D", 16 }, { "7D", 17 }, { "6D", 18 }, { "5D", 19 }, { "4D", 25 }, { "3D", 23 }, { "2D", 24 },
@@ -246,7 +246,7 @@ public static class Patches
 		{ "KH", 30 }, { "QH", 31 }, { "JH", 32 }, { "AH", 33 }, { "10H", 34 }, { "9H", 40 }, { "8H", 41 }, { "7H", 42 }, { "6H", 43 }, { "5H", 44 }, { "4H", 49 }, { "3H", 50 }, { "2H", 51 },
 		{ "JK", 52 }, { "JOKER", 52 },
 	};
-	private static readonly Dictionary<string, int> Domino_MeshIndex = new()
+	static readonly Dictionary<string, int> Domino_MeshIndex = new()
 	{
 		{ "0/0", 0  },
 		{ "1/0", 24 }, { "1/1", 17 },
@@ -256,13 +256,13 @@ public static class Patches
 		{ "5/0", 22 }, { "5/1", 2  }, { "5/2", 10 }, { "5/3", 21 }, { "5/4", 18 }, { "5/5", 25 },
 		{ "6/0", 11 }, { "6/1", 27 }, { "6/2", 6  }, { "6/3", 19 }, { "6/4", 14 }, { "6/5", 13 }, { "6/6", 8 },
 	};
-	private static readonly Dictionary<string, int> Domino_MatIndex = new()
+	static readonly Dictionary<string, int> Domino_MatIndex = new()
 	{
 		{ "PLASTIC", 0 }, { "METAL", 1 }, { "GOLD", 2 },
 	};
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitComponents))]
-	private static void UIGridMenuObjectsInitComponentsPrefix(UIGridMenuObjects __instance)
+	static void UIGridMenuObjectsInitComponentsPrefix(UIGridMenuObjects __instance)
 	{
 		var cardsFolder = __instance.ComponentsButtons.First(x => x.Name == "Cards");
 		cardsFolder.ComponentButtons.AddRange([
@@ -376,7 +376,7 @@ public static class Patches
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(GameMode), nameof(GameMode.SpawnName))]
-	private static bool GameModeSpawnNamePrefix(GameMode __instance, string ObjectName, Vector3 SpawnPos, bool bLocalSpawn, ref GameObject __result)
+	static bool GameModeSpawnNamePrefix(GameMode __instance, string ObjectName, Vector3 SpawnPos, bool bLocalSpawn, ref GameObject __result)
 	{
 		// #gold
 		if (!bLocalSpawn && Network.isClient)
@@ -428,7 +428,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitTables))]
-	private static void UIGridMenuObjectsInitTablesPrefix(UIGridMenuObjects __instance)
+	static void UIGridMenuObjectsInitTablesPrefix(UIGridMenuObjects __instance)
 	{
 		foreach (var tableName in new[] { "Custom Rectangle", "Custom Square" })
 		{
@@ -483,7 +483,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitTables))]
-	private static void UIGridMenuObjectsInitTablesIL(ILContext il)
+	static void UIGridMenuObjectsInitTablesIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -503,7 +503,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitBackgrounds))]
-	private static void UIGridMenuObjectsInitBackgroundsPrefix(UIGridMenuObjects __instance)
+	static void UIGridMenuObjectsInitBackgroundsPrefix(UIGridMenuObjects __instance)
 	{
 		var custom = __instance.BackgroundsButtons.First(x => x.Name == "Custom");
 		(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] = () => {
@@ -543,7 +543,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.GUIPlayerSelection))]
-	private static bool GUIPlayerSelectionPrefix(NetworkUI __instance, string Value, int playerID)
+	static bool GUIPlayerSelectionPrefix(NetworkUI __instance, string Value, int playerID)
 	{
 		var playerState = PlayerManager.Instance.PlayerStateFromID(playerID);
 		if     (PlayerManager.Instance.NameInUse(playerState.name))
@@ -636,7 +636,7 @@ public static class Patches
 	}
 	// [HarmonyPostfix]
 	// [HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.SetSpecificPlayerName))]
-	// private static void NetworkUISetSpecificPlayerNamePostfix(NetworkUI __instance, string newName)
+	// static void NetworkUISetSpecificPlayerNamePostfix(NetworkUI __instance, string newName)
 	// {
 	// 	if (!Network.isServer || __instance.bHotseat || __instance.playerIDToSet == -1)
 	// 		return;
@@ -656,7 +656,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Update))]
-	private static bool UIColorSelectionUpdateReplace(UIColorSelection __instance)
+	static bool UIColorSelectionUpdateReplace(UIColorSelection __instance)
 	{
 // /*
 		static bool Permitted(string label) =>
@@ -741,7 +741,7 @@ public static class Patches
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.OnClick))]
-	private static bool UIColorSelectionOnClickPrefix(UIColorSelection __instance)
+	static bool UIColorSelectionOnClickPrefix(UIColorSelection __instance)
 	{
 		if (UZCameraHome.NeedToPickHome)
 		{
@@ -774,7 +774,7 @@ public static class Patches
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(CameraController), nameof(CameraController.Update))]
-	private static void CameraControllerUpdateIL(ILContext il)
+	static void CameraControllerUpdateIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -829,7 +829,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.Update))]
-	private static void PointerUpdatePrefix(Pointer __instance) // #hack
+	static void PointerUpdatePrefix(Pointer __instance) // #hack
 	{
 		if      (zInput.GetButtonUp("Grab"))
 		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
@@ -839,7 +839,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.Update))]
-	private static void PointerUpdateIL(ILContext il)
+	static void PointerUpdateIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		for (int i = 0; i < 4; i++)
@@ -899,7 +899,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(ManagerPhysicsObject), nameof(ManagerPhysicsObject.UpdateGrabbedNPO))]
-	private static void ManagerPhysicsObjectUpdateGrabbedNPOIL(ILContext il)
+	static void ManagerPhysicsObjectUpdateGrabbedNPOIL(ILContext il)
 	{
 		// #todo: held tilt rotation offset
 		ILCursor c = new(il);
@@ -930,7 +930,7 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.IsVectorTool))]
-	private static bool PointerIsVectorToolPrefix(PointerMode mode, ref bool __result)
+	static bool PointerIsVectorToolPrefix(PointerMode mode, ref bool __result)
 	{
 		// allow usage even if not in the toolbar
 		if (mode != PointerMode.VectorPixel)
@@ -940,7 +940,7 @@ public static class Patches
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorPixel))]
-	private static bool ToolVectorUpdateVectorPixelReplace(ToolVector __instance)
+	static bool ToolVectorUpdateVectorPixelReplace(ToolVector __instance)
 	{
 		if (__instance.VectorActionDown() || (__instance.VectorAction() && __instance.drawing && __instance.CheckMove()))
 			__instance.StartDrawing(2, loop: true);
@@ -950,7 +950,7 @@ public static class Patches
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
-	private static bool ToolVectorUpdateVectorErasePrefix(ToolVector __instance)
+	static bool ToolVectorUpdateVectorErasePrefix(ToolVector __instance)
 	{
 		// #todo: somehow preserve overlap order of lines?
 			// redrawn lines are all on top, but at least in relative order to each other
@@ -966,7 +966,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
-	private static void ToolVectorUpdateVectorEraseIL(ILContext il)
+	static void ToolVectorUpdateVectorEraseIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		int found = 0;
@@ -986,7 +986,7 @@ public static class Patches
 	}
 	// [HarmonyTranspiler]
 	// [HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
-	// private static IEnumerable<CodeInstruction> ToolVectorUpdateVectorEraseTranspiler(IEnumerable<CodeInstruction> instructions)
+	// static IEnumerable<CodeInstruction> ToolVectorUpdateVectorEraseTranspiler(IEnumerable<CodeInstruction> instructions)
 	// {
 	// 	int found = 0;
 	// 	foreach (var instruction in instructions)
@@ -1006,7 +1006,7 @@ public static class Patches
 	// }
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.LateUpdate))]
-	private static void ToolVectorLateUpdateIL(ILContext il)
+	static void ToolVectorLateUpdateIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -1087,7 +1087,7 @@ public static class Patches
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartLine))]
-	private static void PointerStartLineIL(ILContext il)
+	static void PointerStartLineIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -1106,7 +1106,7 @@ public static class Patches
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
-	private static void PointerStartContextualIL(ILContext il)
+	static void PointerStartContextualIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -1181,7 +1181,7 @@ public static class Patches
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
-	private static void PointerStartGlobalContextualPostfix()
+	static void PointerStartGlobalContextualPostfix()
 	{
 		// slow?
 		foreach (var item in NetworkUI.Instance.GUIContextualGlobalMenu.transform.GetChild(0).GetComponentsInChildren<IUZContextual>(true))
@@ -1190,11 +1190,11 @@ public static class Patches
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(LuaScript), nameof(LuaScript.DoString))]
-	private static bool LuaScriptDoStringPrefix(LuaScript __instance) =>
+	static bool LuaScriptDoStringPrefix(LuaScript __instance) =>
 		LuaScriptExecuteScriptPrefix(__instance, __instance.script_code);
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(LuaScript), nameof(LuaScript.ExecuteScript))]
-	private static bool LuaScriptExecuteScriptPrefix(LuaScript __instance, string script)
+	static bool LuaScriptExecuteScriptPrefix(LuaScript __instance, string script)
 	{
 		if (!Settings.EntryInterceptLuaVirus.Value)
 			return true;

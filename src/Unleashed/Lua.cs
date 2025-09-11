@@ -42,7 +42,7 @@ public readonly record struct Lua(string Text)
 
 	public readonly ref struct Literal(Lua Lua)
 	{
-		private readonly Lua Lua = Lua;
+		readonly Lua Lua = Lua;
 		public override string ToString() => Lua.ToString();
 
 		public static implicit operator Lua    (Literal @this) => @this.Lua;
@@ -113,18 +113,18 @@ public readonly record struct Lua(string Text)
 	[InterpolatedStringHandler]
 	public readonly ref struct Template(int literalLength, int formattedCount)
 	{
-		private readonly StringBuilder  builder = new(literalLength);  // min
-		private readonly List<Variable> imports = new(formattedCount); // max
-		private Lua Body => (Lua) builder.ToString();
+		readonly StringBuilder  builder = new(literalLength);  // min
+		readonly List<Variable> imports = new(formattedCount); // max
+		Lua Body => (Lua) builder.ToString();
 
 		public static explicit operator Script(Template @this) =>
 			new(@this.Body, [.. @this.imports]);
 		public static explicit operator Lua(Template @this) =>
 			(Lua) (Script) @this;
 
-		private void Append(Lua lua) =>
+		void Append(Lua lua) =>
 			builder.Append(lua.Text);
-		private void Import(Variable variable) =>
+		void Import(Variable variable) =>
 			imports.TryAddUnique(variable);
 
 		public void AppendLiteral  (string text)  => Append((Lua) text);

@@ -121,7 +121,7 @@ namespace Unleashed
 
 // namespace Unleashed
 // {
-// 	internal static class RuntimeHelpersX
+// 	static class RuntimeHelpersX
 // 	{
 // 		public static T[] GetSubArray<T>(T[] array, Range range)
 // 		{

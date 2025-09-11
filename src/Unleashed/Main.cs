@@ -31,8 +31,8 @@ public sealed class Main : BaseUnityPlugin
 	public static ManualLogSource Log;
 	public static Harmony Harmony;
 
-	private static string loadErrors;
-	private void Awake()
+	static string loadErrors;
+	void Awake()
 	{
 		Instance = this;
 		Log      = Logger;
@@ -65,11 +65,11 @@ public sealed class Main : BaseUnityPlugin
 		}
 	}
 
-	private static class PatchMenuSplash
+	static class PatchMenuSplash
 	{
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(Chat), nameof(Chat.SingletonInit))]
-		private static void Splash()
+		static void Splash()
 		{
 			Chat.LogSystem($"--[[ {PLUGIN_NAME} v{PLUGIN_VERSION} ]]--", PluginColour, true);
 			if (loadErrors is not null)
@@ -79,11 +79,11 @@ public sealed class Main : BaseUnityPlugin
 			}
 		}
 	}
-	private static class PatchMenuVersion
+	static class PatchMenuVersion
 	{
 		[HarmonyPostfix]
 		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
-		private static void VersionNumber()
+		static void VersionNumber()
 		{
 			var hotfixLabel = NetworkUI.Instance.GUIDisconnected.transform
 				.Find("Version/Version Hotfix")
@@ -120,11 +120,11 @@ public sealed class Main : BaseUnityPlugin
 			gameObject.AddComponent<TweenColor>();
 		}
 	}
-	private static class PatchMenuCursor
+	static class PatchMenuCursor
 	{
 		[HarmonyILManipulator]
 		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Init))]
-		private static void CursorColor(ILContext il)
+		static void CursorColor(ILContext il)
 		{
 			ILCursor c = new(il);
 			c.GotoNext(MoveType.Before,

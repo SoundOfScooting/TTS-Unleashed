@@ -54,7 +54,7 @@ public static class Commands
 			// ModdedCommandHelp(type);
 		}
 	}
-	private static readonly string px = Main.PLUGIN_ABBR.ToLower();
+	static readonly string px = Main.PLUGIN_ABBR.ToLower();
 	public static void ModdedCommandHelp(ChatMessageType type)
 	{
 		LogCommand(type, Colour.PurpleHex, $"/{px}help",             "Lists new modded commands");
@@ -72,7 +72,7 @@ public static class Commands
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Chat), nameof(Chat.ChatCMD))]
-	private static bool ChatCMDPrefix(string message, ChatMessageType type)
+	static bool ChatCMDPrefix(string message, ChatMessageType type)
 	{
 		static bool MessageEqualCmdOpt(string message, string command, string delimiter, out string secondaryCommand) =>
 			Chat.MessageEqualCmd(message, command + delimiter, out secondaryCommand) ||
@@ -232,7 +232,7 @@ public static class Commands
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Chat), nameof(Chat.ChatCMD))]
-	private static void ChatCMDIL(ILContext il)
+	static void ChatCMDIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		var found = false;

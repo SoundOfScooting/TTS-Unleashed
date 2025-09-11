@@ -35,7 +35,7 @@ public static class Settings
 	public static string IdentityObjectConverter(object @object) => $"{@object}";
 	public static object IdentityStringConverter(string @string) => $"{@string}";
 
-	private interface IConfigBind
+	interface IConfigBind
 	{
 		public void Bind(ConfigFile config);
 	}
@@ -79,7 +79,7 @@ public static class Settings
 	}
 	public class DebugSetting<T> : Setting<T>
 	{
-		private const string DebugDescription = "!! DEBUG SETTING - USE AT YOUR OWN RISK !!";
+		const string DebugDescription = "!! DEBUG SETTING - USE AT YOUR OWN RISK !!";
 
 		[SetsRequiredMembers]
 		public DebugSetting([CallerLineNumber] int line = default)
@@ -397,9 +397,9 @@ public static class Settings
 			StrToObj = IdentityStringConverter,
 		},
 	};
-	private static string   CacheAutoPromoteIDs;
-	public  static string[] AutoPromoteIDs { get; private set; }
-	private static readonly Setting<string> EntryAutoPromoteIDs = new()
+	static string CacheAutoPromoteIDs;
+	public static string[] AutoPromoteIDs { get; private set; }
+	static readonly Setting<string> EntryAutoPromoteIDs = new()
 	{
 		Section     = Section.General,
 		Key         = "Auto Promote Steam IDs",
@@ -426,7 +426,7 @@ public static class Settings
 			EntryAutoPromoteIDs.Value = AutoPromoteIDs.Join();
 		},
 	};
-	private static void DrawAutoPromoteIDs(ConfigEntryBase entry)
+	static void DrawAutoPromoteIDs(ConfigEntryBase entry)
 	{
 		var display = CacheAutoPromoteIDs ??= AutoPromoteIDs.Join(delimiter: "\n");
 		var changed = GUILayout.TextArea(display, GUILayout.ExpandWidth(true));
@@ -450,16 +450,16 @@ public static class Settings
 //		GUILayout.Space(5+50);
 	}
 
-	private static Traverse<bool> DisplayingWindow_P;
-	private static void ConfigManagerUpdatePostfix()
+	static Traverse<bool> DisplayingWindow_P;
+	static void ConfigManagerUpdatePostfix()
 	{
 		// unfortunately textbox eats input so you have to click outside first
 		if (DisplayingWindow_P.Value && Input.GetKeyDown(KeyCode.Escape))
 			DisplayingWindow_P.Value = false;
 	}
 
-	private static bool loaded = false;
-	public  static void Load()
+	static bool loaded = false;
+	public static void Load()
 	{
 		var config = Main.Instance.Config;
 		if (loaded)
@@ -507,11 +507,11 @@ public static class ConfigFileX
 	// public static ConfigEntry<T> BindX<T>(this ConfigFile @this, string section, string key,  T defaultValue, ConfigDescription description) =>
 	// 	@this.BindX(new(section, key), defaultValue, description);
 
-	private static Dictionary<ConfigDefinition, ConfigEntryBase> Entries(this ConfigFile @this) =>
+	static Dictionary<ConfigDefinition, ConfigEntryBase> Entries(this ConfigFile @this) =>
 		new Traverse(@this).Property<Dictionary<ConfigDefinition, ConfigEntryBase>>("Entries").Value;
-	private static Dictionary<ConfigDefinition, string> OrphanedEntries(this ConfigFile @this) =>
+	static Dictionary<ConfigDefinition, string> OrphanedEntries(this ConfigFile @this) =>
 		new Traverse(@this).Property<Dictionary<ConfigDefinition, string>>("OrphanedEntries").Value;
-	private static bool TryGetPair<T>(Dictionary<ConfigDefinition, T> dict, ConfigDefinition def, out KeyValuePair<ConfigDefinition, T> pair)
+	static bool TryGetPair<T>(Dictionary<ConfigDefinition, T> dict, ConfigDefinition def, out KeyValuePair<ConfigDefinition, T> pair)
 	{
 		foreach (var pair2 in dict)
 		if      (def.Key == pair2.Key.Key && Settings.TrimSectionFormat(def.Section) == Settings.TrimSectionFormat(pair2.Key.Section))

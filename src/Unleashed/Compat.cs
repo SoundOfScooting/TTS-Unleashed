@@ -27,7 +27,7 @@ public class PlayerStateX
 	// #todo: apparently CWT is broken in this Unity version?
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.Remove))]
-	private static void RemovePostfix(PlayerState playerState) =>
+	static void RemovePostfix(PlayerState playerState) =>
 		CWT.Remove(playerState);
 }
 public class NetworkPhysicsObjectX : MonoBehaviour
@@ -62,11 +62,11 @@ public static class Compat
 	public static void StartConnected() =>
 		PlayerStateX.StartConnected();
 
-	private const string VERSION_HEADER = $"\n{Main.PLUGIN_GUID} V";
+	const string VERSION_HEADER = $"\n{Main.PLUGIN_GUID} V";
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
-	private static void ConnectedToServerIL(ILContext il)
+	static void ConnectedToServerIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.After,
@@ -79,11 +79,11 @@ public static class Compat
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
-	private static void RegisterPrefix(ref NetworkPlayer __state) =>
+	static void RegisterPrefix(ref NetworkPlayer __state) =>
 		__state = Network.sender;
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
-	private static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
+	static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
 	{
 		var sender = __state;
 		int s = versionnum.IndexOf(VERSION_HEADER);
@@ -206,7 +206,7 @@ public static class Compat
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
-	private static bool PromoteThisPlayerPrefix(string name)
+	static bool PromoteThisPlayerPrefix(string name)
 	{
 		if (Network.isServer || !Network.isAdmin)
 			return true;
@@ -223,7 +223,7 @@ public static class Compat
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.KickThisPlayer))]
-	private static bool KickThisPlayerPrefix(string name)
+	static bool KickThisPlayerPrefix(string name)
 	{
 		if (Network.isServer || !Network.isAdmin)
 			return true;
@@ -240,7 +240,7 @@ public static class Compat
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.SetPhysics))]
-	private static bool SetPhysicsPrefix(Pointer __instance, int HoverObjectId, RigidbodyState rigidbodyState, PhysicsMaterialState physicsMaterialState)
+	static bool SetPhysicsPrefix(Pointer __instance, int HoverObjectId, RigidbodyState rigidbodyState, PhysicsMaterialState physicsMaterialState)
 	{
 		if (Network.isServer || PlayerStateX.Host.IsModded)
 			return true;

@@ -10,17 +10,17 @@ public static class Events
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
-	private static void StartDisconnected()
+	static void StartDisconnected()
 	{
 		Compat.StartDisconnected();
 	}
-	private static void StartConnected()
+	static void StartConnected()
 	{
 		Compat.StartConnected();
 		MainUI.StartConnected();
 	}
 
-	private static bool addingAllPlayers; // annoying
+	static bool addingAllPlayers; // annoying
 
 	public static void Load()
 	{
@@ -29,19 +29,19 @@ public static class Events
 		// NetworkEvents.OnPlayerConnected   += OnPlayerConnected;
 		EventManager .OnPlayersAdd        += OnPlayersAdd;
 	}
-	private static void OnServerInitialized() =>
+	static void OnServerInitialized() =>
 		addingAllPlayers = false;
-	private static void OnConnectedToServer()
+	static void OnConnectedToServer()
 	{
 		addingAllPlayers = true;
 		Wait.Time(() => addingAllPlayers = false, 5f); // failsafe
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UINotepad), nameof(UINotepad.UpdateNotepadRPC))]
-	private static void UpdateNotepadRPCPrefix() =>
+	static void UpdateNotepadRPCPrefix() =>
 		addingAllPlayers = false; // rpc from server in NetworkUI.OnPlayerConnect after all players added
 
-	private static void OnPlayersAdd(PlayerState playerState)
+	static void OnPlayersAdd(PlayerState playerState)
 	{
 		// Chat.Log($"OnPlayersAdd {playerState.id}", Main.PluginColour);
 		if (playerState.id == NetworkID.ID)

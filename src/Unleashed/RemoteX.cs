@@ -50,7 +50,7 @@ public class RemoteX : BaseNetworkAttribute
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
-	private static void NetworkViewFindAttributeAssembliesIL(ILContext il)
+	static void NetworkViewFindAttributeAssembliesIL(ILContext il)
 	{
 		ILCursor c = new(il);
 		c.GotoNext(MoveType.Before,
@@ -76,7 +76,7 @@ public class RemoteX : BaseNetworkAttribute
 			// DumpAttributes(RPCMethods);
 		});
 	}
-	private static void DumpAttributes(List<MethodRPCSort> RPCMethods)
+	static void DumpAttributes(List<MethodRPCSort> RPCMethods)
 	{
 		for (int i = 0; i < RPCMethods.Count; i++)
 		{
@@ -161,7 +161,7 @@ public class RemoteX : BaseNetworkAttribute
 		return CustomRPCMethods;
 	}
 
-	private static readonly List<BepInEx.BaseUnityPlugin> PluginsOrder =
+	static readonly List<BepInEx.BaseUnityPlugin> PluginsOrder =
 		Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader)).Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
 	public static void SortAttributesX(List<MethodRPCSort> CustomRPCMethods)
 	{
