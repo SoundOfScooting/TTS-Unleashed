@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -260,6 +257,9 @@ public static class Patches
 	{
 		{ "PLASTIC", 0 }, { "METAL", 1 }, { "GOLD", 2 },
 	};
+	static readonly string[] ChessTypes = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
+	static readonly string[] DiceTypes  = ["4", "6", "8", "10", "12", "20"];
+
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitComponents))]
 	static void UIGridMenuObjectsInitComponentsPrefix(UIGridMenuObjects __instance)
@@ -301,7 +301,7 @@ public static class Patches
 			SpriteName      = "Icon-Folder2",
 			SpriteColor     = Color.black,
 			ComponentButtons = [..
-				from type in new[] { "Pawn", "Rook", "Knight", "Bishop", "Queen", "King" }
+				from type in ChessTypes
 				select new UIGridMenu.GridButtonComponent()
 				{
 					Name = $"{type} Gold",
@@ -320,7 +320,7 @@ public static class Patches
 			SpriteName      = "Icon-Folder2",
 			SpriteColor     = Color.black,
 			ComponentButtons = [..
-				from type in new[] { "4", "6", "8", "10", "12", "20" }
+				from type in DiceTypes
 				select new UIGridMenu.GridButtonComponent()
 				{
 					Name = $"D{type} Gold",

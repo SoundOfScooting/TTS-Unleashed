@@ -1,5 +1,5 @@
-using System;
 using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
 using MonoMod.Cil;
@@ -27,15 +27,15 @@ public sealed class Main : BaseUnityPlugin
 	public static readonly Colour PluginColour = Colour.Purple;
 	public static readonly Colour ErrorColour  = Colour.Red;
 
-	public static Main Instance;
-	public static ManualLogSource Log;
-	public static Harmony Harmony;
+	public static Main Instance   { get; private set; }
+	public static Harmony Harmony { get; private set; }
+	public static ManualLogSource Log   => Instance.Logger;
+	public static new ConfigFile Config => ((BaseUnityPlugin) Instance).Config;
 
 	static string loadErrors;
 	void Awake()
 	{
 		Instance = this;
-		Log      = Logger;
 		try
 		{
 			// Debug.developerConsoleVisible = true;

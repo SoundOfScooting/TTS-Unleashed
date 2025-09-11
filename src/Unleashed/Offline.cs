@@ -1,4 +1,3 @@
-using System;
 using HarmonyLib;
 using NewNet;
 using Steamworks;

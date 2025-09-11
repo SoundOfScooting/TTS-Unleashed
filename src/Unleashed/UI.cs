@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using HarmonyLib;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -207,6 +204,7 @@ public class UZCameraHome : MonoBehaviour
 
 	void OnClick()
 	{
+		_ = this;
 		if (NeedToPickHome)
 		{
 			Current = Home.Hand;
@@ -216,6 +214,7 @@ public class UZCameraHome : MonoBehaviour
 	}
 	void OnAltClick()
 	{
+		_ = this;
 		if (NeedToPickHome)
 		{
 			NeedToPickHome           = false;
@@ -1017,8 +1016,8 @@ public static class ToolVectorX
 //			for (int i = 0; i < positions.Length; i++)
 //				positions[i] = drawData.line.transform.TransformPoint(positions[i]);
 	}
-	public static List<VectorEraseData> EraseBuffer = [];
-	public static bool EraseCancelled;
+	public static List<VectorEraseData> EraseBuffer { get; internal set; } = [];
+	public static bool EraseCancelled { get; internal set; }
 
 	public static void StartConnected() =>
 		Wait.Frames(UpdateUI);

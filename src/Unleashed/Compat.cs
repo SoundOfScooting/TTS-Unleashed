@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MonoMod.Cil;
@@ -12,7 +10,7 @@ namespace Unleashed;
 [HarmonyPatch]
 public class PlayerStateX
 {
-	public static ConditionalWeakTable<PlayerState, PlayerStateX> CWT = new();
+	public static ConditionalWeakTable<PlayerState, PlayerStateX> CWT { get; private set; } = new();
 
 	public bool IsModded;
 
@@ -152,7 +150,7 @@ public static class Compat
 		if      (grabbableNPO.HeldByPlayerID == @this.ID && grabbableNPO.HeldByTouchID == touchId)
 			ManagerPhysicsObject.Instance.SetHeldObjectTiltRotationIndex(grabbableNPO, tiltRotationDelta, @this.ID);
 	}
-	public static void SetHeldObjectTiltRotationIndex(this ManagerPhysicsObject @this, NetworkPhysicsObject npo, int tiltDelta, int id)
+	public static void SetHeldObjectTiltRotationIndex(this ManagerPhysicsObject _, NetworkPhysicsObject npo, int tiltDelta, int id)
 	{
 		int heldFlipRotationIndex = npo    .HeldFlipRotationIndex;
 		int heldSpinRotationIndex = npo    .HeldSpinRotationIndex;

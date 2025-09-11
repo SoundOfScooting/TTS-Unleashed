@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using MonoMod.Cil;
@@ -125,7 +122,7 @@ public class RemoteX : BaseNetworkAttribute
 		);
 	}
 
-	public static void AddAttributesX(List<MethodRPCSort> CustomRPCMethods)
+	public static void AddAttributesX(List<MethodRPCSort> _)
 	{
 		//
 	}

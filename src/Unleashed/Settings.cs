@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
@@ -57,7 +54,7 @@ public static class Settings
 		}
 
 		public EventHandler SettingChanged { get; init; }
-		public Action<T>    SettingLoaded { get; init; }
+		public Action<T>    SettingLoaded  { get; init; }
 
 		public ConfigEntry<T> Entry { get; private set; }
 		public T Value
@@ -397,8 +394,8 @@ public static class Settings
 			StrToObj = IdentityStringConverter,
 		},
 	};
-	static string CacheAutoPromoteIDs;
 	public static string[] AutoPromoteIDs { get; private set; }
+	static string CacheAutoPromoteIDs;
 	static readonly Setting<string> EntryAutoPromoteIDs = new()
 	{
 		Section     = Section.General,
@@ -461,16 +458,15 @@ public static class Settings
 	static bool loaded = false;
 	public static void Load()
 	{
-		var config = Main.Instance.Config;
 		if (loaded)
-			config.Reload();
+			Main.Config.Reload();
 		else if (Chainloader.PluginInfos.TryGetValue(Main.CONFIG_MANAGER_GUID, out var info))
 		{
 			var Instance_T     = Traverse.Create(info.Instance);
 			var Keybind_P      = Instance_T.Field("_keybind").Property<KeyboardShortcut>("Value");
 			DisplayingWindow_P = Instance_T.Property<bool>("DisplayingWindow");
 
-			if ((Keybind_P.Value.MainKey == KeyCode.F1) && (Keybind_P.Value.Modifiers.Count() == 0))
+			if ((Keybind_P.Value.MainKey == KeyCode.F1) && !Keybind_P.Value.Modifiers.Any())
 				Keybind_P.Value = new(KeyCode.F1, KeyCode.Escape);
 
 			Main.Harmony.Patch(
@@ -480,14 +476,14 @@ public static class Settings
 			);
 		}
 		loaded = true;
-		config.SaveOnConfigSet = false;
+		Main.Config.SaveOnConfigSet = false;
 
 		foreach (var field in typeof(Settings).GetFields(AccessTools.all))
 		if      (field.GetValue(null) is IConfigBind setting)
-			setting.Bind(config);
+			setting.Bind(Main.Config);
 
-		config.SaveOnConfigSet = true;
-		config.Save();
+		Main.Config.SaveOnConfigSet = true;
+		Main.Config.Save();
 	}
 }
 public static class ConfigFileX
