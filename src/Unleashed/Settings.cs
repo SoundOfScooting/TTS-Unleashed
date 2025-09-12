@@ -7,7 +7,7 @@ using Steamworks;
 
 namespace Unleashed;
 
-public static class Settings
+static class Settings
 {
 	public enum Section
 	{
@@ -443,7 +443,7 @@ public static class Settings
 		Main.Config.Save();
 	}
 }
-public static class ConfigFileX
+static class ConfigFileX
 {
 	static bool TryGetPair<T>(Dictionary<ConfigDefinition, T> dict, ConfigDefinition def, out KeyValuePair<ConfigDefinition, T> pair)
 	{

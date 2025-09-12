@@ -2,9 +2,9 @@ using static UIGridMenu;
 
 namespace Unleashed.GridMenu;
 
-public delegate void OnSpawnEvent(GridButtonOnSpawn @this, Vector3 spawnPos, Action<Vector3> spawn);
+delegate void OnSpawnEvent(GridButtonOnSpawn @this, Vector3 spawnPos, Action<Vector3> spawn);
 
-public sealed class GridButtonOnSpawn : GridButtonComponent
+sealed class GridButtonOnSpawn : GridButtonComponent
 {
 	public required OnSpawnEvent OnSpawn;
 	public sealed override void InteractiveSpawn(Vector3 spawnPos) =>

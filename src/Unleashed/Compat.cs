@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Unleashed;
 
 [HarmonyPatch]
-public static class PlayerStateX
+static class PlayerStateX
 {
 	public static ConditionalWeakTable<PlayerState, Data> CWT { get; private set; } = new();
 
@@ -28,9 +28,9 @@ public static class PlayerStateX
 	static void RemovePostfix(PlayerState playerState) =>
 		CWT.Remove(playerState);
 }
-public static class NetworkPhysicsObjectX
+static class NetworkPhysicsObjectX
 {
-	public sealed class Data : MonoBehaviour
+	sealed class Data : MonoBehaviour
 	{
 		public int HeldTiltRotationIndex;
 	}
@@ -97,7 +97,7 @@ public static class NetworkPhysicsObjectX
 }
 
 [HarmonyPatch]
-public static class Compat
+static class Compat
 {
 	public static void StartDisconnected() =>
 		PlayerStateX.StartDisconnected();

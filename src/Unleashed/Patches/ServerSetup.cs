@@ -3,7 +3,7 @@ using System.ComponentModel;
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-public static class ServerSetup
+static class ServerSetup
 {
 	public enum BackgroundID
 	{

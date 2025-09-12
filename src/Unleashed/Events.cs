@@ -1,7 +1,7 @@
 namespace Unleashed;
 
 [HarmonyPatch]
-public static class Events
+static class Events
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]

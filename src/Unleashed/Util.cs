@@ -26,7 +26,7 @@ public readonly record struct Comparison(int Value) // #net10: open enum + exten
 		};
 }
 
-public static class UICameraTouch
+static class UICameraTouch
 {
 	public const int
 		LEFT   = -1,

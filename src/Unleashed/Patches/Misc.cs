@@ -1,7 +1,7 @@
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-public static class Misc
+static class Misc
 {
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.GUIPlayerSelection))]

@@ -1,7 +1,7 @@
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-public static class MenuHoliday
+static class MenuHoliday
 {
 	public enum Value
 	{

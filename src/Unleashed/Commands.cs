@@ -1,7 +1,7 @@
 namespace Unleashed;
 
 [HarmonyPatch]
-public static class Commands
+static class Commands
 {
 	public static void LogCommand(ChatMessageType type, string colorHex, string command, string description = null) =>
 		Chat.Log(

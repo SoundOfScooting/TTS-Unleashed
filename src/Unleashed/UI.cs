@@ -14,7 +14,7 @@ public static class MainUI
 }
 
 [HarmonyPatch]
-public sealed class UIPointerRotationSnapX : MonoBehaviour
+sealed class UIPointerRotationSnapX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIPointerRotationSnap), nameof(UIPointerRotationSnap.Awake))]
@@ -32,7 +32,7 @@ public sealed class UIPointerRotationSnapX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public sealed class UZCameraHome : MonoBehaviour
+sealed class UZCameraHome : MonoBehaviour
 {
 	// public const string HomePref = $"{Main.PLUGIN_GUID}/{nameof(UZCameraHome)}";
 	public enum Home
@@ -186,7 +186,7 @@ public sealed class UZCameraHome : MonoBehaviour
 }
 
 [HarmonyPatch]
-public class GUIEndTurnX : MonoBehaviour
+class GUIEndTurnX : MonoBehaviour
 {
 	public static void StartConnected() =>
 		NetworkUI.Instance.GUIEndTurn.GetOrAddComponent<GUIEndTurnX>();
@@ -214,7 +214,7 @@ public class GUIEndTurnX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public sealed class UIStarTurnX : GUIEndTurnX
+sealed class UIStarTurnX : GUIEndTurnX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.Awake))]
@@ -245,7 +245,7 @@ public sealed class UIStarTurnX : GUIEndTurnX
 }
 
 [HarmonyPatch]
-public sealed class UINameButtonX : MonoBehaviour
+sealed class UINameButtonX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
@@ -389,7 +389,7 @@ public sealed class UINameButtonX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public sealed class UIColorSelectionX : MonoBehaviour
+sealed class UIColorSelectionX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Start))]
@@ -448,7 +448,7 @@ public sealed class UIColorSelectionX : MonoBehaviour
 }
 
 [HarmonyPatch]
-public static class UICustomObjectX
+static class UICustomObjectX
 {
 	// #idea: would be nice to use deck import UI for cards to access extra options
 	// #idea: edit each ui panel to add inaccesible parameters
@@ -922,7 +922,7 @@ public static class UICustomObjectX
 }
 
 [HarmonyPatch]
-public static class ToolVectorX
+static class ToolVectorX
 {
 	public readonly struct VectorEraseData(ToolVector.VectorDrawData drawData)
 	{
@@ -999,7 +999,7 @@ public static class ToolVectorX
 }
 
 [HarmonyPatch]
-public static class UIGridMenuDecalsX
+static class UIGridMenuDecalsX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIGridMenuDecals), nameof(UIGridMenuDecals.Init))]
@@ -1031,7 +1031,7 @@ public static class UIGridMenuDecalsX
 }
 
 [HarmonyPatch]
-public static class UIFinderX
+static class UIFinderX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIFinder), nameof(UIFinder.Start))]
@@ -1045,7 +1045,7 @@ public static class UIFinderX
 }
 
 [HarmonyPatch]
-public static class UIContextualX
+static class UIContextualX
 {
 	public static void StartConnected() =>
 		UZContextualStash.StartConnected();
@@ -1094,7 +1094,7 @@ public interface IUZContextual
 {
 	void OnStartContextual();
 }
-public sealed class UZContextualStash : MonoBehaviour, IUZContextual
+sealed class UZContextualStash : MonoBehaviour, IUZContextual
 {
 	public const Type FLAG_Global = (Type) 0b1;
 	public enum Type

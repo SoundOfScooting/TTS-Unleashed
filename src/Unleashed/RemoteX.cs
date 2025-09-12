@@ -5,7 +5,7 @@ namespace Unleashed;
 
 [HarmonyPatch]
 [AttributeUsage(AttributeTargets.Method)]
-public sealed class RemoteX : BaseNetworkAttribute
+sealed class RemoteX : BaseNetworkAttribute
 {
 	public SendType sendType = SendType.ReliableBuffered;
 	public RemoteX(
@@ -197,7 +197,7 @@ public sealed class RemoteX : BaseNetworkAttribute
 	}
 }
 
-public static class NetworkBehaviorX // awful
+static class NetworkBehaviorX // awful
 {
 	// static
 	extension<T>(T @this) where T : NetworkBehavior
