@@ -129,7 +129,7 @@ public sealed class Main : BaseUnityPlugin
 		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Init))]
 		static void CursorColor(ILContext il)
 		{
-			ILCursor c = new(il);
+			var c = new ILCursor(il);
 			c.GotoNext(MoveType.Before,
 				// Utilities.SetCursor(WhiteCursorTexture, HardwareCursorOffest);
 				x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.WhiteCursorTexture)))

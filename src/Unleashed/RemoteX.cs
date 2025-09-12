@@ -5,7 +5,7 @@ namespace Unleashed;
 
 [HarmonyPatch]
 [AttributeUsage(AttributeTargets.Method)]
-public class RemoteX : BaseNetworkAttribute
+public sealed class RemoteX : BaseNetworkAttribute
 {
 	public SendType sendType = SendType.ReliableBuffered;
 	public RemoteX(
@@ -46,7 +46,7 @@ public class RemoteX : BaseNetworkAttribute
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
 	static void NetworkViewFindAttributeAssembliesIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// RPCMethods.Sort((MethodRPCSort x, MethodRPCSort y) => x.uniqueName.CompareTo(y.uniqueName));
 			x => x.MatchCallvirt(AccessTools.Method(typeof(List<MethodRPCSort>), nameof(List<>.Sort), [ typeof(Comparison<MethodRPCSort>) ]))
@@ -72,7 +72,7 @@ public class RemoteX : BaseNetworkAttribute
 	}
 	static void DumpAttributes(List<MethodRPCSort> RPCMethods)
 	{
-		for (int i = 0; i < RPCMethods.Count; i++)
+		for (var i = 0; i < RPCMethods.Count; i++)
 		{
 			var entry = RPCMethods[i];
 			Main.Log.LogWarning($"{i}: {entry.classType} / {entry.method}");

@@ -107,7 +107,7 @@ public static class MainUI
 }
 
 [HarmonyPatch]
-public class UIPointerRotationSnapX : MonoBehaviour
+public sealed class UIPointerRotationSnapX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIPointerRotationSnap), nameof(UIPointerRotationSnap.Awake))]
@@ -125,7 +125,7 @@ public class UIPointerRotationSnapX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public class UZCameraHome : MonoBehaviour
+public sealed class UZCameraHome : MonoBehaviour
 {
 	// public const string HomePref = $"{Main.PLUGIN_GUID}/{nameof(UZCameraHome)}";
 	public enum Home
@@ -288,7 +288,7 @@ public class GUIEndTurnX : MonoBehaviour
 	[HarmonyPatch(typeof(Turns), nameof(Turns.GUIEndTurn))]
 	static void GUIEndTurnIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
 		);
@@ -307,7 +307,7 @@ public class GUIEndTurnX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public class UIStarTurnX : GUIEndTurnX
+public sealed class UIStarTurnX : GUIEndTurnX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.Awake))]
@@ -338,7 +338,7 @@ public class UIStarTurnX : GUIEndTurnX
 }
 
 [HarmonyPatch]
-public class UINameButtonX : MonoBehaviour
+public sealed class UINameButtonX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
@@ -380,7 +380,7 @@ public class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(UIPopupList), nameof(UIPopupList.Show))]
 	static void ShowIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// Singleton<UIPalette>.Instance.InitTheme(this);
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Singleton<UIPalette>), nameof(Singleton<>.Instance))),
@@ -482,7 +482,7 @@ public class UINameButtonX : MonoBehaviour
 	}
 }
 [HarmonyPatch]
-public class UIColorSelectionX : MonoBehaviour
+public sealed class UIColorSelectionX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Start))]
@@ -665,7 +665,7 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(CustomToken),        nameof(CustomToken       .bCustomUI), MethodType.Setter)]
 	static void AllowAdminIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
 		);
@@ -1023,7 +1023,7 @@ public static class ToolVectorX
 		public readonly bool      wasAttached   = drawData.attached;
 		public readonly int       sortingOrder  = drawData.line.sortingOrder;
 		public readonly Vector3[] positions     = drawData.line.GetPositions();
-//			for (int i = 0; i < positions.Length; i++)
+//			for (var i = 0; i < positions.Length; i++)
 //				positions[i] = drawData.line.transform.TransformPoint(positions[i]);
 	}
 	public static List<VectorEraseData> EraseBuffer { get; internal set; } = [];
@@ -1106,7 +1106,7 @@ public static class UIGridMenuDecalsX
 	[HarmonyPatch(typeof(UIGridMenu.GridButtonDecal), MethodType.Constructor)]
 	static void UIGridMenuGridButtonDecalCtorIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// if (Network.isServer)
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
@@ -1187,7 +1187,7 @@ public interface IUZContextual
 {
 	void OnStartContextual();
 }
-public class UZContextualStash : MonoBehaviour, IUZContextual
+public sealed class UZContextualStash : MonoBehaviour, IUZContextual
 {
 	public const Type FLAG_Global = (Type) 0b1;
 	public enum Type

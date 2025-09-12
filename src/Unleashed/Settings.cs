@@ -71,7 +71,7 @@ public static class Settings
 			SettingLoaded?.Invoke(Value);
 		}
 	}
-	public class DebugSetting<T> : Setting<T>
+	public sealed class DebugSetting<T> : Setting<T>
 	{
 		const string DebugDescription = "!! DEBUG SETTING - USE AT YOUR OWN RISK !!";
 

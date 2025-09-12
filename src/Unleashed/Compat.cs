@@ -7,7 +7,7 @@ public static class PlayerStateX
 {
 	public static ConditionalWeakTable<PlayerState, Data> CWT { get; private set; } = new();
 
-	public class Data
+	public sealed class Data
 	{
 		public bool IsModded;
 	}
@@ -30,7 +30,7 @@ public static class PlayerStateX
 }
 public static class NetworkPhysicsObjectX
 {
-	public class Data : MonoBehaviour
+	public sealed class Data : MonoBehaviour
 	{
 		public int HeldTiltRotationIndex;
 	}
@@ -110,7 +110,7 @@ public static class Compat
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ConnectedToServer))]
 	static void ConnectedToServerIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// base.networkView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(NetworkUI), nameof(NetworkUI.VersionNumber)))

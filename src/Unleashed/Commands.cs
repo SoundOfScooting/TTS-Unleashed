@@ -229,7 +229,7 @@ public static class Commands
 	[HarmonyPatch(typeof(Chat), nameof(Chat.ChatCMD))]
 	static void ChatCMDIL(ILContext il)
 	{
-		ILCursor c = new(il);
+		var c = new ILCursor(il);
 		var found = false;
 		while (c.TryGotoNext(MoveType.Before,
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
