@@ -188,7 +188,7 @@ public static class Patches
 	[HarmonyPatch(typeof(UIGridMenu.GridButton), nameof(UIGridMenu.GridButton.IsSearched))]
 	static bool UIGridMenuGridButtonIsSearchedPrefix(UIGridMenu.GridButton __instance, ref bool __result)
 	{
-		if (__instance.Tags.Contains(TagHost) && !PlayerStateX.Host.IsModded)
+		if (__instance.Tags.Contains(TagHost) && !PlayerManager.Instance.HostPlayerState().IsModded)
 			return __result = false;
 		if (__instance.Tags.Contains(TagGold) && !SteamManager.bKickstarterGold)
 			return __result = false;
@@ -572,7 +572,7 @@ public static class Patches
 				}
 				if (UZCameraHome.NeedToPickHome)
 					UZCameraHome.NeedToPickHome = false;
-				else if (__instance.bNeedToPickColour && playerID == Compat.PlayerID(UIColorSelection.id))
+				else if (__instance.bNeedToPickColour && playerID == NetworkID.PlayerID(UIColorSelection.id))
 				{
 					__instance.bNeedToPickColour = false;
 					return false;
@@ -607,7 +607,7 @@ public static class Patches
 	}
 	public static void ChangeColorDialog(int nplayerID = -1)
 	{
-		var playerID    = Compat.PlayerID(nplayerID);
+		var playerID    = NetworkID.PlayerID(nplayerID);
 		var playerState = PlayerManager.Instance.PlayerStateFromID(playerID);
 		UIDialog.ShowDropDown(
 			$"[b]{UZCameraHome.GUIColorText}[/b]" + (
@@ -659,7 +659,7 @@ public static class Patches
 		static bool Available(string label) =>
 			!PlayerManager.Instance.ColourInUse(label) || (
 				Network.isAdmin &&
-				(label != PlayerManager.Instance.ColourLabelFromID(Compat.PlayerID(UIColorSelection.id))) &&
+				(label != PlayerManager.Instance.ColourLabelFromID(NetworkID.PlayerID(UIColorSelection.id))) &&
 				(zInput.GetButton("Ctrl") || zInput.GetButton("Shift"))
 			);
 /*/		static bool Permitted(string label) => false;
@@ -739,7 +739,7 @@ public static class Patches
 	{
 		if (UZCameraHome.NeedToPickHome)
 		{
-			UZCameraHome.Current = EnumX.Parse<UZCameraHome.Home>(__instance.label);
+			UZCameraHome.Current = Enum.Parse<UZCameraHome.Home>(__instance.label);
 			return false;
 		}
 		if (!Network.isAdmin ||
@@ -747,7 +747,7 @@ public static class Patches
 			!PlayerManager.Instance.ColourInUse(__instance.label)
 		) return true;
 
-		var targetID = Compat.PlayerID(UIColorSelection.id);
+		var targetID = NetworkID.PlayerID(UIColorSelection.id);
 		var seatedID = PlayerManager.Instance.IDFromColour(__instance.colour);
 		if ((seatedID == -1) || (seatedID == targetID))
 			return true;
@@ -828,8 +828,8 @@ public static class Patches
 		if      (zInput.GetButtonUp("Grab"))
 		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
 		if      (grabbableNPO.HeldByPlayerID == __instance.ID)
-		if      (grabbableNPO.GetX(out var grabbableNPO_X))
-			grabbableNPO_X.HeldTiltRotationIndex = 0;
+		if      (grabbableNPO.HasData())
+			grabbableNPO.HeldTiltRotationIndex = 0;
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.Update))]
@@ -910,10 +910,10 @@ public static class Patches
 		c.Emit(OpCodes.Ldarg_1);
 		c.Emit(OpCodes.Ldloc, 13);
 		c.EmitDelegate(Quaternion(ManagerPhysicsObject __instance, NetworkPhysicsObject grabbedNPO, Quaternion identity) =>
-			!grabbedNPO.GetX(out var grabbedNPO_X)
+			!grabbedNPO.HasData()
 				? identity
 			: Quaternion.AngleAxis(
-				grabbedNPO_X.HeldTiltRotationIndex * 15,
+				grabbedNPO.HeldTiltRotationIndex * 15,
 				__instance.FlipsAroundZAxis(grabbedNPO.gameObject)
 					? Vector3.right
 					: Vector3.forward
@@ -1149,7 +1149,7 @@ public static class Patches
 		c.MoveAfterLabels();
 		c.Remove();
 		c.EmitDelegate(bool() =>
-			PlayerStateX.Host.IsModded
+			PlayerManager.Instance.HostPlayerState().IsModded
 		);
 		// c.RemoveRange(2);
 		// c.Index++;

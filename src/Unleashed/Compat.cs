@@ -1,22 +1,26 @@
 using System.Runtime.CompilerServices;
-using NPO_X = Unleashed.NetworkPhysicsObjectX;
 
 namespace Unleashed;
 
 [HarmonyPatch]
-public class PlayerStateX
+public static class PlayerStateX
 {
-	public static ConditionalWeakTable<PlayerState, PlayerStateX> CWT { get; private set; } = new();
+	public static ConditionalWeakTable<PlayerState, Data> CWT { get; private set; } = new();
 
-	public bool IsModded;
-
-	public static PlayerStateX Host =>
-		PlayerManager.Instance.PlayerStateFromID(NetworkPlayer.SERVER_ID).X();
+	public class Data
+	{
+		public bool IsModded;
+	}
+	extension(PlayerState @this)
+	{
+		Data Data => CWT.GetOrCreateValue(@this);
+		public ref bool IsModded => ref @this.Data.IsModded;
+	}
 
 	public static void StartDisconnected() =>
 		CWT = new();
 	public static void StartConnected() =>
-		PlayerManager.Instance.MyPlayerState().X().IsModded = true;
+		PlayerManager.Instance.MyPlayerState().IsModded = true;
 
 	// #todo: apparently CWT is broken in this Unity version?
 	[HarmonyPostfix]
@@ -24,33 +28,77 @@ public class PlayerStateX
 	static void RemovePostfix(PlayerState playerState) =>
 		CWT.Remove(playerState);
 }
-public class NetworkPhysicsObjectX : MonoBehaviour
+public static class NetworkPhysicsObjectX
 {
-	public int HeldTiltRotationIndex;
+	public class Data : MonoBehaviour
+	{
+		public int HeldTiltRotationIndex;
+	}
+	extension(NetworkPhysicsObject @this)
+	{
+		Data Data => @this.gameObject.GetOrAddComponent<Data>();
+		public bool HasData() => @this.TryGetComponent<Data>(out _);
+		public ref int HeldTiltRotationIndex => ref @this.Data.HeldTiltRotationIndex;
+	}
+	// extension(PlayerAction) // #todo: would prefer string IDs on Lua side
+	// {
+	// 	public static PlayerAction TiltIncrementalRight => PlayerAction.Under+1;
+	// 	public static PlayerAction TiltOver             => PlayerAction.Under+2;
+	// 	public static PlayerAction TiltIncrementalLeft  => PlayerAction.Under+3;
+	// }
+	extension(Pointer @this)
+	{
+		[RemoteX(Permission.Owner, SendType.ReliableNoDelay, null, SerializationMethod.Default)]
+		public void ChangeHeldTiltRotationIndex(int tiltRotationDelta, int touchId = -1)
+		{
+			if (tiltRotationDelta == 0)
+				return;
+			if (Network.isClient)
+			{
+				if (PlayerManager.Instance.HostPlayerState().IsModded)
+					@this.RPC_X(RPCTarget.Server, ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
+				return;
+			}
+			// #todo: wrong
+			var action = tiltRotationDelta switch
+			{
+				>= 1 and <= 11 => PlayerAction.FlipIncrementalRight,
+				12             => PlayerAction.FlipOver,
+				_              => PlayerAction.FlipIncrementalLeft,
+			};
+			if (!EventManager.CheckPlayerAction(@this.PointerColorLabel, action, @this.GetGrabbedLuaObjects(touchId)))
+				return;
+			foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
+			if      (grabbableNPO.HeldByPlayerID == @this.ID && grabbableNPO.HeldByTouchID == touchId)
+				ManagerPhysicsObject.Instance.SetHeldObjectTiltRotationIndex(grabbableNPO, tiltRotationDelta, @this.ID);
+		}
+	}
+	extension(ManagerPhysicsObject @this)
+	{
+		public void SetHeldObjectTiltRotationIndex(NetworkPhysicsObject npo, int tiltDelta, int id)
+		{
+			int heldFlipRotationIndex = npo.HeldFlipRotationIndex;
+			int heldSpinRotationIndex = npo.HeldSpinRotationIndex;
+			int heldTiltRotationIndex = npo.HeldTiltRotationIndex;
+			int num = (heldTiltRotationIndex + tiltDelta) % 24;
+
+			var luaGameObjectScript = npo.luaGameObjectScript;
+			var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.stringColor;
+			// #todo: wrong
+			if (!luaGameObjectScript || luaGameObjectScript.CheckObjectRotate(heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex))
+			{
+				npo.HeldTiltRotationIndex = num;
+				npo.DisableFastDragWhileAnimating();
+				// #todo: wrong
+				EventManager.TriggerObjectRotate(npo, heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex);
+			}
+		}
+	}
 }
 
 [HarmonyPatch]
 public static class Compat
 {
-	public static PlayerStateX X(this PlayerState @this) =>
-		PlayerStateX.CWT.GetOrCreateValue(@this);
-	public static bool GetX(this PlayerState @this, out PlayerStateX thisX) =>
-		PlayerStateX.CWT.TryGetValue(@this, out thisX);
-	public static void ClearX(this PlayerState @this) =>
-		PlayerStateX.CWT.Remove(@this);
-	public static NPO_X X(this NetworkPhysicsObject @this) =>
-		@this.gameObject.GetOrAddComponent<NPO_X>();
-	public static bool GetX(this NetworkPhysicsObject @this, out NPO_X thisX) =>
-		@this.TryGetComponent(out thisX);
-	public static void ClearX(this NetworkPhysicsObject @this)
-	{
-		if (@this.GetX(out var thisX))
-			UnityEngine.Object.Destroy(thisX);
-	}
-
-	public static int PlayerID(int id) =>
-		(id == -1) ? NetworkID.ID : id;
-
 	public static void StartDisconnected() =>
 		PlayerStateX.StartDisconnected();
 	public static void StartConnected() =>
@@ -101,7 +149,7 @@ public static class Compat
 		{
 			try
 			{
-				PlayerManager.Instance.PlayerStateFromID(sender.id).X().IsModded = true;
+				PlayerManager.Instance.PlayerStateFromID(sender.id).IsModded = true;
 				AchievementManager.Instance.RPC_X(sender, RPCSetIsModded, NetworkPlayer.SERVER_ID);
 			}
 			catch (Exception e)
@@ -120,50 +168,7 @@ public static class Compat
 	// }
 	[RemoteX(Permission.Server)]
 	public static void RPCSetIsModded(AchievementManager _, ushort id) =>
-		PlayerManager.Instance.PlayerStateFromID(id).X().IsModded = true;
-
-	[RemoteX(Permission.Owner, SendType.ReliableNoDelay, null, SerializationMethod.Default)]
-	public static void ChangeHeldTiltRotationIndex(this Pointer @this, int tiltRotationDelta, int touchId = -1)
-	{
-		if (tiltRotationDelta == 0)
-			return;
-		if (Network.isClient)
-		{
-			if (PlayerStateX.Host.IsModded)
-				@this.RPC_X(RPCTarget.Server, ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
-			return;
-		}
-		// #todo: wrong
-		var action = tiltRotationDelta switch
-		{
-			>= 1 and <= 11 => PlayerAction.FlipIncrementalRight,
-			12             => PlayerAction.FlipOver,
-			_              => PlayerAction.FlipIncrementalLeft,
-		};
-		if (!EventManager.CheckPlayerAction(@this.PointerColorLabel, action, @this.GetGrabbedLuaObjects(touchId)))
-			return;
-		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
-		if      (grabbableNPO.HeldByPlayerID == @this.ID && grabbableNPO.HeldByTouchID == touchId)
-			ManagerPhysicsObject.Instance.SetHeldObjectTiltRotationIndex(grabbableNPO, tiltRotationDelta, @this.ID);
-	}
-	public static void SetHeldObjectTiltRotationIndex(this ManagerPhysicsObject _, NetworkPhysicsObject npo, int tiltDelta, int id)
-	{
-		int heldFlipRotationIndex = npo    .HeldFlipRotationIndex;
-		int heldSpinRotationIndex = npo    .HeldSpinRotationIndex;
-		int heldTiltRotationIndex = npo.X().HeldTiltRotationIndex;
-		int num = (heldTiltRotationIndex + tiltDelta) % 24;
-
-		var luaGameObjectScript = npo.luaGameObjectScript;
-		var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.stringColor;
-		// #todo: wrong
-		if (!luaGameObjectScript || luaGameObjectScript.CheckObjectRotate(heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex))
-		{
-			npo.X().HeldTiltRotationIndex = num;
-			npo.DisableFastDragWhileAnimating();
-			// #todo: wrong
-			EventManager.TriggerObjectRotate(npo, heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex);
-		}
-	}
+		PlayerManager.Instance.PlayerStateFromID(id).IsModded = true;
 
 	// #todo: not usable in hotseat
 	public static readonly Lua.Variable LuaGetPlayerBySteamID = new(
@@ -236,7 +241,7 @@ public static class Compat
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.SetPhysics))]
 	static bool SetPhysicsPrefix(Pointer __instance, int HoverObjectId, RigidbodyState rigidbodyState, PhysicsMaterialState physicsMaterialState)
 	{
-		if (Network.isServer || PlayerStateX.Host.IsModded)
+		if (Network.isServer || PlayerManager.Instance.HostPlayerState().IsModded)
 			return true;
 
 		List<string> guids = [];

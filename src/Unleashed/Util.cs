@@ -5,14 +5,31 @@ namespace Unleashed
 {
 	public static class Extensions
 	{
-		public static void Deconstruct<T>(this T @this, out T @out) => @out = @this;
+		extension<T>(T @this)
+		{
+			public void Deconstruct(out T @out) => @out = @this;
+		}
 
-		public static bool IsBlinded(this PlayerManager @this, int ID) =>
-			@this.PlayersDictionary.TryGetValue(Compat.PlayerID(ID), out var playerState) &&
-			playerState.blind;
+		extension(zInput)
+		{
+			public static bool GetButtonChanged(string ButtonName, ControlType CT = ControlType.All) =>
+				zInput.GetButtonDown(ButtonName, CT) || zInput.GetButtonUp(ButtonName, CT);
+		}
 
-		// public static bool GetButtonChanged(this zInput @null, string ButtonName, ControlType CT = ControlType.All) =>
-		// 	zInput.GetButtonDown(ButtonName, CT) || zInput.GetButtonUp(ButtonName, CT);
+		extension(NetworkID)
+		{
+			public static int PlayerID(int ID) =>
+				(ID == -1) ? NetworkID.ID : ID;
+		}
+		extension(PlayerManager @this)
+		{
+			public bool IsBlinded(int ID) =>
+				@this.PlayersDictionary.TryGetValue(NetworkID.PlayerID(ID), out var playerState) &&
+				playerState.blind;
+
+			public PlayerState HostPlayerState() =>
+				@this.PlayerStateFromID(NetworkPlayer.SERVER_ID);
+		}
 	}
 
 	public readonly record struct Comparison(int Value) // #net10: open enum + extensions?
@@ -55,72 +72,79 @@ namespace Unleashed
 
 	public static class ActivatorX
 	{
-		public static T CreateInstance<T>(bool nonPublic) =>
-			(T) Activator.CreateInstance(typeof(T), nonPublic);
-		public static T CreateInstance<T>(params object[] args) =>
-			(T) Activator.CreateInstance(typeof(T), args);
-		public static T CreateInstance<T>(object[] args, object[] activationAttributes) =>
-			(T) Activator.CreateInstance(typeof(T), args, activationAttributes);
-		public static T CreateInstance<T>(BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture) =>
-			(T) Activator.CreateInstance(typeof(T), bindingAttr, binder, args, culture);
-		public static T CreateInstance<T>(BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes) =>
-			(T) Activator.CreateInstance(typeof(T), bindingAttr, binder, args, culture, activationAttributes);
+		extension(Activator)
+		{
+			public static T CreateInstance<T>(bool nonPublic) =>
+				(T) Activator.CreateInstance(typeof(T), nonPublic);
+			public static T CreateInstance<T>(params object[] args) =>
+				(T) Activator.CreateInstance(typeof(T), args);
+			public static T CreateInstance<T>(object[] args, object[] activationAttributes) =>
+				(T) Activator.CreateInstance(typeof(T), args, activationAttributes);
+			public static T CreateInstance<T>(BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture) =>
+				(T) Activator.CreateInstance(typeof(T), bindingAttr, binder, args, culture);
+			public static T CreateInstance<T>(BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture, object[] activationAttributes) =>
+				(T) Activator.CreateInstance(typeof(T), bindingAttr, binder, args, culture, activationAttributes);
+		}
 	}
 
 	public static class EnumX // partially implemented in .NET 5
 	{
-		public static string Format<TEnum>(TEnum value, string format) where TEnum: struct, Enum =>
-			Enum.Format(typeof(TEnum), value, format);
-		public static string Format<TEnum>(object value, string format) where TEnum: struct, Enum =>
-			Enum.Format(typeof(TEnum), value, format);
-		public static string GetName<TEnum>(TEnum value) where TEnum: struct, Enum =>
-			Enum.GetName(typeof(TEnum), value);
-		public static string GetName<TEnum>(object value) where TEnum: struct, Enum =>
-			Enum.GetName(typeof(TEnum), value);
-		public static string[] GetNames<TEnum>() where TEnum: struct, Enum =>
-			Enum.GetNames(typeof(TEnum));
-		public static Type GetUnderlyingType<TEnum>() where TEnum: struct, Enum =>
-			Enum.GetUnderlyingType(typeof(TEnum));
-		// public static Array GetValues<TEnum>() where TEnum: struct, Enum =>
-		// 	Enum.GetValues(typeof(TEnum));
-		public static TEnum[] GetValues<TEnum>() where TEnum: struct, Enum =>
-			(TEnum[]) Enum.GetValues(typeof(TEnum));
-		public static bool IsDefined<TEnum>(TEnum value) where TEnum: struct, Enum =>
-			Enum.IsDefined(typeof(TEnum), value);
-		public static bool IsDefined<TEnum>(object value) where TEnum: struct, Enum =>
-			Enum.IsDefined(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value) where TEnum: struct, Enum =>
-			(TEnum) Enum.Parse(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value, bool ignoreCase) where TEnum: struct, Enum =>
-			(TEnum) Enum.Parse(typeof(TEnum), value, ignoreCase);
-		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(ulong value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(uint value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(ushort value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		// [CLSCompliant(false)]
-		public static TEnum ToObject<TEnum>(sbyte value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(object value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(long value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(int value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(byte value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
-		public static TEnum ToObject<TEnum>(short value) where TEnum: struct, Enum =>
-			(TEnum) Enum.ToObject(typeof(TEnum), value);
+		extension(Enum)
+		{
+			public static string Format<TEnum>(TEnum value, string format) where TEnum: struct, Enum =>
+				Enum.Format(typeof(TEnum), value, format);
+			public static string Format<TEnum>(object value, string format) where TEnum: struct, Enum =>
+				Enum.Format(typeof(TEnum), value, format);
+			public static string GetName<TEnum>(TEnum value) where TEnum: struct, Enum =>
+				Enum.GetName(typeof(TEnum), value);
+			public static string GetName<TEnum>(object value) where TEnum: struct, Enum =>
+				Enum.GetName(typeof(TEnum), value);
+			public static string[] GetNames<TEnum>() where TEnum: struct, Enum =>
+				Enum.GetNames(typeof(TEnum));
+			public static Type GetUnderlyingType<TEnum>() where TEnum: struct, Enum =>
+				Enum.GetUnderlyingType(typeof(TEnum));
+			// public static Array GetValues<TEnum>() where TEnum: struct, Enum =>
+			// 	Enum.GetValues(typeof(TEnum));
+			public static TEnum[] GetValues<TEnum>() where TEnum: struct, Enum =>
+				(TEnum[]) Enum.GetValues(typeof(TEnum));
+			public static bool IsDefined<TEnum>(TEnum value) where TEnum: struct, Enum =>
+				Enum.IsDefined(typeof(TEnum), value);
+			public static bool IsDefined<TEnum>(object value) where TEnum: struct, Enum =>
+				Enum.IsDefined(typeof(TEnum), value);
+			public static TEnum Parse<TEnum>(string value) where TEnum: struct, Enum =>
+				(TEnum) Enum.Parse(typeof(TEnum), value);
+			public static TEnum Parse<TEnum>(string value, bool ignoreCase) where TEnum: struct, Enum =>
+				(TEnum) Enum.Parse(typeof(TEnum), value, ignoreCase);
+			// [CLSCompliant(false)]
+			public static TEnum ToObject<TEnum>(ulong value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			// [CLSCompliant(false)]
+			public static TEnum ToObject<TEnum>(uint value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			// [CLSCompliant(false)]
+			public static TEnum ToObject<TEnum>(ushort value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			// [CLSCompliant(false)]
+			public static TEnum ToObject<TEnum>(sbyte value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			public static TEnum ToObject<TEnum>(object value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			public static TEnum ToObject<TEnum>(long value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			public static TEnum ToObject<TEnum>(int value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			public static TEnum ToObject<TEnum>(byte value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+			public static TEnum ToObject<TEnum>(short value) where TEnum: struct, Enum =>
+				(TEnum) Enum.ToObject(typeof(TEnum), value);
+		}
 	}
 }
 
-// namespace Unleashed
+// // #idea: want a static extension method but it's not recognized by compiler
+// namespace System.Runtime.CompilerServices
 // {
-// 	static class RuntimeHelpersX
+// 	static class RuntimeHelpers
 // 	{
 // 		public static T[] GetSubArray<T>(T[] array, Range range)
 // 		{

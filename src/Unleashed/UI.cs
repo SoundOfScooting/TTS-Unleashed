@@ -12,82 +12,97 @@ public static class MainUI
 		UIContextualX.StartConnected();
 	}
 
-	public static void AssignLocalTRS(this GameObject @this, GameObject src)
+	extension(GameObject @this)
 	{
-		@this.transform.parent        = src.transform.parent;
-		@this.transform.localPosition = src.transform.localPosition;
-		@this.transform.localRotation = src.transform.localRotation;
-		@this.transform.localScale    = src.transform.localScale;
-		@this.layer = src.layer;
-	}
-
-	public static Vector3[] GetPositions(this LineRenderer @this)
-	{
-		var positions = new Vector3[@this.positionCount];
-		@this.GetPositions(positions);
-		return positions;
-	}
-
-	/// <summary>
-	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-	/// </summary>
-	public static UISprite AddComponent(this GameObject go, UISprite toAdd)
-	{
-		var comp  = go.AddComponent<UISprite>(toAdd);
-		comp.type = toAdd.type;
-		comp.SetDimensions(toAdd.width, toAdd.height);
-		return comp;
-	}
-	/// <summary>
-	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-	/// </summary>
-	public static UIButton AddComponent(this GameObject go, UIButton toAdd)
-	{
-		var comp = go.AddComponent<UIButton>(toAdd);
-		if (toAdd.tweenTarget)
-			comp.tweenTarget = go;
-		comp.OnInit();
-		comp.hover   = toAdd.hover;
-		comp.pressed = toAdd.pressed;
-		return comp;
-	}
-	/// <summary>
-	/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-	/// </summary>
-	public static UILabel AddComponent(this GameObject go, UILabel toAdd)
-	{
-		var comp      = go.AddComponent<UILabel>(toAdd);
-		comp.color    = toAdd.color;
-		comp.fontSize = toAdd.fontSize;
-		return comp;
-	}
-
-	public static void RestartTooltip(this UITooltipScript @this)
-	{
-		if (UIHoverText.text == @this.translatedTooltip)
+		public void AssignLocalTRS(GameObject src)
 		{
-			@this.CancelTooltip();
-			@this.OnHover(true);
-		}
-		else if (
-			UIHoverText.text == @this.translatedDelayTooltip && @this.translatedTooltip == "" ||
-			UIHoverText.text == @this.translatedTooltip + UIHoverText.DelayTooltipSpacer + @this.translatedDelayTooltip
-		){
-			@this.CancelTooltip();
-			@this.OnHover(true);
-			@this.CancelInvoke(nameof(@this.InvokeDelayTooltip));
-			@this.InvokeDelayTooltip();
+			@this.transform.parent        = src.transform.parent;
+			@this.transform.localPosition = src.transform.localPosition;
+			@this.transform.localRotation = src.transform.localRotation;
+			@this.transform.localScale    = src.transform.localScale;
+			@this.layer = src.layer;
 		}
 	}
 
-	public static void SpoofNotifyOnClick(this UICamera _, GameObject go, int touchID = UICameraTouch.LEFT)
+	extension(GameObject go)
 	{
-		var      currentTouchID = UICamera.currentTouchID;
-		UICamera.currentTouchID = touchID;
+		/// <summary>
+		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+		/// </summary>
+		public UISprite AddComponent(UISprite toAdd)
 		{
-			UICamera.Notify(go, "OnClick", null);
+			var comp  = go.AddComponent<UISprite>(toAdd);
+			comp.type = toAdd.type;
+			comp.SetDimensions(toAdd.width, toAdd.height);
+			return comp;
 		}
-		UICamera.currentTouchID = currentTouchID;
+		/// <summary>
+		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+		/// </summary>
+		public UIButton AddComponent(UIButton toAdd)
+		{
+			var comp = go.AddComponent<UIButton>(toAdd);
+			if (toAdd.tweenTarget)
+				comp.tweenTarget = go;
+			comp.OnInit();
+			comp.hover   = toAdd.hover;
+			comp.pressed = toAdd.pressed;
+			return comp;
+		}
+		/// <summary>
+		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
+		/// </summary>
+		public UILabel AddComponent(UILabel toAdd)
+		{
+			var comp      = go.AddComponent<UILabel>(toAdd);
+			comp.color    = toAdd.color;
+			comp.fontSize = toAdd.fontSize;
+			return comp;
+		}
+	}
+
+	extension(LineRenderer @this)
+	{
+		public Vector3[] GetPositions()
+		{
+			var positions = new Vector3[@this.positionCount];
+			@this.GetPositions(positions);
+			return positions;
+		}
+	}
+
+	extension(UITooltipScript @this)
+	{
+		public void RestartTooltip()
+		{
+			if (UIHoverText.text == @this.translatedTooltip)
+			{
+				@this.CancelTooltip();
+				@this.OnHover(true);
+			}
+			else if (
+				UIHoverText.text == @this.translatedDelayTooltip && @this.translatedTooltip == "" ||
+				UIHoverText.text == @this.translatedTooltip + UIHoverText.DelayTooltipSpacer + @this.translatedDelayTooltip
+			){
+				@this.CancelTooltip();
+				@this.OnHover(true);
+				@this.CancelInvoke(nameof(@this.InvokeDelayTooltip));
+				@this.InvokeDelayTooltip();
+			}
+		}
+	}
+
+	extension(UICamera)
+	{
+		public static void SpoofNotifyOnClick(GameObject go, int touchID = UICameraTouch.LEFT)
+		{
+			var      currentTouchID = UICamera.currentTouchID;
+			UICamera.currentTouchID = touchID;
+			{
+				UICamera.Notify(go, "OnClick", null);
+			}
+			UICamera.currentTouchID = currentTouchID;
+		}
 	}
 }
 
@@ -106,7 +121,7 @@ public class UIPointerRotationSnapX : MonoBehaviour
 	void OnAltClick()
 	{
 		@base.bMouse1 = true;
-		UICamera.current.SpoofNotifyOnClick(gameObject);
+		UICamera.SpoofNotifyOnClick(gameObject);
 	}
 }
 [HarmonyPatch]
@@ -219,12 +234,12 @@ public class UZCameraHome : MonoBehaviour
 		}
 		UIDialog.ShowDropDown(
 			"[b]Choose Camera Home[/b]",
-			dropDownOptions: [.. EnumX.GetNames<Home>()],
+			dropDownOptions: [.. Enum.GetNames<Home>()],
 			drowDownValue:   Current.ToString(),
 
 			leftButtonText: "OK",
 			leftButtonFunc: label =>
-				Current = EnumX.Parse<Home>(label),
+				Current = Enum.Parse<Home>(label),
 
 			rightButtonText: "Cancel",
 			rightButtonFunc: null
@@ -286,7 +301,7 @@ public class GUIEndTurnX : MonoBehaviour
 			return;
 		Turns.Instance.turnsState.Reverse ^= true;
 		{
-			UICamera.current.SpoofNotifyOnClick(gameObject);
+			UICamera.SpoofNotifyOnClick(gameObject);
 		}
 		Turns.Instance.turnsState.Reverse ^= true;
 	}
@@ -507,10 +522,10 @@ public class UIColorSelectionX : MonoBehaviour
 
 	void Update()
 	{
-		if (restartTooltip || (
-			zInput.GetButtonDown("Ctrl")  || zInput.GetButtonUp("Ctrl") ||
-			zInput.GetButtonDown("Shift") || zInput.GetButtonUp("Shift")
-		)){
+		if (restartTooltip ||
+			zInput.GetButtonChanged("Ctrl") ||
+			zInput.GetButtonChanged("Shift")
+		){
 			restartTooltip  = false;
 			tooltip.Tooltip = originalTooltip;
 			if (!UZCameraHome.NeedToPickHome && Network.isAdmin)
@@ -537,48 +552,62 @@ public static class UICustomObjectX
 		public readonly List<Delegate> OnImportFakeQueue = [];
 		// #todo? onCancel
 	}
-	static Data X<T>(this T @this) where T : UICustomObject<T> =>
-		@this.gameObject.GetOrAddComponent<Data>();
-	// static bool GetX<T>(this T @this, out Data thisX) where T : UICustomObject<T> =>
-	// 	@this.TryGetComponent(out thisX);
-	// static void ClearX<T>(this T @this) where T : UICustomObject<T>
-	// {
-	// 	if (@this.GetX(out var thisX))
-	// 		UnityEngine.Object.Destroy(thisX);
-	// }
-
-	public static bool TargettingFake<T>(this T @this) where T : UICustomObject<T> =>
-		@this.CustomObjectQueue is [null, ..];
-
-	public static void QueueFake(this UICustomImage @this, Action<UICustomImage> onImport) =>
-		QueueFake<UICustomImage>(@this, onImport);
-	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport) =>
-		QueueFake<UICustomSky>(@this, onImport);
-	static void QueueFake<T>(this T @this, Action<T> onImport) where T : UICustomObject<T>
+	extension<T>(T @this) where T : UICustomObject<T>
 	{
-		if (@this.X().OnImportFakeQueue.Contains(onImport))
-			return;
-		@this.X().OnImportFakeQueue.Add(onImport);
-		@this    .CustomObjectQueue.Add(null);
-		@this.NumberInQueue      = @this.CustomObjectQueue.Count - 1;
-		@this.TargetCustomObject = null;
-		@this.gameObject.SetActive(true);
+		Data Data => @this.gameObject.GetOrAddComponent<Data>();
+		public List<Delegate> OnImportFakeQueue => @this.Data.OnImportFakeQueue;
+
+		public bool TargettingFake() =>
+			@this.CustomObjectQueue is [null, ..];
+
+		void QueueFake(Action<T> onImport)
+		{
+			if (@this.OnImportFakeQueue.Contains(onImport))
+				return;
+			@this.OnImportFakeQueue.Add(onImport);
+			@this.CustomObjectQueue.Add(null);
+			@this.NumberInQueue      = @this.CustomObjectQueue.Count - 1;
+			@this.TargetCustomObject = null;
+			@this.gameObject.SetActive(true);
+		}
+
+		bool BaseOnEnableFake()
+		{
+			if (@this.TargettingFake())
+			{
+				@this.TargetCustomObject = null;
+				@this.GetComponent<UIHighlightTargets>().Reset();
+				return true;
+			}
+			return false;
+		}
+
+		void BaseCloseFake()
+		{
+			if (@this.TargettingFake())
+				@this.OnImportFakeQueue.RemoveAt(0);
+		}
+
+		bool ImportFake()
+		{
+			if (@this.TargettingFake() && @this.OnImportFakeQueue is [{} onImport, ..])
+			{
+				onImport.DynamicInvoke(@this);
+				return true;
+			}
+			return false;
+		}
 	}
+	public static void QueueFake(this UICustomImage @this, Action<UICustomImage> onImport) =>
+		@this.QueueFake<UICustomImage>(onImport);
+	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport) =>
+		@this.QueueFake<UICustomSky>(onImport);
+
 	static object Invoke(object @this, string method) =>
 		AccessTools.Method(typeof(UICustomObjectX), method)
 			.MakeGenericMethod([@this.GetType()])
 			.Invoke(null, [@this]);
 
-	static bool BaseOnEnableFake<T>(this T @this) where T : UICustomObject<T>
-	{
-		if (@this.TargettingFake())
-		{
-			@this.TargetCustomObject = null;
-			@this.GetComponent<UIHighlightTargets>().Reset();
-			return true;
-		}
-		return false;
-	}
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.OnEnable))]
@@ -609,26 +638,12 @@ public static class UICustomObjectX
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
 	static bool BaseUpdatePrefix(object __instance) =>
 		!(bool) Invoke(__instance, nameof(TargettingFake));
-	static void BaseCloseFake<T>(this T @this) where T : UICustomObject<T>
-	{
-		if (@this.TargettingFake())
-			@this.X().OnImportFakeQueue.RemoveAt(0);
-	}
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Close))]
 	static void BaseClosePrefix(object __instance) =>
 		Invoke(__instance, nameof(BaseCloseFake));
 
-	static bool ImportFake<T>(this T @this) where T : UICustomObject<T>
-	{
-		if (@this.TargettingFake() && @this.X().OnImportFakeQueue is [{} onImport, ..])
-		{
-			onImport.DynamicInvoke(@this);
-			return true;
-		}
-		return false;
-	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.Import))]
 	[HarmonyPatch(typeof(UICustomSky),   nameof(UICustomSky  .Import))]
@@ -921,7 +936,7 @@ public static class UICustomObjectX
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	static void TileStartPostfix(UICustomTile __instance) =>
-		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && PlayerStateX.Host.IsModded;
+		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && PlayerManager.Instance.HostPlayerState().IsModded;
 	// #todo: GetCustomObject parity
 	// #todo: relocate to dedicated Lua fixes/additions
 	[HarmonyPostfix]

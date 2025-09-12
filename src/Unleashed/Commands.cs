@@ -110,7 +110,7 @@ public static class Commands
 			foreach (var player in PlayerManager.Instance.PlayersList)
 				Chat.Log(
 					$"{player.id}: {player.name}" +
-						(!player.X().IsModded      ? "" : $" +{Main.PLUGIN_ABBR}") +
+						(!player.IsModded          ? "" : $" +{Main.PLUGIN_ABBR}") +
 						(player.id != NetworkID.ID ? "" : " (you)"),
 					Main.PluginColour,
 					type
@@ -168,7 +168,7 @@ public static class Commands
 				return false;
 			}
 			if (!int.TryParse(LibString.bite(ref rest), out var senderId) ||
-				!PlayerManager.Instance.PlayersDictionary.TryGetValue(Compat.PlayerID(senderId), out var sender)
+				!PlayerManager.Instance.PlayersDictionary.TryGetValue(NetworkID.PlayerID(senderId), out var sender)
 			){
 				Chat.Log($"Invalid sender ID! See /{px}list to view all player IDs.", Main.ErrorColour, type);
 				return false;
@@ -184,13 +184,13 @@ public static class Commands
 				return false;
 			}
 			if (!int.TryParse(LibString.bite(ref rest), out var senderId) ||
-				!PlayerManager.Instance.PlayersDictionary.TryGetValue(Compat.PlayerID(senderId), out var sender)
+				!PlayerManager.Instance.PlayersDictionary.TryGetValue(NetworkID.PlayerID(senderId), out var sender)
 			){
 				Chat.Log($"Invalid sender ID! See /{px}list to view all player IDs.", Main.ErrorColour, type);
 				return false;
 			}
 			if (!int.TryParse(LibString.bite(ref rest), out var recipientId) ||
-				!PlayerManager.Instance.PlayersDictionary.TryGetValue(Compat.PlayerID(recipientId), out var recipient)
+				!PlayerManager.Instance.PlayersDictionary.TryGetValue(NetworkID.PlayerID(recipientId), out var recipient)
 			){
 				Chat.Log($"Invalid recipient ID! See /{px}list to view all player IDs.", Main.ErrorColour, type);
 				return false;
@@ -207,7 +207,7 @@ public static class Commands
 				return false;
 			}
 			if (!int.TryParse(LibString.bite(ref rest), out var senderId) ||
-				!PlayerManager.Instance.PlayersDictionary.TryGetValue(Compat.PlayerID(senderId), out var sender)
+				!PlayerManager.Instance.PlayersDictionary.TryGetValue(NetworkID.PlayerID(senderId), out var sender)
 			){
 				Chat.Log($"Invalid sender ID! See /{px}list to view all player IDs.", Main.ErrorColour, type);
 				return false;

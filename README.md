@@ -16,7 +16,7 @@ Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 
 # Compilation
 
-Unleashed is compiled using .NET 9 targetting netstandard2.0.
+Unleashed is compiled using .NET 10 targetting netstandard2.0.
 
 Copy or symlink all DLL files mentioned in `[REPO]/Unleashed.csproj` from the `[GAME]/Tabletop_Simulator_Data/Managed` folder to the `[REPO]/lib/` folder.\
 Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/bin/edu.sos.unleashed.dll`.\

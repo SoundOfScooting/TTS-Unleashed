@@ -98,7 +98,7 @@ public class RemoteX : BaseNetworkAttribute
 		validationFunctions.Add(
 			$"{Main.PLUGIN_GUID}/Turns.SetPlayerTurn",
 			player => player.isAdmin || (
-				PlayerStateX.Host.IsModded &&
+				PlayerManager.Instance.HostPlayerState().IsModded &&
 				Turns.Instance.turnsState.PassTurns &&
 				Turns.Instance.IsTurn(PlayerManager.Instance.PlayerStateFromID(player.id).stringColor)
 			)
@@ -113,7 +113,7 @@ public class RemoteX : BaseNetworkAttribute
 		validationFunctions.Add(
 			$"{Main.PLUGIN_GUID}/Pointer.SetPhysics",
 			player => player.isServer || (
-				PlayerStateX.Host.IsModded &&
+				PlayerManager.Instance.HostPlayerState().IsModded &&
 				validationFunctions["Permissions/Contextual"](player)
 			)
 		);
@@ -200,117 +200,123 @@ public class RemoteX : BaseNetworkAttribute
 public static class NetworkBehaviorX // awful
 {
 	// static
-	public static void RPC_X<T>(this T @this, RPCTarget target, Action<T> action) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this);
-	public static void RPC_X<T, T1>(this T @this, RPCTarget target, Action<T, T1> action, T1 arg1) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1);
-	public static void RPC_X<T, T1, T2>(this T @this, RPCTarget target, Action<T, T1, T2> action, T1 arg1, T2 arg2) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2);
-	public static void RPC_X<T, T1, T2, T3>(this T @this, RPCTarget target, Action<T, T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3);
-	public static void RPC_X<T, T1, T2, T3, T4>(this T @this, RPCTarget target, NetworkView.Action<T, T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4);
-	public static void RPC_X<T, T1, T2, T3, T4, T5>(this T @this, RPCTarget target, NetworkView.Action<T, T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4, arg5);
+	extension<T>(T @this) where T : NetworkBehavior
+	{
+		public void RPC_X(RPCTarget target, Action<T> action) =>
+			@this.networkView.RPC(target, action, @this);
+		public void RPC_X<T1>(RPCTarget target, Action<T, T1> action, T1 arg1) =>
+			@this.networkView.RPC(target, action, @this, arg1);
+		public void RPC_X<T1, T2>(RPCTarget target, Action<T, T1, T2> action, T1 arg1, T2 arg2) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2);
+		public void RPC_X<T1, T2, T3>(RPCTarget target, Action<T, T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3);
+		public void RPC_X<T1, T2, T3, T4>(RPCTarget target, NetworkView.Action<T, T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4);
+		public void RPC_X<T1, T2, T3, T4, T5>(RPCTarget target, NetworkView.Action<T, T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4, arg5);
 
-	public static void RPC_X<T, TResult>(this T @this, RPCTarget target, Func<T, TResult> action) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this);
-	public static void RPC_X<T, T1, TResult>(this T @this, RPCTarget target, Func<T, T1, TResult> action, T1 arg1) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1);
-	public static void RPC_X<T, T1, T2, TResult>(this T @this, RPCTarget target, Func<T, T1, T2, TResult> action, T1 arg1, T2 arg2) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2);
-	public static void RPC_X<T, T1, T2, T3, TResult>(this T @this, RPCTarget target, Func<T, T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3);
-	public static void RPC_X<T, T1, T2, T3, T4, TResult>(this T @this, RPCTarget target, Func<T, T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4);
-	public static void RPC_X<T, T1, T2, T3, T4, T5, TResult>(this T @this, RPCTarget target, Func<T, T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) where T : NetworkBehavior =>
-		@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4, arg5);
+		public void RPC_X<TResult>(RPCTarget target, Func<T, TResult> action) =>
+			@this.networkView.RPC(target, action, @this);
+		public void RPC_X<T1, TResult>(RPCTarget target, Func<T, T1, TResult> action, T1 arg1) =>
+			@this.networkView.RPC(target, action, @this, arg1);
+		public void RPC_X<T1, T2, TResult>(RPCTarget target, Func<T, T1, T2, TResult> action, T1 arg1, T2 arg2) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2);
+		public void RPC_X<T1, T2, T3, TResult>(RPCTarget target, Func<T, T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3);
+		public void RPC_X<T1, T2, T3, T4, TResult>(RPCTarget target, Func<T, T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4);
+		public void RPC_X<T1, T2, T3, T4, T5, TResult>(RPCTarget target, Func<T, T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+			@this.networkView.RPC(target, action, @this, arg1, arg2, arg3, arg4, arg5);
 
-	public static void RPC_X<T>(this T @this, NetworkPlayer receiver, Action<T> action) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this);
-	public static void RPC_X<T, T1>(this T @this, NetworkPlayer receiver, Action<T, T1> action, T1 arg1) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1);
-	public static void RPC_X<T, T1, T2>(this T @this, NetworkPlayer receiver, Action<T, T1, T2> action, T1 arg1, T2 arg2) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2);
-	public static void RPC_X<T, T1, T2, T3>(this T @this, NetworkPlayer receiver, Action<T, T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3);
-	public static void RPC_X<T, T1, T2, T3, T4>(this T @this, NetworkPlayer receiver, NetworkView.Action<T, T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4);
-	public static void RPC_X<T, T1, T2, T3, T4, T5>(this T @this, NetworkPlayer receiver, NetworkView.Action<T, T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4, arg5);
+		public void RPC_X(NetworkPlayer receiver, Action<T> action) =>
+			@this.networkView.RPC(receiver, action, @this);
+		public void RPC_X<T1>(NetworkPlayer receiver, Action<T, T1> action, T1 arg1) =>
+			@this.networkView.RPC(receiver, action, @this, arg1);
+		public void RPC_X<T1, T2>(NetworkPlayer receiver, Action<T, T1, T2> action, T1 arg1, T2 arg2) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2);
+		public void RPC_X<T1, T2, T3>(NetworkPlayer receiver, Action<T, T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3);
+		public void RPC_X<T1, T2, T3, T4>(NetworkPlayer receiver, NetworkView.Action<T, T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4);
+		public void RPC_X<T1, T2, T3, T4, T5>(NetworkPlayer receiver, NetworkView.Action<T, T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4, arg5);
 
-	public static void RPC_X<T, TResult>(this T @this, NetworkPlayer receiver, Func<T, TResult> action) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this);
-	public static void RPC_X<T, T1, TResult>(this T @this, NetworkPlayer receiver, Func<T, T1, TResult> action, T1 arg1) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1);
-	public static void RPC_X<T, T1, T2, TResult>(this T @this, NetworkPlayer receiver, Func<T, T1, T2, TResult> action, T1 arg1, T2 arg2) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2);
-	public static void RPC_X<T, T1, T2, T3, TResult>(this T @this, NetworkPlayer receiver, Func<T, T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3);
-	public static void RPC_X<T, T1, T2, T3, T4, TResult>(this T @this, NetworkPlayer receiver, Func<T, T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4);
-	public static void RPC_X<T, T1, T2, T3, T4, T5, TResult>(this T @this, NetworkPlayer receiver, Func<T, T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) where T : NetworkBehavior =>
-		@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4, arg5);
+		public void RPC_X<TResult>(NetworkPlayer receiver, Func<T, TResult> action) =>
+			@this.networkView.RPC(receiver, action, @this);
+		public void RPC_X<T1, TResult>(NetworkPlayer receiver, Func<T, T1, TResult> action, T1 arg1) =>
+			@this.networkView.RPC(receiver, action, @this, arg1);
+		public void RPC_X<T1, T2, TResult>(NetworkPlayer receiver, Func<T, T1, T2, TResult> action, T1 arg1, T2 arg2) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2);
+		public void RPC_X<T1, T2, T3, TResult>(NetworkPlayer receiver, Func<T, T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3);
+		public void RPC_X<T1, T2, T3, T4, TResult>(NetworkPlayer receiver, Func<T, T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4);
+		public void RPC_X<T1, T2, T3, T4, T5, TResult>(NetworkPlayer receiver, Func<T, T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+			@this.networkView.RPC(receiver, action, @this, arg1, arg2, arg3, arg4, arg5);
+	}
 
 //	// instance
-//	public static void RPC_X(this NetworkBehavior @this, RPCTarget target, Action action) =>
-//		@this.networkView.RPC(target, action);
-//	public static void RPC_X<T1>(this NetworkBehavior @this, RPCTarget target, Action<T1> action, T1 arg1) =>
-//		@this.networkView.RPC(target, action, arg1);
-//	public static void RPC_X<T1, T2>(this NetworkBehavior @this, RPCTarget target, Action<T1, T2> action, T1 arg1, T2 arg2) =>
-//		@this.networkView.RPC(target, action, arg1, arg2);
-//	public static void RPC_X<T1, T2, T3>(this NetworkBehavior @this, RPCTarget target, Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3);
-//	public static void RPC_X<T1, T2, T3, T4>(this NetworkBehavior @this, RPCTarget target, Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4);
-//	public static void RPC_X<T1, T2, T3, T4, T5>(this NetworkBehavior @this, RPCTarget target, NetworkView.Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5);
-//	public static void RPC_X<T1, T2, T3, T4, T5, T6>(this NetworkBehavior @this, RPCTarget target, NetworkView.Action<T1, T2, T3, T4, T5, T6> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5, arg6);
+//	extension(NetworkBehavior @this)
+//	{
+//		public void RPC_X(RPCTarget target, Action action) =>
+//			@this.networkView.RPC(target, action);
+//		public void RPC_X<T1>(RPCTarget target, Action<T1> action, T1 arg1) =>
+//			@this.networkView.RPC(target, action, arg1);
+//		public void RPC_X<T1, T2>(RPCTarget target, Action<T1, T2> action, T1 arg1, T2 arg2) =>
+//			@this.networkView.RPC(target, action, arg1, arg2);
+//		public void RPC_X<T1, T2, T3>(RPCTarget target, Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3);
+//		public void RPC_X<T1, T2, T3, T4>(RPCTarget target, Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4);
+//		public void RPC_X<T1, T2, T3, T4, T5>(RPCTarget target, NetworkView.Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5);
+//		public void RPC_X<T1, T2, T3, T4, T5, T6>(RPCTarget target, NetworkView.Action<T1, T2, T3, T4, T5, T6> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5, arg6);
 //
-//	public static void RPC_X<TResult>(this NetworkBehavior @this, RPCTarget target, Func<TResult> action) =>
-//		@this.networkView.RPC(target, action);
-//	public static void RPC_X<T1, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, TResult> action, T1 arg1) =>
-//		@this.networkView.RPC(target, action, arg1);
-//	public static void RPC_X<T1, T2, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, T2, TResult> action, T1 arg1, T2 arg2) =>
-//		@this.networkView.RPC(target, action, arg1, arg2);
-//	public static void RPC_X<T1, T2, T3, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3);
-//	public static void RPC_X<T1, T2, T3, T4, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4);
-//	public static void RPC_X<T1, T2, T3, T4, T5, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5);
-//	public static void RPC_X<T1, T2, T3, T4, T5, T6, TResult>(this NetworkBehavior @this, RPCTarget target, Func<T1, T2, T3, T4, T5, T6, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
-//		@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5, arg6);
+//		public void RPC_X<TResult>(RPCTarget target, Func<TResult> action) =>
+//			@this.networkView.RPC(target, action);
+//		public void RPC_X<T1, TResult>(RPCTarget target, Func<T1, TResult> action, T1 arg1) =>
+//			@this.networkView.RPC(target, action, arg1);
+//		public void RPC_X<T1, T2, TResult>(RPCTarget target, Func<T1, T2, TResult> action, T1 arg1, T2 arg2) =>
+//			@this.networkView.RPC(target, action, arg1, arg2);
+//		public void RPC_X<T1, T2, T3, TResult>(RPCTarget target, Func<T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3);
+//		public void RPC_X<T1, T2, T3, T4, TResult>(RPCTarget target, Func<T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4);
+//		public void RPC_X<T1, T2, T3, T4, T5, TResult>(RPCTarget target, Func<T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5);
+//		public void RPC_X<T1, T2, T3, T4, T5, T6, TResult>(RPCTarget target, Func<T1, T2, T3, T4, T5, T6, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
+//			@this.networkView.RPC(target, action, arg1, arg2, arg3, arg4, arg5, arg6);
 //
-//	public static void RPC_X(this NetworkBehavior @this, NetworkPlayer receiver, Action action) =>
-//		@this.networkView.RPC(receiver, action);
-//	public static void RPC_X<T1>(this NetworkBehavior @this, NetworkPlayer receiver, Action<T1> action, T1 arg1) =>
-//		@this.networkView.RPC(receiver, action, arg1);
-//	public static void RPC_X<T1, T2>(this NetworkBehavior @this, NetworkPlayer receiver, Action<T1, T2> action, T1 arg1, T2 arg2) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2);
-//	public static void RPC_X<T1, T2, T3>(this NetworkBehavior @this, NetworkPlayer receiver, Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3);
-//	public static void RPC_X<T1, T2, T3, T4>(this NetworkBehavior @this, NetworkPlayer receiver, Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4);
-//	public static void RPC_X<T1, T2, T3, T4, T5>(this NetworkBehavior @this, NetworkPlayer receiver, NetworkView.Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5);
-//	public static void RPC_X<T1, T2, T3, T4, T5, T6>(this NetworkBehavior @this, NetworkPlayer receiver, NetworkView.Action<T1, T2, T3, T4, T5, T6> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5, arg6);
+//		public void RPC_X(NetworkPlayer receiver, Action action) =>
+//			@this.networkView.RPC(receiver, action);
+//		public void RPC_X<T1>(NetworkPlayer receiver, Action<T1> action, T1 arg1) =>
+//			@this.networkView.RPC(receiver, action, arg1);
+//		public void RPC_X<T1, T2>(NetworkPlayer receiver, Action<T1, T2> action, T1 arg1, T2 arg2) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2);
+//		public void RPC_X<T1, T2, T3>(NetworkPlayer receiver, Action<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3);
+//		public void RPC_X<T1, T2, T3, T4>(NetworkPlayer receiver, Action<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4);
+//		public void RPC_X<T1, T2, T3, T4, T5>(NetworkPlayer receiver, NetworkView.Action<T1, T2, T3, T4, T5> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5);
+//		public void RPC_X<T1, T2, T3, T4, T5, T6>(NetworkPlayer receiver, NetworkView.Action<T1, T2, T3, T4, T5, T6> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5, arg6);
 //
-//	public static void RPC_X<TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<TResult> action) =>
-//		@this.networkView.RPC(receiver, action);
-//	public static void RPC_X<T1, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, TResult> action, T1 arg1) =>
-//		@this.networkView.RPC(receiver, action, arg1);
-//	public static void RPC_X<T1, T2, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, T2, TResult> action, T1 arg1, T2 arg2) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2);
-//	public static void RPC_X<T1, T2, T3, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3);
-//	public static void RPC_X<T1, T2, T3, T4, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4);
-//	public static void RPC_X<T1, T2, T3, T4, T5, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5);
-//	public static void RPC_X<T1, T2, T3, T4, T5, T6, TResult>(this NetworkBehavior @this, NetworkPlayer receiver, Func<T1, T2, T3, T4, T5, T6, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
-//		@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5, arg6);
+//		public void RPC_X<TResult>(NetworkPlayer receiver, Func<TResult> action) =>
+//			@this.networkView.RPC(receiver, action);
+//		public void RPC_X<T1, TResult>(NetworkPlayer receiver, Func<T1, TResult> action, T1 arg1) =>
+//			@this.networkView.RPC(receiver, action, arg1);
+//		public void RPC_X<T1, T2, TResult>(NetworkPlayer receiver, Func<T1, T2, TResult> action, T1 arg1, T2 arg2) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2);
+//		public void RPC_X<T1, T2, T3, TResult>(NetworkPlayer receiver, Func<T1, T2, T3, TResult> action, T1 arg1, T2 arg2, T3 arg3) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3);
+//		public void RPC_X<T1, T2, T3, T4, TResult>(NetworkPlayer receiver, Func<T1, T2, T3, T4, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4);
+//		public void RPC_X<T1, T2, T3, T4, T5, TResult>(NetworkPlayer receiver, Func<T1, T2, T3, T4, T5, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5);
+//		public void RPC_X<T1, T2, T3, T4, T5, T6, TResult>(NetworkPlayer receiver, Func<T1, T2, T3, T4, T5, T6, TResult> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5, T6 arg6) =>
+//			@this.networkView.RPC(receiver, action, arg1, arg2, arg3, arg4, arg5, arg6);
+//	}
 }
 
