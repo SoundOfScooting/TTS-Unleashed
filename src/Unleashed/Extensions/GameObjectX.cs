@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Unleashed.Extensions;
 
 static class GameObjectX
@@ -14,50 +16,59 @@ static class GameObjectX
 
 	extension(GameObject @this)
 	{
-		public void AssignLocalTRS(GameObject src)
+		public Transform CopyParent(GameObject other) =>
+			@this.CopyParent(other.transform);
+		public Transform CopyParent(Component other) =>
+			@this.CopyParent(other.transform);
+		public Transform CopyParent(Transform src) =>
+			@this.transform.CopyParent(src);
+
+		public T CopyComponent<T>(GameObject other) where T : Component =>
+			@this.CopyComponent(other.GetComponent<T>());
+		public T CopyComponent<T>(Component other) where T : Component =>
+			@this.CopyComponent(other.GetComponent<T>());
+		[OverloadResolutionPriority(1)]
+		public T CopyComponent<T>(T source) where T : Component =>
+			@this.AddComponent<T>().Copy(source);
+	}
+	extension(Transform @this)
+	{
+		public Transform CopyParent(Transform source)
 		{
-			@this.transform.parent        = src.transform.parent;
-			@this.transform.localPosition = src.transform.localPosition;
-			@this.transform.localRotation = src.transform.localRotation;
-			@this.transform.localScale    = src.transform.localScale;
-			@this.layer = src.layer;
+			@this.SetParent(source.parent, false);
+			@this.localPosition    = source.localPosition;
+			@this.localRotation    = source.localRotation;
+			@this.localScale       = source.localScale;
+			@this.gameObject.layer = source.gameObject.layer;
+			return @this;
 		}
 	}
-
-	extension(GameObject go)
+	extension<T>(T @this) where T : Component
 	{
-		/// <summary>
-		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-		/// </summary>
-		public UISprite AddComponent(UISprite toAdd)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0030:Do not use banned APIs", Justification = "<Pending>")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "<Pending>")]
+		public T Copy(T source)
 		{
-			var comp  = go.AddComponent<UISprite>(toAdd);
-			comp.type = toAdd.type;
-			comp.SetDimensions(toAdd.width, toAdd.height);
-			return comp;
-		}
-		/// <summary>
-		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-		/// </summary>
-		public UIButton AddComponent(UIButton toAdd)
-		{
-			var comp = go.AddComponent<UIButton>(toAdd);
-			if (toAdd.tweenTarget)
-				comp.tweenTarget = go;
-			comp.OnInit();
-			comp.hover   = toAdd.hover;
-			comp.pressed = toAdd.pressed;
-			return comp;
-		}
-		/// <summary>
-		/// Wrapper around <see cref="global::ExtensionMethods.AddComponent{T}(GameObject, T)"/> due to inadequate <see cref="global::ExtensionMethods.GetCopyOf{T}(Component, T)"/>
-		/// </summary>
-		public UILabel AddComponent(UILabel toAdd)
-		{
-			var comp      = go.AddComponent<UILabel>(toAdd);
-			comp.color    = toAdd.color;
-			comp.fontSize = toAdd.fontSize;
-			return comp;
+			@this = @this.GetCopyOf(source);
+			switch ((@this, source))
+			{
+				case (UISprite dst, UISprite src):
+					dst.type = src.type;
+					dst.SetDimensions(src.width, src.height);
+					break;
+				case (UIButton dst, UIButton src):
+					if (src.tweenTarget) // #todo:
+						dst.tweenTarget = dst.gameObject;
+					dst.OnInit();
+					dst.hover   = src.hover;
+					dst.pressed = src.pressed;
+					break;
+				case (UILabel dst, UILabel src):
+					dst.color    = src.color;
+					dst.fontSize = src.fontSize;
+					break;
+			}
+			return @this;
 		}
 	}
 }

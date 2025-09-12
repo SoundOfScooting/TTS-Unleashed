@@ -7,3 +7,5 @@ indent_size  = tab
 tab_width    = 4
 insert_final_newline = true
 
+# RS0030: Do not use banned APIs
+dotnet_diagnostic.RS0030.severity = error

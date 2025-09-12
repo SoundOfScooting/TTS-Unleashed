@@ -93,20 +93,19 @@ sealed class UZCameraHome : MonoBehaviour
 			.FindObjectsOfTypeAll<UIPointerRotationSnap>()
 			.FirstOrDefault();
 
-		gameObject.AssignLocalTRS(@base.gameObject);
-		transform .localPosition += new Vector3(56f, 0f, 0f);
-		gameObject.AddComponent(@base.GetComponent<BoxCollider2D>());
-		gameObject.AddComponent(@base.GetComponent<UISprite>());
-		gameObject.AddComponent(@base.GetComponent<UIButton>());
-		gameObject.AddComponent<UITooltipScript>().Tooltip = "Camera Home";
-		gameObject.AddComponent<TweenColor>();
+		gameObject.CopyParent(@base).localPosition += new Vector3(56f, 0f, 0f);
+		gameObject.CopyComponent<BoxCollider2D>(@base);
+		gameObject.CopyComponent<UISprite>(@base);
+		gameObject.CopyComponent<UIButton>(@base);
+		gameObject.AddComponent <UITooltipScript>().Tooltip = "Camera Home";
+		gameObject.AddComponent <TweenColor>();
 		// I2.Loc.Localize
 
 		var labelObject = new GameObject(@base.ThisLabelObject.name);
-		labelObject.AssignLocalTRS(@base.ThisLabelObject);
+		labelObject.CopyParent(@base.ThisLabelObject);
 		labelObject.transform.parent        = transform;
 		labelObject.transform.localPosition = new(0f, -2f, 0f);
-		Label = labelObject.AddComponent(@base.ThisLabelObject.GetComponent<UILabel>());
+		Label = labelObject.CopyComponent<UILabel>(@base.ThisLabelObject);
 	}
 
 	void OnClick()
@@ -1138,26 +1137,23 @@ sealed class UZContextualStash : MonoBehaviour, IUZContextual
 	{
 		this.type = type;
 
-		var baseObject =
-			NetworkUI.Instance.GUIContextualGlobalMenu.transform
-				.Find("Table/04 Paste").gameObject;
-		gameObject.AssignLocalTRS(baseObject);
+		var @base = NetworkUI.Instance.GUIContextualGlobalMenu.transform.Find("Table/04 Paste");
+		transform.CopyParent(@base);
 		if ((type & FLAG_Global) == 0)
 			transform.parent = NetworkUI.Instance.GUIContextualMenu.transform.Find("Table");
 
-		(Label = gameObject.AddComponent(baseObject.GetComponent<UILabel>()))
+		(Label = gameObject.CopyComponent<UILabel>(@base))
 			.text = LABEL_PADDING + "???";
-		gameObject.AddComponent(baseObject.GetComponents<UIButton>()[0])
+		gameObject.CopyComponent(@base.GetComponents<UIButton>()[0])
 			.onClick = [new(OnClickContextual)];
-		gameObject.AddComponent(baseObject.GetComponent<BoxCollider2D>());
-		gameObject.AddComponent<TweenColor>();
+		gameObject.CopyComponent<BoxCollider2D>(@base);
+		gameObject.AddComponent <TweenColor>();
 
-		var baseImagesObject = baseObject.transform.Find("Images").gameObject;
-		var imagesObject     = new GameObject(baseImagesObject.name);
-		imagesObject.AssignLocalTRS(baseImagesObject);
-		imagesObject.transform.parent = transform;
+		var baseImages   = @base.Find("Images");
+		var imagesObject = new GameObject(baseImages.name);
+		imagesObject.CopyParent(baseImages).parent = transform;
 
-		(Icon = imagesObject.AddComponent(baseImagesObject.GetComponent<UISprite>()))
+		(Icon = imagesObject.CopyComponent<UISprite>(baseImages))
 			.spriteName = "???";
 	}
 

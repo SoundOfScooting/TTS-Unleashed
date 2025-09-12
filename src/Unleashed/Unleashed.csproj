@@ -10,4 +10,12 @@
 		<DefineConstants Condition=" '$(TRUE_ULTIMATE_POWER)' != '0' ">$(DefineConstants);TRUE_ULTIMATE_POWER;</DefineConstants>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<AdditionalFiles Include="BannedSymbols.txt" />
+		<PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+	</ItemGroup>
+
 </Project>

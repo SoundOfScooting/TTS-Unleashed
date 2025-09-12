@@ -1,0 +1,2 @@
+M:ExtensionMethods.GetCopyOf`1(UnityEngine.Component,``0)
+M:ExtensionMethods.AddComponent`1(UnityEngine.GameObject,``0)
