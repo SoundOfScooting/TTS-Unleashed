@@ -12,5 +12,7 @@ static class Nickname
 	{
 		if (Entry.Value is [_, ..] nickname)
 			NetworkUI.Instance.SetPlayerName(nickname);
+		else if (Offline.NoSteam)
+			NetworkUI.Instance.SetPlayerName("NotConnectedToSteam"); // bugfix
 	}
 }

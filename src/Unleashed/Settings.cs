@@ -1,9 +1,7 @@
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
-using Steamworks;
 
 namespace Unleashed;
 
@@ -103,13 +101,8 @@ static class Settings
 	{
 		Key            = "All Kickstarter Rewards",
 		DefaultValue   = false,
-		SettingChanged = (sender, args) =>
-		{
-			if (!SteamManager.bSteam)
-				return;
-			SteamManager.bKickstarterPointer = DebugAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
-			SteamManager.bKickstarterGold    = DebugAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
-		},
+		SettingLoaded  = _ => Patches.Debug.UpdateRewards(),
+		SettingChanged = (sender, args) => Patches.Debug.UpdateRewards(),
 	};
 	// public static DebugSetting<bool> DebugAllDLC = new()
 	// {

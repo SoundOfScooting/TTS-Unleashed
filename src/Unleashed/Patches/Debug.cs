@@ -1,3 +1,5 @@
+using Steamworks;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
@@ -9,26 +11,23 @@ static class Debug
 #endif
 	static Settings.Setting<bool> EntryDeveloperMode => Settings.DebugDeveloperMode;
 
+	public static void UpdateRewards()
+	{
+		SteamManager.bKickstarterPointer = EntryAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
+		SteamManager.bKickstarterGold    = EntryAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
+	}
+
 #if TRUE_ULTIMATE_POWER
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Init))]
 	static void SteamManagerInitIL(ILContext il)
 	{
 		var c = new ILCursor(il);
-		c.GotoNext(MoveType.Before,
-			// bKickstarterPointer = SteamApps.BIsSubscribedApp(KickstarterPointer);
-			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.bKickstarterPointer)))
-		);
-		c.EmitDelegate(bool(bool subscribed) =>
-			EntryAllRewards.Value || subscribed
-		);
-		c.GotoNext(MoveType.Before,
+		c.GotoNext(MoveType.After,
 			// bKickstarterGold = SteamApps.BIsSubscribedApp(KickstarterGold);
 			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.bKickstarterGold)))
 		);
-		c.EmitDelegate(bool(bool subscribed) =>
-			EntryAllRewards.Value || subscribed
-		);
+		c.EmitDelegate(UpdateRewards);
 	}
 	// [HarmonyPrefix]
 	// [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.IsSubscribedApp))]

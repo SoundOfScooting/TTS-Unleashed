@@ -1,9 +1,10 @@
 # dev
 
-* Renamed assembly from `Unleashed.dll` to `edu.sos.unleashed.dll`. To update, delete the old one and add the renamed one.
+* Renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll`. To update, delete the old one and add the renamed one.
 * Added setting `Menu Holiday`
+* Added multi-line support to object `Name` field
 * Fixed ConfigurationManager sanitizing special characters in strings
-* Object `Name` field supports multiple lines
+* Enabled starting singleplayer/hotseat without Steam running and fixed the `-nosteam` launch option.
 
 # v0.1.0
 
