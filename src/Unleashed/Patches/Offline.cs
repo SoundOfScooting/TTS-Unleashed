@@ -1,12 +1,12 @@
 using Steamworks;
 
-namespace Unleashed;
+namespace Unleashed.Patches;
 
 [HarmonyPatch]
-public static class Offline
+static class Offline
 {
-	public static bool NoSteam      => Utilities.IsLaunchOption("-nosteam");
-	public static bool Singleplayer => Network.maxConnections == 0;
+	static bool NoSteam      => Utilities.IsLaunchOption("-nosteam");
+	static bool Singleplayer => Network.maxConnections == 0;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(SteamUser),        nameof(SteamUser.GetSteamID))]

@@ -99,7 +99,7 @@ public static class Settings
 		DefaultValue = false,
 	};
 #if TRUE_ULTIMATE_POWER
-	public static readonly DebugSetting<bool> DebugAllKickstarterRewards = new()
+	public static readonly DebugSetting<bool> DebugAllRewards = new()
 	{
 		Key            = "All Kickstarter Rewards",
 		DefaultValue   = false,
@@ -107,8 +107,8 @@ public static class Settings
 		{
 			if (!SteamManager.bSteam)
 				return;
-			SteamManager.bKickstarterPointer = DebugAllKickstarterRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
-			SteamManager.bKickstarterGold    = DebugAllKickstarterRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
+			SteamManager.bKickstarterPointer = DebugAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
+			SteamManager.bKickstarterGold    = DebugAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
 		},
 	};
 	// public static DebugSetting<bool> DebugAllDLC = new()
@@ -176,16 +176,7 @@ public static class Settings
 		},
 	};
 #endif
-	public enum ValueMenuHoliday
-	{
-		Default,
-		Thanksgiving,
-		Christmas,
-		Halloween,
-		Random,
-		All,
-	}
-	public static readonly Setting<ValueMenuHoliday> EntryMenuHoliday = new()
+	public static readonly Setting<Patches.MenuHoliday.Value> EntryMenuHoliday = new()
 	{
 		Section     = Section.General,
 		Key         = "Menu Holiday",
@@ -193,7 +184,7 @@ public static class Settings
 			"""
 			The holiday logo that appears on the main menu.
 			""",
-		DefaultValue   = ValueMenuHoliday.Default,
+		DefaultValue   = Patches.MenuHoliday.Value.Default,
 		Attributes     = new() { Order = OrderByLine() },
 		SettingChanged = (sender, args) =>
 		{
@@ -217,38 +208,7 @@ public static class Settings
 		AcceptableValues = new AcceptableValueList<string>([.. Colour.AllPlayerLabels, "Choose", "Dialog"]),
 		Attributes       = new() { Order = OrderByLine() },
 	};
-	public enum ValueInitBackground
-	{
-		Museum    = 8,
-		Field     = 2,
-		Forest    = 1,
-		Tunnel    = 3,
-		Cathedral = 4,
-		Downtown  = 5,
-		Regal     = 6,
-		Sunset    = 7,
-		// Custom,
-		Random    = 0,
-	}
-	public enum ValueInitTable
-	{
-		Hexagon  = 3,
-		Octagon  = 2,
-		Square   = 1,
-		Poker    = 6,
-		[Description("RPG")] // silly
-		RPG      = 4,
-		Circular = 5,
-		// Custom,
-		Glass    = 7,
-		Plastic  = 8,
-		Random   = 0,
-		[Description("Random+")]
-		RandomPlus = -2,
-		[Description("Random++")]
-		RandomPlusPlus = -1,
-	}
-	public static readonly Setting<ValueInitBackground> EntryInitBackground = new()
+	public static readonly Setting<Patches.ServerSetup.BackgroundID> EntryInitBackground = new()
 	{
 		Section     = Section.General,
 		Key         = "Initial Background",
@@ -256,10 +216,10 @@ public static class Settings
 			"""
 			The initial background after server creation, or Random.
 			""",
-		DefaultValue = ValueInitBackground.Random,
+		DefaultValue = Patches.ServerSetup.BackgroundID.Random,
 		Attributes   = new() { Order = OrderByLine() },
 	};
-	public static readonly Setting<ValueInitTable> EntryInitTable = new()
+	public static readonly Setting<Patches.ServerSetup.TableID> EntryInitTable = new()
 	{
 		Section     = Section.General,
 		Key         = "Initial Table",
@@ -267,7 +227,7 @@ public static class Settings
 			"""
 			The initial table after server creation, or Random.
 			""",
-		DefaultValue = ValueInitTable.Random,
+		DefaultValue = Patches.ServerSetup.TableID.Random,
 		Attributes   = new() { Order = OrderByLine() },
 	};
 
