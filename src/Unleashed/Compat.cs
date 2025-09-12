@@ -5,9 +5,19 @@ namespace Unleashed;
 [HarmonyPatch]
 static class PlayerStateX
 {
-	public static ConditionalWeakTable<PlayerState, Data> CWT { get; private set; } = new();
+	[ModuleInitializer]
+	internal static void Initializer()
+	{
+		Events.OnStartDisconnected += OnStartDisconnected;
+		Events.OnStartConnected    += OnStartConnected;
+	}
+	static void OnStartDisconnected() =>
+		CWT = new();
+	static void OnStartConnected() =>
+		PlayerManager.Instance.MyPlayerState().IsModded = true;
 
-	public sealed class Data
+	static ConditionalWeakTable<PlayerState, Data> CWT;
+	sealed class Data
 	{
 		public bool IsModded;
 	}
@@ -16,11 +26,6 @@ static class PlayerStateX
 		Data Data => CWT.GetOrCreateValue(@this);
 		public ref bool IsModded => ref @this.Data.IsModded;
 	}
-
-	public static void StartDisconnected() =>
-		CWT = new();
-	public static void StartConnected() =>
-		PlayerManager.Instance.MyPlayerState().IsModded = true;
 
 	// #todo: apparently CWT is broken in this Unity version?
 	[HarmonyPostfix]
@@ -99,11 +104,6 @@ static class NetworkPhysicsObjectX
 [HarmonyPatch]
 static class Compat
 {
-	public static void StartDisconnected() =>
-		PlayerStateX.StartDisconnected();
-	public static void StartConnected() =>
-		PlayerStateX.StartConnected();
-
 	const string VERSION_HEADER = $"\n{Main.PLUGIN_GUID} V";
 
 	[HarmonyILManipulator]

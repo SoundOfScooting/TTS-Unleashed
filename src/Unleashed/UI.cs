@@ -1,17 +1,7 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Unleashed;
-
-[HarmonyPatch]
-public static class MainUI
-{
-	public static void StartConnected()
-	{
-		GUIEndTurnX.StartConnected();
-		ToolVectorX.StartConnected();
-		UIContextualX.StartConnected();
-	}
-}
 
 [HarmonyPatch]
 sealed class UIPointerRotationSnapX : MonoBehaviour
@@ -188,7 +178,10 @@ sealed class UZCameraHome : MonoBehaviour
 [HarmonyPatch]
 class GUIEndTurnX : MonoBehaviour
 {
-	public static void StartConnected() =>
+	[ModuleInitializer]
+	internal static void Initializer() =>
+		Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected() =>
 		NetworkUI.Instance.GUIEndTurn.GetOrAddComponent<GUIEndTurnX>();
 
 	[HarmonyILManipulator]
@@ -936,8 +929,12 @@ static class ToolVectorX
 	public static List<VectorEraseData> EraseBuffer { get; internal set; } = [];
 	public static bool EraseCancelled { get; internal set; }
 
-	public static void StartConnected() =>
+	[ModuleInitializer]
+	internal static void Initializer() =>
+		Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected() =>
 		Wait.Frames(UpdateUI);
+
 	public static void UpdateUI()
 	{
 		if (!NetworkUI._Instance || !NetworkUI.Instance.GUIConnected.activeInHierarchy)
@@ -1047,9 +1044,6 @@ static class UIFinderX
 [HarmonyPatch]
 static class UIContextualX
 {
-	public static void StartConnected() =>
-		UZContextualStash.StartConnected();
-
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIContextual), nameof(UIContextual.Awake))]
 	static void AwakePostfix(UIContextual __instance)
@@ -1105,7 +1099,10 @@ sealed class UZContextualStash : MonoBehaviour, IUZContextual
 		ObjectStash  = 3 << 1 | 0,
 	}
 
-	public static void StartConnected()
+	[ModuleInitializer]
+	internal static void Initializer() =>
+		Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected()
 	{
 		// after 04 Paste
 #if TRUE_ULTIMATE_POWER

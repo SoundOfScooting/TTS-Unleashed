@@ -3,17 +3,15 @@ namespace Unleashed;
 [HarmonyPatch]
 static class Events
 {
+	public static event Action OnStartConnected;
+	public static event Action OnStartDisconnected;
+
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
-	static void StartDisconnected()
-	{
-		Compat.StartDisconnected();
-	}
-	static void StartConnected()
-	{
-		Compat.StartConnected();
-		MainUI.StartConnected();
-	}
+	static void TriggerStartDisconnected() =>
+		OnStartDisconnected.Invoke();
+	static void TriggerStartConnected() =>
+		OnStartConnected.Invoke();
 
 	static bool addingAllPlayers; // annoying
 
@@ -41,7 +39,7 @@ static class Events
 		// Chat.Log($"OnPlayersAdd {playerState.id}", Main.PluginColour);
 		if (playerState.id == NetworkID.ID)
 		{
-			StartConnected();
+			TriggerStartConnected();
 			return;
 		}
 		if (NetworkUI.Instance.bHotseat)

@@ -8,7 +8,7 @@
 
 		<EnableNetAnalyzers>true</EnableNetAnalyzers>
 		<AnalysisMode>recommended</AnalysisMode>
-		<NoWarn>CA1822</NoWarn> <!-- #net10 -->
+		<NoWarn>$(NoWarn);CA1822;CA2255</NoWarn> <!-- #net10 -->
 	</PropertyGroup>
 
 	<PropertyGroup>
