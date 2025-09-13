@@ -1,17 +1,44 @@
 namespace Unleashed;
 
+// terrible
+interface IEvent<T> where T : Delegate
+{
+	T Trigger { get; }
+	void operator +=(T listener);
+	void operator -=(T listener);
+}
+record struct Event<T>(T Trigger = null) : IEvent<T> where T : Delegate
+{
+	public T Trigger { get; private set; } = Trigger;
+	public void operator +=(T listener) =>
+		Trigger = (T) Delegate.Combine(Trigger, listener);
+	public void operator -=(T listener) =>
+		Trigger = (T) Delegate.Remove(Trigger, listener);
+}
+
 [HarmonyPatch]
 static class Events
 {
 	public static event Action OnStartConnected;
 	public static event Action OnStartDisconnected;
+	// public static event Action OnPlayersAddOther;
+	public static event Action OnStartGlobalContextual;
+	public static event Action OnStartContextual;
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
 	static void TriggerStartDisconnected() =>
-		OnStartDisconnected.Invoke();
+		OnStartDisconnected?.Invoke();
 	static void TriggerStartConnected() =>
-		OnStartConnected.Invoke();
+		OnStartConnected?.Invoke();
+	// static void TriggerPlayersAddOther() =>
+	// 	OnPlayersAddOther?.Invoke();
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
+	static void TriggerStartGlobalContextual() =>
+		OnStartGlobalContextual?.Invoke();
+	internal static void TriggerStartContextual() =>
+		OnStartContextual?.Invoke();
 
 	static bool addingAllPlayers; // annoying
 
@@ -19,7 +46,6 @@ static class Events
 	{
 		NetworkEvents.OnServerInitialized += OnServerInitialized;
 		NetworkEvents.OnConnectedToServer += OnConnectedToServer;
-		// NetworkEvents.OnPlayerConnected   += OnPlayerConnected;
 		EventManager .OnPlayersAdd        += OnPlayersAdd;
 	}
 	static void OnServerInitialized() =>
@@ -44,6 +70,8 @@ static class Events
 		}
 		if (NetworkUI.Instance.bHotseat)
 			return;
+
+		// TriggerPlayersAddOther();
 
 		if (!addingAllPlayers && Settings.EntryAutoJoinMessage.Value is [_, ..] autoJoin)
 			Chat.SendChatMessage(autoJoin);

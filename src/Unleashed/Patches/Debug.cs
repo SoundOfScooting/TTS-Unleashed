@@ -54,5 +54,25 @@ static class Debug
 		}
 		return true;
 	}
+
+	// [HarmonyPostfix]
+	// [HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.SetSpecificPlayerName))]
+	// static void NetworkUISetSpecificPlayerNamePostfix(NetworkUI __instance, string newName)
+	// {
+	// 	if (!Network.isServer || __instance.bHotseat || __instance.playerIDToSet == -1)
+	// 		return;
+
+	// 	var player = PlayerManager.Instance.PlayerStateFromID(__instance.playerIDToSet);
+	// 	player.name = newName;
+	// 	// update playerName which does nothing
+	// 	__instance.networkView.RPC(player.networkPlayer, __instance.UpdateName, newName);
+
+	// 	// would trigger Auto Join Message
+	// 	var playerData = new PlayerManager.PlayerData(player);
+	// 	PlayerManager.Instance.RemovePlayer(player.id);
+	// 	PlayerManager.Instance.AddPlayer   (playerData);
+	// 	// PlayerManager.Instance.networkView.RPC(RPCTarget.Others, PlayerManager.Instance.RPCRemovePlayer, player.id);
+	// 	// PlayerManager.Instance.networkView.RPC(RPCTarget.Others, PlayerManager.Instance.RPCAddPlayer,    playerData);
+	// }
 }
 

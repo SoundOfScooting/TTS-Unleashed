@@ -1,6 +1,6 @@
 namespace Unleashed.Extensions;
 
-static class Misc
+static class MiscExtensions
 {
 	extension<T>(T @this)
 	{
@@ -17,6 +17,11 @@ static class Misc
 	{
 		public static int PlayerID(int ID) =>
 			(ID == -1) ? NetworkID.ID : ID;
+
+		public static int HotseatID =>
+			NetworkUI.Instance.bHotseat
+				? NetworkUI.Instance.CurrentHotseat
+				: NetworkID.ID;
 	}
 	extension(PlayerManager @this)
 	{

@@ -1,10 +1,11 @@
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-static class Camera
+static class CameraControls
 {
-	static Settings.Setting<bool> InvertHorizontalControls => Settings.EntryInvertHorizontal3PControls;
-	static Settings.Setting<bool> InvertVerticalControls   => Settings.EntryInvertVertical3PControls;
+	static Settings.Setting<bool> InvertHorizontalAxis    => Settings.EntryInvertHorizontal3PControls;
+	static Settings.Setting<bool> InvertVerticalAxis      => Settings.EntryInvertVertical3PControls;
+	static Settings.Setting<bool> BlockMousePanningOverUI => Settings.EntryBlockMousePanningOverUI;
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(CameraController), nameof(CameraController.Update))]
@@ -21,7 +22,7 @@ static class Camera
 		c.Index -= 2;
 		c.Remove();
 		c.EmitDelegate(float(float x, float dx) =>
-			InvertHorizontalControls.Value
+			InvertHorizontalAxis.Value
 				? x - dx
 				: x + dx
 		);
@@ -36,7 +37,7 @@ static class Camera
 		c.Index -= 2;
 		c.Remove();
 		c.EmitDelegate(float(float y, float dy) =>
-			InvertVerticalControls.Value
+			InvertVerticalAxis.Value
 				? y + dy
 				: y - dy
 		);
@@ -52,13 +53,13 @@ static class Camera
 			found++;
 			c.EmitDelegate(bool(bool cameraHoldRotateDown) =>
 				cameraHoldRotateDown && !(
-					Settings.EntryBlockMousePanningOverUI.Value &&
+					BlockMousePanningOverUI.Value &&
 					UICamera.HoverOverUI()
 				)
 			);
 		}
 		if (found != 2)
-			Main.Log.LogWarning($"{nameof(Camera)}.{nameof(UpdateIL)} expected 2, found {found}");
+			Main.Log.LogWarning($"{nameof(CameraControls)}.{nameof(UpdateIL)} expected 2, found {found}");
 	}
 }
 

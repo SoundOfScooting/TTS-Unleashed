@@ -1,5 +1,3 @@
-using static UIGridMenu;
-
 namespace Unleashed.GridMenu;
 
 [HarmonyPatch]

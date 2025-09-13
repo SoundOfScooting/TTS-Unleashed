@@ -3,7 +3,7 @@ using static UIGridMenu;
 namespace Unleashed.GridMenu;
 
 [HarmonyPatch]
-static class InitTables
+static class Tables
 {
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitTables))]

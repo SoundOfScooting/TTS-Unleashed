@@ -3,7 +3,7 @@ using static UIGridMenu;
 namespace Unleashed.GridMenu;
 
 [HarmonyPatch]
-static class InitComponents
+static class Components
 {
 	static readonly List<string> RandomNames =
 	[

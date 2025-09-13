@@ -1,6 +1,6 @@
-namespace Unleashed;
+namespace Unleashed.Extensions;
 
-public readonly record struct Comparison(int Value) // #net10: open enum + extensions?
+public readonly record struct Comparison(int Value) // #want: open enum + extensions?
 {
 	public const int
 		LT = -1,
@@ -24,17 +24,5 @@ public readonly record struct Comparison(int Value) // #net10: open enum + exten
 			(var _, null)  => GT,
 			(var a, var b) => a.CompareTo(b),
 		};
-}
-
-static class UICameraTouch
-{
-	public const int
-		LEFT   = -1,
-		RIGHT  = -2,
-		MIDDLE = -3;
-	public const int
-		UNITY_LEFT   = 0,
-		UNITY_RIGHT  = 1,
-		UNITY_MIDDLE = 2;
 }
 

@@ -1,0 +1,179 @@
+namespace Unleashed.Patches;
+
+[HarmonyPatch]
+sealed class UINameButtonX : MonoBehaviour
+{
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
+	static void StartPostfix(UINameButton __instance) =>
+		__instance.gameObject.GetOrAddComponent<UINameButtonX>();
+
+	UINameButton @base;
+	void Awake()
+	{
+		@base = GetComponent<UINameButton>();
+		@base.DoNotConfirm.AddRange([ "Start Turns", "Reverse Turns", "Stop Turns" ]);
+		@base.PopupList.OnPopupListShow += OnPopupListShow;
+	}
+	void OnDestroy() =>
+		@base.PopupList.OnPopupListShow -= OnPopupListShow;
+
+	bool Extra;
+	void OnAltClick()
+	{
+		if (!UIPopupList.isOpen)
+			Extra = true;
+		UICamera.SpoofOnClick(gameObject);
+	}
+
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.UpdateDropDown))]
+	static bool UpdateDropDownReplace(UINameButton __instance)
+	{
+		if (PlayerManager.Instance.PlayersDictionary.TryGetValue(__instance.id, out var playerState))
+			__instance.NameLabel.text = playerState.name;
+		return false;
+	}
+	void OnPopupListShow()
+	{
+		@base.PopupList.items = [];
+		var items = @base.PopupList.items;
+
+		(var isExtra, Extra) = (Extra, false);
+
+		var isHotseat   = NetworkUI.Instance.bHotseat;
+		var isOwnButton = @base.id == NetworkID.HotseatID;
+		var buttonColor =
+			Colour.ColourFromUIColour(GetComponent<UIButton>().defaultColor).Label;
+
+		if (isExtra && Network.isAdmin)
+		{
+			if (Turns.Instance.turnsState.Enable)
+			{
+				items.Add("Stop Turns");
+				items.Add("Reverse Turns");
+			}
+			else
+				items.Add("Start Turns");
+		}
+		if (Turns.Instance.turnsState.Enable)
+		{
+			if (!Turns.Instance.IsTurn(buttonColor))
+			{
+				if (Turns.Instance.turnsState.PassTurns && Turns.Instance.IsTurn())
+					items.Add("Pass Turn");
+				else if (Network.isAdmin)
+					items.Add("Set Turn");
+			}
+		}
+
+		if (Network.isAdmin || isOwnButton)
+			items.Add("Change Color");
+		items.Add("Change Team");
+
+		if (Settings.DebugChangeNameButton.Value || (isHotseat && isOwnButton))
+			items.Add("Change Name");
+
+		items.Add(PlayerManager.Instance.IsBlinded(@base.id)
+			? "Unblindfold"
+			: "Blindfold"
+		);
+		items.Add(PlayerManager.Instance.IsMuted(@base.id)
+			? "Unmute"
+			: "Mute"
+		);
+		if (Network.isAdmin)
+		{
+			items.Add("Server Mute");
+			items.Add("Server Unmute");
+		}
+		if (Network.isAdmin && !PlayerManager.Instance.IsHost(@base.id))
+		{
+			items.Add(PlayerManager.Instance.IsPromoted(@base.id)
+				? "Demote"
+				: "Promote"
+			);
+			items.Add("Kick");
+		}
+		if (Network.isServer && !isOwnButton)
+		{
+			items.Add("Ban");
+			items.Add("Give Host");
+		}
+	}
+
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.GUIPlayerSelection))]
+	static bool GUIPlayerSelectionPrefix(NetworkUI __instance, string Value, int playerID)
+	{
+		var playerState = PlayerManager.Instance.PlayerStateFromID(playerID);
+		if (!PlayerManager.Instance.NameInUse(playerState.name))
+			return true;
+
+		switch (Value)
+		{
+			default: return true;
+
+			case "Start Turns":
+				Turns.Instance.turnsState = new(
+					Turns.Instance.turnsState,
+					Enable:    true,
+					TurnColor: playerState.stringColor
+				);
+				return false;
+			case "Stop Turns":
+				Turns.Instance.turnsState = new(
+					Turns.Instance.turnsState,
+					Enable:    false,
+					TurnColor: ""
+				);
+				return false;
+			case "Reverse Turns":
+				Turns.Instance.turnsState = new(
+					Turns.Instance.turnsState,
+					Reverse: !Turns.Instance.turnsState.Reverse
+				);
+				return false;
+
+			case "Change Color":
+				if (UICamera.currentTouchID != UICameraTouch.LEFT)
+				{
+					UIColorSelection.ShowDialog(playerID);
+					return false;
+				}
+				if (UZCameraHome.NeedToPickHome)
+					UZCameraHome.NeedToPickHome = false;
+				else if (__instance.bNeedToPickColour && playerID == NetworkID.PlayerID(UIColorSelection.id))
+				{
+					__instance.bNeedToPickColour = false;
+					return false;
+				}
+
+				if (playerID != NetworkID.ID || zInput.GetButton("Ctrl") || zInput.GetButton("Shift"))
+				{
+					UIColorSelection.id = playerID;
+					__instance.bNeedToPickColour = true;
+					return false;
+				}
+				__instance.GUIChangeColor();
+				return false;
+
+			case "Blindfold":
+			case "Unblindfold":
+				PlayerManager.Instance.ChangeBlindfold(playerID, !playerState.blind);
+				return false;
+
+			case "Unmute":
+			case "Mute":
+				EventManager.TriggerPlayerMute(playerState.muted ^= true, playerID);
+				return false;
+			case "Server Unmute":
+				PlayerManager.Instance.networkView.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, false);
+				return false;
+			case "Server Mute":
+				PlayerManager.Instance.networkView.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, true);
+				return false;
+		}
+	}
+}
+

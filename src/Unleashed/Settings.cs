@@ -287,7 +287,7 @@ static class Settings
 		DefaultValue   = true,
 		Attributes     = new() { Order = OrderByLine() },
 		SettingChanged = (sender, args) =>
-			ToolVectorX.UpdateUI(),
+			Patches.ToolVectorX.UpdateUI(),
 	};
 	public static readonly Setting<bool> EntryEnableFastFlick = new()
 	{

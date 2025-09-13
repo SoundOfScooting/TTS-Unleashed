@@ -112,7 +112,7 @@ static class ServerSetup
 					break;
 				case "Dialog":
 					__instance.bNeedToPickColour = false;
-					Misc.ChangeColorDialog();
+					UIColorSelection.ShowDialog();
 					break;
 				default:
 					__instance.ClientRequestColor(Colour.Value);

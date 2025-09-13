@@ -1,7 +1,7 @@
 namespace Unleashed.GridMenu;
 
 [HarmonyPatch]
-static class InitBackgrounds
+static class Backgrounds
 {
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitBackgrounds))]
