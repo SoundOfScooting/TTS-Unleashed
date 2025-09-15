@@ -109,10 +109,10 @@ sealed class UIColorSelectionX : MonoBehaviour
 		var seated = PlayerManager.Instance.PlayersDictionary[seatedID];
 		Lua.Execute(
 			$"""
-			local target = { Compat.LuaGetPlayerBySteamID }({ target.steamId })
-			local seated = { Compat.LuaGetPlayerBySteamID }({ seated.steamId })
+			local target = { Lua.GetPlayerBySteamID }({ target.steamId })
+			local seated = { Lua.GetPlayerBySteamID }({ seated.steamId })
 			local swap   = { zInput.GetButton("Shift") }
-			{ Compat.LuaChangePlayerColorSeated }(target, seated, swap)
+			{ Lua.ChangePlayerColorSeated }(target, seated, swap)
 			"""
 		);
 		NetworkUI.Instance.bNeedToPickColour = false;

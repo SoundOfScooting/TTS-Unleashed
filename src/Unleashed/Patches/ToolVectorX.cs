@@ -194,12 +194,12 @@ static class ToolVectorX
 						drawData.loop,
 						drawData.square
 					));
-					// __instance.networkView.RPC(RPCTarget.Others, __instance.RPCAddLine, lineNetworkData);
+					// __instance.RPC(RPCTarget.Others, __instance.RPCAddLine, lineNetworkData);
 					// __instance.RPCAddLine(lineNetworkData);
 				}
 				if (lines.Count > 0)
 				{
-					__instance.networkView.RPC(RPCTarget.Others, __instance.RPCAddLines, lines);
+					__instance.RPC(RPCTarget.Others, __instance.RPCAddLines, lines);
 					__instance.RPCAddLines(lines);
 				}
 			}

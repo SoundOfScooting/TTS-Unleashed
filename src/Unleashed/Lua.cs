@@ -5,6 +5,39 @@ namespace Unleashed;
 
 public readonly record struct Lua(string Text)
 {
+	// #todo: not usable in hotseat
+	public static readonly Variable GetPlayerBySteamID = new(
+		nameof(GetPlayerBySteamID),
+		$"""
+		function (steam_id)
+			for _,player in ipairs(Player.getPlayers()) do
+				if player.steam_id == steam_id then
+					return player
+				end
+			end
+			return nil
+		end
+		"""
+	);
+	public static readonly Variable ChangePlayerColorSeated = new(
+		nameof(ChangePlayerColorSeated),
+		$"""
+		function (target, seated, swap)
+			if target and seated then
+				local target_color = target.color
+				local seated_color = seated.color
+
+				seated.changeColor("Grey")
+				target.changeColor(seated_color)
+
+				if swap and (target_color ~= "Grey") then
+					seated.changeColor(target_color)
+				end
+			end
+		end
+		"""
+	);
+
 	public string Text { get => field ?? ""; } = Text;
 	public override string ToString() => Text;
 

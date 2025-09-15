@@ -1,4 +1,4 @@
-namespace Unleashed.Contextual;
+namespace Unleashed.Context;
 
 [HarmonyPatch]
 static class MultilineName

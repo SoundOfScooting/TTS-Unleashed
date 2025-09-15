@@ -157,7 +157,7 @@ static class Commands
 				Chat.Log($"Usage: /{px}spooflog <message>", Main.ErrorColour, type);
 				return false;
 			}
-			Chat.Instance.networkView.RPC(RPCTarget.Server, Chat.Instance.RPC_Chat, rest);
+			Chat.Instance.RPC(RPCTarget.Server, Chat.Instance.RPC_Chat, rest);
 			return false;
 		}
 		if (MessageEqualCmdOpt(message, $"/{px}spoofsay", " ", out rest))
@@ -173,7 +173,7 @@ static class Commands
 				Chat.Log($"Invalid sender ID! See /{px}list to view all player IDs.", Main.ErrorColour, type);
 				return false;
 			}
-			Chat.Instance.networkView.RPC(RPCTarget.Server, Chat.Instance.RPC_ChatMessage, sender.id, rest);
+			Chat.Instance.RPC(RPCTarget.Server, Chat.Instance.RPC_ChatMessage, sender.id, rest);
 			return false;
 		}
 		if (MessageEqualCmdOpt(message, $"/{px}spoofwhisper", " ", out rest))
@@ -196,7 +196,7 @@ static class Commands
 				return false;
 			}
 			foreach (var networkPlayer in new[] { recipient.networkPlayer, sender.networkPlayer, Network.player }.Distinct())
-				Chat.Instance.networkView.RPC(networkPlayer, Chat.Instance.RPC_ChatWhisperMessage, sender.id, rest, recipient.stringColor);
+				Chat.Instance.RPC(networkPlayer, Chat.Instance.RPC_ChatWhisperMessage, sender.id, rest, recipient.stringColor);
 			return false;
 		}
 		if (MessageEqualCmdOpt(message, $"/{px}spoofteam", " ", out rest))
@@ -219,7 +219,7 @@ static class Commands
 			}
 			foreach (var recipient in PlayerManager.Instance.PlayersList)
 			if      (PlayerManager.Instance.SameTeam(recipient.id, sender.id))
-				Chat.Instance.networkView.RPC(recipient.networkPlayer, Chat.Instance.RPC_ChatTeamMessage, sender.id, rest);
+				Chat.Instance.RPC(recipient.networkPlayer, Chat.Instance.RPC_ChatTeamMessage, sender.id, rest);
 			return false;
 		}
 #endif

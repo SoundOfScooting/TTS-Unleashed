@@ -1,3 +1,6 @@
+using System.Runtime.CompilerServices;
+using Unleashed.Compat;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
@@ -168,12 +171,61 @@ sealed class UINameButtonX : MonoBehaviour
 				EventManager.TriggerPlayerMute(playerState.muted ^= true, playerID);
 				return false;
 			case "Server Unmute":
-				PlayerManager.Instance.networkView.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, false);
-				return false;
 			case "Server Mute":
-				PlayerManager.Instance.networkView.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, true);
+				PlayerManager.Instance.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, Value == "Server Mute");
 				return false;
 		}
+	}
+
+	[ModuleInitializer]
+	internal static void Initializer() =>
+		RemoteX.ChangeRPCMethods += (RPCMethods) =>
+		{
+			// bugfix
+			// -[Remote(Permission.Admin)]
+			// +[Remote("Turns/Turns.SetPlayerTurn")]
+			RPCMethods.Set(
+				AccessTools.Method(typeof(Turns), nameof(Turns.SetPlayerTurn)),
+				player => player.isAdmin || (
+					API.HostModded &&
+					Turns.Instance.turnsState.PassTurns &&
+					Turns.Instance.IsTurn(PlayerManager.Instance.PlayerStateFromID(player.id).stringColor)
+				)
+			);
+		};
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
+	static bool PromoteThisPlayerPrefix(string name)
+	{
+		if (Network.isServer || !Network.isAdmin)
+			return true;
+		var steamId = PlayerManager.Instance.SteamIDFromName(name);
+		Lua.Execute(
+			$"""
+			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			if player then
+				player.promote()
+			end
+			"""
+		);
+		return false;
+	}
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.KickThisPlayer))]
+	static bool KickThisPlayerPrefix(string name)
+	{
+		if (Network.isServer || !Network.isAdmin)
+			return true;
+		var steamId = PlayerManager.Instance.SteamIDFromName(name);
+		Lua.Execute(
+			$"""
+			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			if player then
+				player.kick()
+			end
+			"""
+		);
+		return false;
 	}
 }
 

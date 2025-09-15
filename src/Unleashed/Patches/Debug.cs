@@ -65,14 +65,14 @@ static class Debug
 	// 	var player = PlayerManager.Instance.PlayerStateFromID(__instance.playerIDToSet);
 	// 	player.name = newName;
 	// 	// update playerName which does nothing
-	// 	__instance.networkView.RPC(player.networkPlayer, __instance.UpdateName, newName);
+	// 	__instance.RPC(player.networkPlayer, __instance.UpdateName, newName);
 
 	// 	// would trigger Auto Join Message
 	// 	var playerData = new PlayerManager.PlayerData(player);
 	// 	PlayerManager.Instance.RemovePlayer(player.id);
 	// 	PlayerManager.Instance.AddPlayer   (playerData);
-	// 	// PlayerManager.Instance.networkView.RPC(RPCTarget.Others, PlayerManager.Instance.RPCRemovePlayer, player.id);
-	// 	// PlayerManager.Instance.networkView.RPC(RPCTarget.Others, PlayerManager.Instance.RPCAddPlayer,    playerData);
+	// 	// PlayerManager.Instance.RPC(RPCTarget.Others, PlayerManager.Instance.RPCRemovePlayer, player.id);
+	// 	// PlayerManager.Instance.RPC(RPCTarget.Others, PlayerManager.Instance.RPCAddPlayer,    playerData);
 	// }
 }
 

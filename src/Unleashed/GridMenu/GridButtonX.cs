@@ -1,3 +1,4 @@
+using Unleashed.Compat;
 using static UIGridMenu;
 
 namespace Unleashed.GridMenu;
@@ -12,7 +13,7 @@ static class GridButtonX
 	[HarmonyPatch(typeof(GridButton), nameof(GridButton.IsSearched))]
 	static bool IsSearchedPrefix(GridButton __instance, ref bool __result)
 	{
-		if (__instance.Tags.Contains(TAG_HOST) && !PlayerManager.Instance.HostPlayerState().IsModded)
+		if (__instance.Tags.Contains(TAG_HOST) && !API.HostModded)
 			return __result = false;
 		if (__instance.Tags.Contains(TAG_GOLD) && !SteamManager.bKickstarterGold)
 			return __result = false;

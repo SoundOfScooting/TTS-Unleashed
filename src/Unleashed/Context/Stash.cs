@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Unleashed.Contextual;
+namespace Unleashed.Context;
 
 sealed class UZContextualStash : MonoBehaviour
 {

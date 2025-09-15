@@ -1,4 +1,6 @@
-namespace Unleashed.Contextual;
+using Unleashed.Compat;
+
+namespace Unleashed.Context;
 
 [HarmonyPatch]
 static class Custom
@@ -292,7 +294,7 @@ static class Custom
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	static void TileStartPostfix(UICustomTile __instance) =>
-		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && PlayerManager.Instance.HostPlayerState().IsModded;
+		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && API.HostModded;
 	// #todo: GetCustomObject parity
 	// #todo: relocate to dedicated Lua fixes/additions
 	[HarmonyPostfix]
