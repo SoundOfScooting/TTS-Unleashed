@@ -1,23 +1,50 @@
 using Steamworks;
+using Unleashed.Settings;
 
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class Debug
 {
-#if TRUE_ULTIMATE_POWER
-	static Settings.Setting<bool> EntryAllRewards => Settings.DebugAllRewards;
-	// static Settings.Setting<bool> EntryAllDLC => Settings.DebugAllDLC;
-#endif
-	static Settings.Setting<bool> EntryDeveloperMode => Settings.DebugDeveloperMode;
-
-	public static void UpdateRewards()
+	[Setting]
+	static readonly DebugSetting<bool> DeveloperMode = new()
 	{
-		SteamManager.bKickstarterPointer = EntryAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
-		SteamManager.bKickstarterGold    = EntryAllRewards.Value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
+		Key     = "TTS Developer Mode",
+		Default = false,
+	};
+	[PowerSetting]
+	static readonly DebugSetting<bool> AllRewards = new()
+	{
+		Key       = "All Kickstarter Rewards",
+		Default   = false,
+		OnLoaded  = UpdateRewards,
+		OnChanged = UpdateRewards,
+	};
+	// [PowerSetting]
+	// static readonly DebugSetting<bool> AllDLC = new()
+	// {
+	// 	Key     = "All DLC",
+	// 	Default = false,
+	// };
+	static void UpdateRewards(bool value)
+	{
+		SteamManager.bKickstarterPointer = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
+		SteamManager.bKickstarterGold    = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
 	}
 
-#if TRUE_ULTIMATE_POWER
+	[HarmonyPrefix]
+	// [HarmonyPatch(typeof(Developer), nameof(Developer.HasName))]
+	[HarmonyPatch(typeof(Developer), nameof(Developer.HasSteamID))]
+	static bool DeveloperHasPrefix(ref bool __result)
+	{
+		if (DeveloperMode.Value)
+		{
+			__result = true;
+			return false;
+		}
+		return true;
+	}
+
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Init))]
 	static void SteamManagerInitIL(ILContext il)
@@ -27,33 +54,21 @@ static class Debug
 			// bKickstarterGold = SteamApps.BIsSubscribedApp(KickstarterGold);
 			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.bKickstarterGold)))
 		);
-		c.EmitDelegate(UpdateRewards);
+		c.EmitDelegate(void() =>
+			UpdateRewards(AllRewards.Value)
+		);
 	}
 	// [HarmonyPrefix]
 	// [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.IsSubscribedApp))]
 	// static bool SteamManagerIsSubscribedAppPrefix(ref bool __result)
 	// {
-	// 	if (EntryAllDLC.Value)
+	// 	if (AllDLC.Value)
 	// 	{
 	// 		__result = true;
 	// 		return false;
 	// 	}
 	// 	return true;
 	// }
-#endif
-
-	[HarmonyPrefix]
-	// [HarmonyPatch(typeof(Developer), nameof(Developer.HasName))]
-	[HarmonyPatch(typeof(Developer), nameof(Developer.HasSteamID))]
-	static bool DeveloperHasPrefix(ref bool __result)
-	{
-		if (EntryDeveloperMode.Value)
-		{
-			__result = true;
-			return false;
-		}
-		return true;
-	}
 
 	// [HarmonyPostfix]
 	// [HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.SetSpecificPlayerName))]

@@ -1,8 +1,29 @@
+using Unleashed.Settings;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class MenuHoliday
 {
+	[Setting]
+	static readonly Setting<Value> Enabled = new()
+	{
+		Section     = Section.Menu,
+		Key         = "Menu Holiday",
+		Default     = Value.Default,
+		Description =
+			"""
+			The holiday logo that appears on the main menu.
+			""",
+		OnChanged = value =>
+		{
+			if (Network.peerType == NetworkPeerMode.Disconnected)
+				NetworkUI.Instance.GUIDisconnected.transform
+					.Find("TTS Logo/Holidays")
+					.GetComponent<UIHoliday>()
+					.Start();
+		},
+	};
 	public enum Value
 	{
 		Default,
@@ -12,7 +33,6 @@ static class MenuHoliday
 		Random,
 		All,
 	}
-	static Settings.Setting<Value> Enabled => Settings.EntryMenuHoliday;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIHoliday), nameof(UIHoliday.Start))]

@@ -1,9 +1,25 @@
+using Unleashed.Settings;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class FastCommands
 {
-	static Settings.Setting<bool> Enabled => Settings.EntryEnableFastCommands;
+	[Setting]
+	static readonly Setting<bool> Enabled = new()
+	{
+		MigrateFrom = [
+			("General", "Enable Fast Commands"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Enable Fast Commands",
+		Default     = true,
+		Description =
+			"""
+			When shift is not held down, the 'Help' control instead starts typing a command in chat.
+			Best used when 'Help' is bound to /.
+			""",
+	};
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Update))]

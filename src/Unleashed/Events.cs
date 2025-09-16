@@ -1,3 +1,5 @@
+using Unleashed.Settings;
+
 namespace Unleashed;
 
 // terrible
@@ -21,7 +23,7 @@ static class Events
 {
 	public static event Action OnStartConnected;
 	public static event Action OnStartDisconnected;
-	// public static event Action OnPlayersAddOther;
+	public static event Action<PlayerState> OnPlayersAddOther;
 	public static event Action OnStartGlobalContextual;
 	public static event Action OnStartContextual;
 
@@ -31,8 +33,8 @@ static class Events
 		OnStartDisconnected?.Invoke();
 	static void TriggerStartConnected() =>
 		OnStartConnected?.Invoke();
-	// static void TriggerPlayersAddOther() =>
-	// 	OnPlayersAddOther?.Invoke();
+	static void TriggerPlayersAddOther(PlayerState playerState) =>
+		OnPlayersAddOther?.Invoke(playerState);
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
 	static void TriggerStartGlobalContextual() =>
@@ -68,18 +70,11 @@ static class Events
 			TriggerStartConnected();
 			return;
 		}
-		if (NetworkUI.Instance.bHotseat)
+		if (!NetworkUI.Instance.bHotseat && !addingAllPlayers)
+		{
+			TriggerPlayersAddOther(playerState);
 			return;
-
-		// TriggerPlayersAddOther();
-
-		if (!addingAllPlayers && Settings.EntryAutoJoinMessage.Value is [_, ..] autoJoin)
-			Chat.SendChatMessage(autoJoin);
-
-		if (Network.isServer && Settings.AutoPromoteIDs.Contains(playerState.steamId))
-			Wait.Frames(() =>
-				PlayerManager.Instance.PromoteThisPlayer(playerState.name)
-			);
+		}
 	}
 }
 

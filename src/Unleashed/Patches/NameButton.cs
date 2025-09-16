@@ -1,20 +1,30 @@
 using System.Runtime.CompilerServices;
 using Unleashed.Compat;
+using Unleashed.Settings;
 
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 sealed class UINameButtonX : MonoBehaviour
 {
+	[Setting]
+	static readonly DebugSetting<bool> DebugChangeName = new()
+	{
+		Key     = "Change Name Button",
+		Default = false,
+	};
+
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
 	static void StartPostfix(UINameButton __instance) =>
 		__instance.gameObject.GetOrAddComponent<UINameButtonX>();
 
 	UINameButton @base;
+	UIButton button;
 	void Awake()
 	{
-		@base = GetComponent<UINameButton>();
+		@base  = GetComponent<UINameButton>();
+		button = GetComponent<UIButton>();
 		@base.DoNotConfirm.AddRange([ "Start Turns", "Reverse Turns", "Stop Turns" ]);
 		@base.PopupList.OnPopupListShow += OnPopupListShow;
 	}
@@ -39,15 +49,15 @@ sealed class UINameButtonX : MonoBehaviour
 	}
 	void OnPopupListShow()
 	{
-		@base.PopupList.items = [];
 		var items = @base.PopupList.items;
+		items.Clear();
 
 		(var isExtra, Extra) = (Extra, false);
 
 		var isHotseat   = NetworkUI.Instance.bHotseat;
 		var isOwnButton = @base.id == NetworkID.HotseatID;
 		var buttonColor =
-			Colour.ColourFromUIColour(GetComponent<UIButton>().defaultColor).Label;
+			Colour.ColourFromUIColour(button.defaultColor).Label;
 
 		if (isExtra && Network.isAdmin)
 		{
@@ -74,7 +84,7 @@ sealed class UINameButtonX : MonoBehaviour
 			items.Add("Change Color");
 		items.Add("Change Team");
 
-		if (Settings.DebugChangeNameButton.Value || (isHotseat && isOwnButton))
+		if (DebugChangeName.Value || (isHotseat && isOwnButton))
 			items.Add("Change Name");
 
 		items.Add(PlayerManager.Instance.IsBlinded(@base.id)

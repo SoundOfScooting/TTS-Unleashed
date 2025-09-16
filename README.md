@@ -37,11 +37,7 @@ The plugin generates a config file `edu.sos.unleashed.cfg` in the folder `[GAME]
 If you have [ConfigurationManager](#installation) installed, you can edit settings in-game by holding Escape and then pressing F1 *(in order)*.\
 To close the settings window, either press the `Close` button or click outside the settings window and press Escape.
 
-### Section [General]
-
-`Nickname`\
-A nickname used instead of your Steam display name.\
-Nickname changes only take effect when joining a new server.
+### Section [Menu]
 
 `Menu Cursor Color` *(default `Purple`)*\
 The color of the cursor on the main menu.
@@ -49,6 +45,8 @@ The color of the cursor on the main menu.
 `Menu Holiday`\
 The holiday logo that appears on the main menu.\
 One of: `Default`, `Thanksgiving`, `Christmas`, `Halloween`, `Random`, `All`
+
+### Section [Setup]
 
 `Initial Player Color` *(default `White`)*\
 The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI/dialog window.
@@ -59,17 +57,19 @@ The initial background after server creation, or `Random`.
 `Initial Table` *(default `Random`)*\
 The initial table after server creation, or `Random`.
 
-`Invert Horizontal 3P Controls` *(default `false`)*\
-Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.\
-This makes them align with first-person view and mouse panning.
-
-`Invert Vertical 3P Controls` *(default `false`)*\
-Swaps controls 'Camera Down' with 'Camera Up' in third-person and top-down view.\
-This makes them align with first-person view and mouse panning.
+### Section [Controls]
 
 `Block Mouse Panning Over UI` *(default `true`)*\
 Blocks 'Camera Hold Rotate' control while hovering over UI.\
 This eases right clicking UI elements, but prevents mouse panning over large panels.
+
+`Invert Third-Person Horizontal Axis` *(default `false`)*\
+Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.\
+This aligns them with first-person view and mouse panning.
+
+`Invert Third-Person Vertical Axis` *(default `false`)*\
+Swaps controls 'Camera Down' with 'Camera Up' in third-person view.\
+This aligns them with first-person view and mouse panning.
 
 `Enable Pixel Draw` *(default `true`)*\
 Fully implements the unfinished pixel draw tool, an apparent vector-based rework of the removed pixel paint tool.\
@@ -82,13 +82,19 @@ Flicking an object when not the host no longer requires two clicks *(previously 
 **BUG:** This allows you to try *(and fail)* to flick objects that you are prevented from selecting by Lua scripts.
 
 `Enable Fast Commands` *(default `true`)*\
-If shift is not held down, the 'Help' control instead starts typing a command in chat.\
+When shift is not held down, the 'Help' control instead starts typing a command in chat.\
 Best used when 'Help' is bound to `/`.
+
+### Section [Misc]
 
 `Intercept Lua Virus` *(default `true`)*\
 **Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
 **NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
 https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
+
+`Nickname`\
+A nickname used instead of your Steam display name.\
+Nickname changes only take effect when joining a new server.
 
 `Auto Join Message`\
 Message automatically sent in chat when a player joins.\

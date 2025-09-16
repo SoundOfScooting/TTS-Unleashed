@@ -4,10 +4,10 @@ global using MonoMod.Cil;
 global using NewNet;
 global using UnityEngine;
 global using Unleashed.Extensions;
-
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using Unleashed.Settings;
 
 namespace Unleashed;
 
@@ -20,11 +20,12 @@ namespace Unleashed;
 [BepInDependency(CONFIG_MANAGER_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Main : BaseUnityPlugin
 {
-	public const string PLUGIN_REPO    = "https://github.com/SoundOfScooting/TTS-Unleashed";
 	public const string PLUGIN_GUID    = PluginInfo.PLUGIN_GUID;
 	public const string PLUGIN_NAME    = PluginInfo.PLUGIN_NAME;
 	public const string PLUGIN_VERSION = PluginInfo.PLUGIN_VERSION;
 	public const string PLUGIN_ABBR    = "UZ";
+	const string PLUGIN_REPO = "https://github.com/SoundOfScooting/TTS-Unleashed";
+	const string PLUGIN_URL  = $"{PLUGIN_REPO}/releases/tag/v{PLUGIN_VERSION}";
 
 	internal const string CONFIG_MANAGER_GUID = "com.bepis.bepinex.configurationmanager";
 
@@ -51,7 +52,7 @@ public sealed class Main : BaseUnityPlugin
 			Harmony.PatchAll(typeof(PatchMenuCursor));
 
 			Log.LogInfo(">> Configuring...");
-			Settings.Load();
+			SettingAttribute.Load();
 
 			Log.LogInfo(">> Patching...");
 			Harmony.PatchAll(typeof(Main).Assembly);
@@ -100,7 +101,7 @@ public sealed class Main : BaseUnityPlugin
 			gameObject.CopyParent(numberLabel);
 
 			var moddedLabel   = gameObject.CopyComponent(numberLabel);
-			moddedLabel.color = loadErrors is not null ? ErrorColour : PluginColour;
+			moddedLabel.color = loadErrors is null ? PluginColour : ErrorColour;
 			moddedLabel.text  = $"+{PLUGIN_ABBR} v{PLUGIN_VERSION}";
 			moddedLabel.SetAnchor(NetworkUI.Instance.GUIUIRoot,
 				left:   numberLabel.leftAnchor  .relative, numberLabel.leftAnchor  .absolute,
@@ -120,12 +121,53 @@ public sealed class Main : BaseUnityPlugin
 			gameObject.CopyComponent<BoxCollider2D>(numberLabel);
 			gameObject.CopyComponent<UIButton>(numberLabel);
 			gameObject.CopyComponent<UIOpenURL>(numberLabel)
-				.URL = $"{PLUGIN_REPO}/releases/tag/v{PLUGIN_VERSION}";
+				.URL = PLUGIN_URL;
 			gameObject.AddComponent <TweenColor>();
 		}
 	}
 	static class PatchMenuCursor
 	{
+		[Setting]
+		static readonly Setting<string> MenuCursorColor = new()
+		{
+			MigrateFrom = [
+				("General", "Menu Player Color"), // 0.1.0
+			],
+			Section     = Section.Menu,
+			Key         = "Menu Cursor Color",
+			Default     = PluginColour.Label,
+			Acceptable  = new AcceptableValueList<string>(Colour.AllPlayerLabels),
+			Description =
+				"""
+				The color of the cursor on the main menu.
+				""",
+			OnChanged = value =>
+			{
+				if (loadErrors is null)
+				if (Network.peerType == NetworkPeerMode.Disconnected)
+					Utilities.SetCursor(
+						NetworkUI.Instance.StringColorToCursorTexture(value),
+						NetworkUI.HardwareCursorOffest
+					);
+			},
+		};
+		[PowerSetting]
+		static readonly Setting<string> MenuErrorColor = new()
+		{
+			Section     = Section.Menu,
+			Key         = "Menu Error Color",
+			Default     = ErrorColour.Label,
+			Acceptable  = new AcceptableValueList<string>(Colour.AllPlayerLabels),
+			Description =
+				"""
+				The color of the cursor on the main menu (if the mod failed to load).
+				""",
+			Attributes  = new()
+			{
+				IsAdvanced = true,
+			},
+		};
+
 		[HarmonyILManipulator]
 		[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Init))]
 		static void CursorColor(ILContext il)
@@ -139,10 +181,7 @@ public sealed class Main : BaseUnityPlugin
 			c.Remove();
 			c.EmitDelegate(Texture2D(NetworkUI __instance) =>
 				__instance.StringColorToCursorTexture(
-#if TRUE_ULTIMATE_POWER
-					loadErrors is not null ? Settings.EntryMenuErrorColour.Value :
-#endif
-					Settings.EntryMenuCursorColour.Value
+					loadErrors is null ? MenuCursorColor.Value : MenuErrorColor.Value
 				)
 			);
 		}

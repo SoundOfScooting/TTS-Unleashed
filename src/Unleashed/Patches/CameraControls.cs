@@ -1,11 +1,55 @@
+using Unleashed.Settings;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class CameraControls
 {
-	static Settings.Setting<bool> InvertHorizontalAxis    => Settings.EntryInvertHorizontal3PControls;
-	static Settings.Setting<bool> InvertVerticalAxis      => Settings.EntryInvertVertical3PControls;
-	static Settings.Setting<bool> BlockMousePanningOverUI => Settings.EntryBlockMousePanningOverUI;
+	[Setting]
+	static readonly Setting<bool> BlockMousePanningOverUI = new()
+	{
+		MigrateFrom = [
+			("General", "Block Mouse Panning Over UI"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Block Mouse Panning Over UI",
+		Default     = true,
+		Description =
+			"""
+			Blocks 'Camera Hold Rotate' control while hovering over UI.
+			This eases right clicking UI elements, but prevents mouse panning over large panels.
+			""",
+	};
+	[Setting]
+	static readonly Setting<bool> InvertHorizontalAxis = new()
+	{
+		MigrateFrom = [
+			("General", "Invert Horizontal 3P Controls"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Invert Third-Person Horizontal Axis",
+		Default     = false,
+		Description =
+			"""
+			Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.
+			This aligns them with first-person view and mouse panning.
+			""",
+	};
+	[Setting]
+	static readonly Setting<bool> InvertVerticalAxis = new()
+	{
+		MigrateFrom = [
+			("General", "Invert Vertical 3P Controls"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Invert Third-Person Vertical Axis",
+		Default     = false,
+		Description =
+			"""
+			Swaps controls 'Camera Down' with 'Camera Up' in third-person view.
+			This aligns them with first-person view and mouse panning.
+			""",
+	};
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(CameraController), nameof(CameraController.Update))]

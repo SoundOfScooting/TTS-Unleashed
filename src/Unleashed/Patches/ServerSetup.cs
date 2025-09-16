@@ -1,11 +1,56 @@
 using System.ComponentModel;
+using BepInEx.Configuration;
+using Unleashed.Settings;
 
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class ServerSetup
 {
-	public enum BackgroundID
+	[Setting]
+	static readonly Setting<string> InitialColour = new()
+	{
+		MigrateFrom = [
+			("General", "Initial Player Color"), // 0.1.0
+		],
+		Section     = Section.Setup,
+		Key         = "Initial Player Color",
+		Default     = Colour.White.Label,
+		Acceptable  = new AcceptableValueList<string>(["Choose", "Dialog", .. Colour.AllPlayerLabels]),
+		Description =
+			"""
+			The initial player color after server creation, or Choose/Dialog to open the color selection UI/dialog window.
+			""",
+	};
+	[Setting]
+	static readonly Setting<BackgroundID> InitialBackground = new()
+	{
+		MigrateFrom = [
+			("General", "Initial Background"), // 0.1.0
+		],
+		Section     = Section.Setup,
+		Key         = "Initial Background",
+		Default     = BackgroundID.Random,
+		Description =
+			"""
+			The initial background after server creation, or Random.
+			""",
+	};
+	[Setting]
+	static readonly Setting<TableID> InitialTable = new()
+	{
+		MigrateFrom = [
+			("General", "Initial Table"), // 0.1.0
+		],
+		Section     = Section.Setup,
+		Key         = "Initial Table",
+		Default     = TableID.Random,
+		Description =
+			"""
+			The initial table after server creation, or Random.
+			""",
+	};
+	enum BackgroundID
 	{
 		Museum    = 8,
 		Field     = 2,
@@ -18,7 +63,7 @@ static class ServerSetup
 		// Custom,
 		Random    = 0,
 	}
-	public enum TableID
+	enum TableID
 	{
 		Hexagon  = 3,
 		Octagon  = 2,
@@ -36,9 +81,6 @@ static class ServerSetup
 		[Description("Random++")]
 		RandomPlusPlus = -1,
 	}
-	static Settings.Setting<string>       Colour     => Settings.EntryInitPlayerColour;
-	static Settings.Setting<BackgroundID> Background => Settings.EntryInitBackground;
-	static Settings.Setting<TableID>      Table      => Settings.EntryInitTable;
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ServerInitialized))]
@@ -54,7 +96,7 @@ static class ServerSetup
 		// c.Emit(OpCodes.Ldloca, 4);
 		c.EmitDelegate(int(int num/*, ref GameObject gameObject*/) =>
 		{
-			var num2 =  Background.Value;
+			var num2 =  InitialBackground.Value;
 			if (num2 == BackgroundID.Random)
 				return num;
 			return (int) num2;
@@ -69,7 +111,7 @@ static class ServerSetup
 		c.Emit(OpCodes.Ldloca, 0);
 		c.EmitDelegate(int(int num, ref GameObject gameObject2) =>
 		{
-			var num2 = Table.Value;
+			var num2 = InitialTable.Value;
 			switch (num2)
 			{
 				case TableID.Random:
@@ -105,7 +147,7 @@ static class ServerSetup
 		c.RemoveRange(2);
 		c.EmitDelegate(void(NetworkUI __instance) =>
 		{
-			switch (Colour.Value)
+			switch (InitialColour.Value)
 			{
 				case "Choose":
 					__instance.GUIChangeColor();
@@ -115,7 +157,7 @@ static class ServerSetup
 					UIColorSelection.ShowDialog();
 					break;
 				default:
-					__instance.ClientRequestColor(Colour.Value);
+					__instance.ClientRequestColor(InitialColour.Value);
 					break;
 			}
 		});

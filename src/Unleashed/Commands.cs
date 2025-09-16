@@ -1,3 +1,5 @@
+using Unleashed.Settings;
+
 namespace Unleashed;
 
 [HarmonyPatch]
@@ -101,7 +103,7 @@ static class Commands
 		}
 		if (Chat.MessageEqualCmd(message, $"/{px}settings"))
 		{
-			Settings.Load();
+			SettingAttribute.Load();
 			Chat.Log("Reloaded settings file.", Main.PluginColour, type);
 			return false;
 		}

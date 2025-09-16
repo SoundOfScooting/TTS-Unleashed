@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Unleashed.Settings;
 using static ToolVector;
 
 namespace Unleashed.Patches;
@@ -11,6 +12,25 @@ static class ToolVectorX
 		Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected() =>
 		Wait.Frames(UpdateUI);
+
+	[Setting]
+	static readonly Setting<bool> EnableDrawPixel = new()
+	{
+		MigrateFrom = [
+			("General", "Enable Pixel Draw"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Enable Pixel Draw",
+		Default     = true,
+		Description =
+			"""
+			Fully implements the unfinished pixel draw tool, an apparent vector-based rework of the removed pixel paint tool.
+			It is located under the draw toolbar between the circle and erase tools.
+			Each pixel drawn is one vector line.
+			NOTE: If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
+			""",
+		OnChanged = value => UpdateUI(),
+	};
 
 	static List<VectorEraseData> EraseBuffer = [];
 	static bool EraseCancelled;
@@ -52,7 +72,7 @@ static class ToolVectorX
 		var DrawColor  = DrawT.Find("Scroll View/06 Color" ).gameObject; // +56
 		var DrawDelete = DrawT.Find("Scroll View/Delete"   ).gameObject; // +44
 
-		var enabled = Settings.EntryEnableVectorPixel.Value;
+		var enabled = EnableDrawPixel.Value;
 		if (!enabled)
 			Pointer.VectorTools.Remove(PointerMode.VectorPixel);
 		else if (!Pointer.VectorTools.Contains(PointerMode.VectorPixel))

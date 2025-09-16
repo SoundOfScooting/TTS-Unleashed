@@ -1,9 +1,25 @@
+using Unleashed.Settings;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
 static class FastFlick
 {
-	static Settings.Setting<bool> Enabled => Settings.EntryEnableFastFlick;
+	[Setting]
+	static readonly Setting<bool> Enabled = new()
+	{
+		MigrateFrom = [
+			("General", "Enable Fast Flick"), // 0.1.0
+		],
+		Section     = Section.Controls,
+		Key         = "Enable Fast Flick",
+		Default     = true,
+		Description =
+			"""
+			Flicking an object when not the host no longer requires two clicks (previously the first click would only highlight the object).
+			BUG: This allows you to try (and fail) to flick objects that you are prevented from selecting by Lua scripts.
+			""",
+	};
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartLine))]

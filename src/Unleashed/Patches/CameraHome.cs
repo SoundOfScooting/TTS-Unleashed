@@ -4,6 +4,19 @@ namespace Unleashed.Patches;
 sealed class UZCameraHome : MonoBehaviour
 {
 	// public const string HomePref = $"{Main.PLUGIN_GUID}/{nameof(UZCameraHome)}";
+
+	// [Settings.Setting]
+	// static readonly Settings.Setting<Home> EntryInitCameraHome = new()
+	// {
+	// 	Section     = Settings.Section.General,
+	// 	Key         = "Initial Camera Home",
+	// 	Default     = Home.Hand,
+	// 	Description =
+	// 		"""
+	// 		The initial camera home.
+	// 		""",
+	// };
+
 	public enum Home
 	{
 		Hand,
