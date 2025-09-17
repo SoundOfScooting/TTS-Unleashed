@@ -5,22 +5,20 @@ namespace Unleashed.Context;
 
 sealed class UZContextualStash : MonoBehaviour
 {
-	public const string LABEL_PADDING = "            ";
-
-	public enum Type
+	enum Act
 	{
 		GlobalUnlock = 0 << 1 | 1,
 		GlobalDraw   = 1 << 1 | 1,
 		ObjectDraw   = 2 << 1 | 0,
 		ObjectStash  = 3 << 1 | 0,
 	}
-	Type type;
-	bool IsGlobal => type switch
+	Act act;
+	bool IsGlobal => act switch
 	{
-		Type.GlobalDraw   => true,
-		Type.GlobalUnlock => true,
-		Type.ObjectDraw   => false,
-		Type.ObjectStash  => false,
+		Act.GlobalDraw   => true,
+		Act.GlobalUnlock => true,
+		Act.ObjectDraw   => false,
+		Act.ObjectStash  => false,
 		_ => throw new UnreachableException(),
 	};
 
@@ -36,11 +34,11 @@ sealed class UZContextualStash : MonoBehaviour
 #if TRUE_ULTIMATE_POWER
 		new GameObject("04 Pb |SORT| Unlock Stash")
 			.AddComponent<UZContextualStash>()
-			.CreateComponents(Type.GlobalUnlock);
+			.CreateComponents(Act.GlobalUnlock);
 #endif
 		new GameObject("04 Pc |SORT| Draw Stash")
 			.AddComponent<UZContextualStash>()
-			.CreateComponents(Type.GlobalDraw);
+			.CreateComponents(Act.GlobalDraw);
 
 		// after 06 Draw
 		// new GameObject("06 Ds |SORT| Draw Stash")
@@ -48,12 +46,12 @@ sealed class UZContextualStash : MonoBehaviour
 		// 	.CreateComponents(Type.ObjectDraw);
 		new GameObject("06 Ds |SORT| Stash")
 			.AddComponent<UZContextualStash>()
-			.CreateComponents(Type.ObjectStash);
+			.CreateComponents(Act.ObjectStash);
 	}
 
-	void CreateComponents(Type type)
+	void CreateComponents(Act act)
 	{
-		this.type = type;
+		this.act = act;
 
 		var @base = NetworkUI.Instance.GUIContextualGlobalMenu.transform.Find("Table/04 Paste");
 		transform.CopyParent(@base);
@@ -61,7 +59,7 @@ sealed class UZContextualStash : MonoBehaviour
 			transform.parent = NetworkUI.Instance.GUIContextualMenu.transform.Find("Table");
 
 		(Label = gameObject.CopyComponent<UILabel>(@base))
-			.text = LABEL_PADDING + "???";
+			.text = Contextual.LABEL_PADDING + "???";
 		gameObject.CopyComponent(@base.GetComponents<UIButton>()[0])
 			.onClick = [new(OnClickContextual)];
 		gameObject.CopyComponent<BoxCollider2D>(@base);
@@ -101,13 +99,9 @@ sealed class UZContextualStash : MonoBehaviour
 	bool ctrlDown, shiftDown;
 	LuaPlayer target;
 
-	void OnStartContextual()
-	{
-		gameObject.SetActive(false);
-		if (StartContextual())
-			PlayerScript.PointerScript.SetActive(gameObject, true);
-	}
-	bool StartContextual()
+	void OnStartContextual() =>
+		Contextual.Check(gameObject, CheckContextual);
+	bool CheckContextual()
 	{
 		if (!Network.isAdmin) // #compat
 			return false;
@@ -116,10 +110,10 @@ sealed class UZContextualStash : MonoBehaviour
 		target     = player;
 		ctrlDown   = zInput.GetButton("Ctrl");
 		shiftDown  = zInput.GetButton("Shift");
-		switch (type)
+		switch (act)
 		{
 			default: throw new UnreachableException();
-			case Type.GlobalUnlock:
+			case Act.GlobalUnlock:
 			{
 				if (ctrlDown)
 				{
@@ -127,7 +121,7 @@ sealed class UZContextualStash : MonoBehaviour
 					if      (hand.Stash)
 					{
 						Icon.spriteName = "Icon-Toggle";
-						Label.text = LABEL_PADDING +
+						Label.text = Contextual.LABEL_PADDING +
 							"Unlock Stash [b](All)[/b]";
 						return true;
 					}
@@ -139,7 +133,7 @@ sealed class UZContextualStash : MonoBehaviour
 				{
 					target = LuaPlayer.GetHandPlayer(hand.TriggerLabel);
 					Icon.spriteName = "Icon-Toggle";
-					Label.text = LABEL_PADDING +
+					Label.text = Contextual.LABEL_PADDING +
 						$"{(
 							hand.Stash.IsGrabbable ? "Lock" : "Unlock"
 						)} Stash {(
@@ -151,10 +145,10 @@ sealed class UZContextualStash : MonoBehaviour
 				}
 				return false;
 			}
-			case Type.GlobalDraw:
+			case Act.GlobalDraw:
 			{
 				Icon.spriteName = "Icon-DrawCard6";
-				Label.text = LABEL_PADDING +
+				Label.text = Contextual.LABEL_PADDING +
 					$"{(shiftDown ? "Swap " : "Draw ")}Stash";
 				if (ctrlDown)
 				{
@@ -198,7 +192,7 @@ sealed class UZContextualStash : MonoBehaviour
 			// 	}
 			// 	return false;
 			// }
-			case Type.ObjectStash:
+			case Act.ObjectStash:
 			{
 				bool anyInHand = false;
 				// bool anyStash  = false; // #stash
@@ -211,7 +205,7 @@ sealed class UZContextualStash : MonoBehaviour
 				if (anyInHand)
 				{
 					Icon.spriteName = "Icon-DrawCard6";
-					Label.text = LABEL_PADDING +
+					Label.text = Contextual.LABEL_PADDING +
 						$"{(
 							shiftDown
 								? "Swap "
@@ -325,10 +319,10 @@ sealed class UZContextualStash : MonoBehaviour
 	}
 	void InvokeAction()
 	{
-		switch (type)
+		switch (act)
 		{
 			default: throw new UnreachableException();
-			case Type.GlobalUnlock:
+			case Act.GlobalUnlock:
 				Lua.Execute(
 					$"""
 					local global  = { true }
@@ -347,11 +341,11 @@ sealed class UZContextualStash : MonoBehaviour
 					"""
 				);
 				break;
-			case Type.GlobalDraw:
-			case Type.ObjectStash:
+			case Act.GlobalDraw:
+			case Act.ObjectStash:
 				Lua.Execute(
 					$"""
-					local global  = { type == Type.GlobalDraw }
+					local global  = { act == Act.GlobalDraw }
 					local all     = global and { ctrlDown }
 					local swap    = { shiftDown }
 					local targets =

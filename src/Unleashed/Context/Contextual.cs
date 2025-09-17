@@ -6,6 +6,15 @@ namespace Unleashed.Context;
 [HarmonyPatch]
 static class Contextual
 {
+	public const string LABEL_PADDING = "            ";
+
+	public static void Check(GameObject gameObject, Func<bool> active)
+	{
+		gameObject.SetActive(false);
+		if (active())
+			PlayerScript.PointerScript.SetActive(gameObject, true);
+	}
+
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
 	static void StartContextualIL(ILContext il)
@@ -62,7 +71,6 @@ static class Contextual
 		// c.RemoveRange(2);
 		// c.Index++;
 		// c.RemoveRange(2);
-
 		c.GotoNext(MoveType.After,
 			// NetworkInstance.GUIContextualMenu.SetActive(value: true);
 			x => x.MatchLdarg(0),
