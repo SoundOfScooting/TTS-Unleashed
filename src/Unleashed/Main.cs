@@ -12,7 +12,10 @@ using Unleashed.Settings;
 namespace Unleashed;
 
 #if TRUE_ULTIMATE_POWER
-	#warning TICK TOCK...
+	#warning TRUE_ULTIMATE_POWER=1
+#endif
+#if DEBUG_COMPAT
+	#warning DEBUG_COMPAT=1
 #endif
 
 [BepInPlugin(PLUGIN_GUID, PLUGIN_NAME, PLUGIN_VERSION)]

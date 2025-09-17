@@ -106,7 +106,7 @@ static class Contextual
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.SetPhysics))]
 	static bool SetPhysicsPrefix(Pointer __instance, int HoverObjectId, RigidbodyState rigidbodyState, PhysicsMaterialState physicsMaterialState)
 	{
-		if (Network.isServer || API.HostModded)
+		if (API.HostModded)
 			return true;
 
 		List<string> guids = [];

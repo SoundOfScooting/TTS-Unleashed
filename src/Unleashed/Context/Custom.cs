@@ -7,8 +7,6 @@ static class Custom
 {
 	// #idea: would be nice to use deck import UI for cards to access extra options
 	// #idea: edit each ui panel to add inaccesible parameters
-	const bool DEBUG_COMPAT = false;
-
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(CustomAssetbundle),  nameof(CustomAssetbundle .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomCard),         nameof(CustomCard        .bCustomUI), MethodType.Setter)]
@@ -39,7 +37,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
 	static bool AssetbundleImportPrefix(UICustomAssetbundle __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomAssetbundleURL          = __instance.CustomAssetbundleURL         .Trim();
 		__instance.CustomAssetbundleSecondaryURL = __instance.CustomAssetbundleSecondaryURL.Trim();
@@ -69,7 +67,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomCard), nameof(UICustomCard.Import))]
 	static bool CardImportPrefix(UICustomCard __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.URLFace = __instance.URLFace.Trim();
 		__instance.URLBack = __instance.URLBack.Trim();
@@ -104,7 +102,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomDeck), nameof(UICustomDeck.Import))]
 	static bool DeckImportPrefix(UICustomDeck __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.URLFace = __instance.URLFace.Trim();
 		__instance.URLBack = __instance.URLBack.Trim();
@@ -144,7 +142,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomDice), nameof(UICustomDice.Import))]
 	static bool DiceImportPrefix(UICustomDice __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))
@@ -171,7 +169,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.Import))]
 	static bool ImageImportPrefix(UICustomImage __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))
@@ -201,7 +199,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomImageDouble), nameof(UICustomImageDouble.Import))]
 	static bool ImageDoubleImportPrefix(UICustomImageDouble __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		// #bug: (base game) CustomImageSecondaryURL is not trimmed
@@ -230,7 +228,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomMesh), nameof(UICustomMesh.Import))]
 	static bool MeshImportPrefix(UICustomMesh __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.MeshURL     = __instance.MeshURL    .Trim();
 		__instance.DiffuseURL  = __instance.DiffuseURL .Trim();
@@ -275,7 +273,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomSky), nameof(UICustomSky.Import))]
 	static bool SkyImportPrefix(UICustomSky __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))
@@ -294,7 +292,7 @@ static class Custom
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	static void TileStartPostfix(UICustomTile __instance) =>
-		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = !DEBUG_COMPAT && API.HostModded;
+		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = API.HostModded;
 	// #todo: GetCustomObject parity
 	// #todo: relocate to dedicated Lua fixes/additions
 	[HarmonyPostfix]
@@ -313,7 +311,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.Import))]
 	static bool TileImportPrefix(UICustomTile __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))
@@ -344,7 +342,7 @@ static class Custom
 	[HarmonyPatch(typeof(UICustomToken), nameof(UICustomToken.Import))]
 	static bool TokenImportPrefix(UICustomToken __instance, bool __runOriginal)
 	{
-		if (!__runOriginal || !DEBUG_COMPAT && Network.isServer)
+		if (!__runOriginal || API.IsServer)
 			return __runOriginal;
 		__instance.CustomImageURL = __instance.CustomImageURL.Trim();
 		if (string.IsNullOrEmpty(__instance.CustomImageURL))

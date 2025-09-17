@@ -74,7 +74,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 			zInput.GetButtonChanged("Ctrl") ||
 			zInput.GetButtonChanged("Shift")
 		){
-			restartTooltip  = false;
+			restartTooltip = false;
 			tooltip.ChangeTooltip(originalTooltip);
 			if (!UZCameraHome.NeedToPickHome && Network.isAdmin)
 			{

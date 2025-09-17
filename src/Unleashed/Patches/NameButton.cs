@@ -207,7 +207,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
 	static bool PromoteThisPlayerPrefix(string name)
 	{
-		if (Network.isServer || !Network.isAdmin)
+		if (API.IsServer || !Network.isAdmin)
 			return true;
 		var steamId = PlayerManager.Instance.SteamIDFromName(name);
 		Lua.Execute(
@@ -224,7 +224,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.KickThisPlayer))]
 	static bool KickThisPlayerPrefix(string name)
 	{
-		if (Network.isServer || !Network.isAdmin)
+		if (API.IsServer || !Network.isAdmin)
 			return true;
 		var steamId = PlayerManager.Instance.SteamIDFromName(name);
 		Lua.Execute(
