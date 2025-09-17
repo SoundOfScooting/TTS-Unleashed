@@ -78,7 +78,7 @@ static class Contextual
 
 	[ModuleInitializer]
 	internal static void Initializer() =>
-		RemoteX.ChangeRPCMethods += (RPCMethods) =>
+		RemoteX.RegisterOverrides += (RPCMethods) =>
 		{
 			// -[Remote(Permission.Server)]
 			// +[Remote(Permission.Owner, validationFunction: "Permissions/Contextual")]

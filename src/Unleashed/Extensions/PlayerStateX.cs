@@ -8,13 +8,13 @@ static class PlayerStateX
 	[ModuleInitializer]
 	internal static void Initializer()
 	{
-		Events.OnStartDisconnected += OnStartDisconnected;
 		Events.OnStartConnected    += OnStartConnected;
+		Events.OnStartDisconnected += OnStartDisconnected;
 	}
-	static void OnStartDisconnected() =>
-		CWT = new();
 	static void OnStartConnected() =>
 		PlayerManager.Instance.MyPlayerState().IsModded = true;
+	static void OnStartDisconnected() =>
+		CWT = new();
 
 	static ConditionalWeakTable<PlayerState, Data> CWT;
 	sealed class Data

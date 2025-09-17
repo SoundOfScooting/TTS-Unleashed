@@ -4,7 +4,8 @@ using MethodRPCSort = NewNet.NetworkView.MethodRPCSort;
 
 namespace Unleashed.Compat;
 
-// #todo: add version control for RPCMethodSort ids
+// #todo: add version control for both vanilla and modded MethodRPCSort ids
+	// could also use implement string ids?
 
 readonly record struct RPCMethods(List<MethodRPCSort> Base)
 {
@@ -33,7 +34,7 @@ readonly record struct RPCMethods(List<MethodRPCSort> Base)
 [AttributeUsage(AttributeTargets.Method)]
 sealed class RemoteX : BaseNetworkAttribute
 {
-	public static event Action<RPCMethods> ChangeRPCMethods;
+	public static event Action<RPCMethods> RegisterOverrides;
 
 	public SendType sendType = SendType.ReliableBuffered;
 	public RemoteX(
@@ -47,8 +48,8 @@ sealed class RemoteX : BaseNetworkAttribute
 		this.validationFunction = validationFunction;
 		this.serializationMethod = serializationMethod;
 	}
-	public static explicit operator Remote(RemoteX rpc) =>
-		new(rpc.permission, rpc.sendType, rpc.validationFunction, rpc.serializationMethod);
+	public static explicit operator Remote(RemoteX @this) =>
+		new(@this.permission, @this.sendType, @this.validationFunction, @this.serializationMethod);
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
@@ -67,7 +68,7 @@ sealed class RemoteX : BaseNetworkAttribute
 			// WARNING: DO NOT REMOVE //
 			RPCMethods.Sort(comp);
 			// ////////////////////// //
-			ChangeRPCMethods?.Invoke(new(RPCMethods));
+			RegisterOverrides?.Invoke(new(RPCMethods));
 
 			List<MethodRPCSort> CustomRPCMethods = [];
 			FindAttributesX(CustomRPCMethods);
@@ -79,11 +80,8 @@ sealed class RemoteX : BaseNetworkAttribute
 	}
 	static void DumpAttributes(List<MethodRPCSort> RPCMethods)
 	{
-		for (var i = 0; i < RPCMethods.Count; i++)
-		{
-			var entry = RPCMethods[i];
+		foreach (var (i, entry) in RPCMethods.Index())
 			Main.Log.LogWarning($"{i}: {entry.classType} / {entry.method}");
-		}
 	}
 
 	static List<MethodRPCSort> FindAttributesX(List<MethodRPCSort> CustomRPCMethods)
@@ -118,7 +116,7 @@ sealed class RemoteX : BaseNetworkAttribute
 		return CustomRPCMethods;
 	}
 
-	static readonly List<BepInEx.BaseUnityPlugin> PluginsOrder =
+	static readonly List<BepInEx.BaseUnityPlugin> PluginsOrdered =
 		Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader)).Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
 	static void SortAttributesX(List<MethodRPCSort> CustomRPCMethods)
 	{
@@ -140,8 +138,8 @@ sealed class RemoteX : BaseNetworkAttribute
 		static Comparison CompareAssemblies(Assembly a, Assembly b) =>
 			Comparison.Compare(
 				// -1 (non-plugin asm) < 0 (first plugin)
-				PluginsOrder.FindIndex(p => p?.GetType()?.Assembly == a),
-				PluginsOrder.FindIndex(p => p?.GetType()?.Assembly == b)
+				PluginsOrdered.FindIndex(p => p?.GetType()?.Assembly == a),
+				PluginsOrdered.FindIndex(p => p?.GetType()?.Assembly == b)
 			);
 		static Comparison CompareParameters(IEnumerable<Type> a, IEnumerable<Type> b)
 		{

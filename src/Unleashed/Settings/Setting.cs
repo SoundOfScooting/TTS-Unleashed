@@ -3,7 +3,6 @@ using BepInEx.Configuration;
 
 namespace Unleashed.Settings;
 
-// #wip: replace with string
 enum Section
 {
 	Menu = 1,

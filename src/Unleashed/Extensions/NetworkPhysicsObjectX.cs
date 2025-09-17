@@ -30,7 +30,7 @@ static class NetworkPhysicsObjectX
 			if (Network.isClient)
 			{
 				if (API.HostModded)
-					@this.RPC(RPCTarget.Server, ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
+					@this.RPC(RPCTarget.Server, @this.ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
 				return;
 			}
 			// #todo: wrong

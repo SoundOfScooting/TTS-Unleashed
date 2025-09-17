@@ -189,7 +189,7 @@ sealed class UINameButtonX : MonoBehaviour
 
 	[ModuleInitializer]
 	internal static void Initializer() =>
-		RemoteX.ChangeRPCMethods += (RPCMethods) =>
+		RemoteX.RegisterOverrides += (RPCMethods) =>
 		{
 			// bugfix
 			// -[Remote(Permission.Admin)]
