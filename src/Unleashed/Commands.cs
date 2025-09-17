@@ -51,7 +51,7 @@ static class Commands
 			// ModdedCommandHelp(type);
 		}
 	}
-	static readonly string px = Main.PLUGIN_ABBR.ToLower();
+	static readonly string px = Main.PLUGIN_ABBR.ToLowerInvariant();
 	public static void ModdedCommandHelp(ChatMessageType type)
 	{
 		LogCommand(type, Colour.PurpleHex, $"/{px}help",             "Lists new modded commands");
@@ -77,7 +77,7 @@ static class Commands
 
 		if (MessageEqualCmdOpt(message, "/help", " ", out var rest))
 		{
-			CommandHelp(type, rest?.ToLower() == "-a");
+			CommandHelp(type, rest?.ToLowerInvariant() == "-a");
 			return false;
 		}
 		if (Network.isAdmin && Chat.MessageEqualCmd(message, "/execute ", out rest))

@@ -7,5 +7,20 @@ indent_size  = tab
 tab_width    = 4
 insert_final_newline = true
 
+[*.cs]
+
 # RS0030: Do not use banned APIs
 dotnet_diagnostic.RS0030.severity = error
+
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1715: Identifiers should have correct prefix
+dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
+
+# // #net10
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = none
+
+# CA2255: The 'ModuleInitializer' attribute should not be used in libraries
+dotnet_diagnostic.CA2255.severity = none

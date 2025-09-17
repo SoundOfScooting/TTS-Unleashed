@@ -31,12 +31,12 @@ static class ClientVersion
 	static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
 	{
 		var sender = __state;
-		var s = versionnum.IndexOf(VERSION_HEADER);
+		var s = versionnum.IndexOf(VERSION_HEADER, StringComparison.Ordinal);
 		if (s < 0)
 			return;
 
 		s += VERSION_HEADER.Length;
-		var e = versionnum.IndexOf("\n", s);
+		var e = versionnum.IndexOf("\n", s, StringComparison.Ordinal);
 		if (e < 0)
 			e = versionnum.Length;
 

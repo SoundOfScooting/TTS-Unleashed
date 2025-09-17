@@ -8,7 +8,7 @@ static class UICustomObjectX
 	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport) =>
 		@this.QueueFake<UICustomSky>(onImport);
 
-	class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
+	sealed class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
 	{
 		public readonly List<Delegate> OnImportFakeQueue = [];
 		// #todo? onCancel

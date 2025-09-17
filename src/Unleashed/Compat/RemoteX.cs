@@ -9,7 +9,7 @@ namespace Unleashed.Compat;
 
 readonly record struct RPCMethods(List<MethodRPCSort> Base)
 {
-	string FuncID(MethodInfo method) =>
+	static string FuncID(MethodInfo method) =>
 		$"{Main.PLUGIN_GUID}/{method.FullDescription()}";
 	public string AddFunc(MethodInfo method, Func<NetworkPlayer, bool> func)
 	{

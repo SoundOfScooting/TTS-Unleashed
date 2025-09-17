@@ -43,7 +43,7 @@ static class Tables
 						tableName == "Custom Square"
 							? "Custom Table Square"
 							: "Custom Table"
-					).ToUpper());
+					).ToUpperInvariant());
 					UICustomImage.Instance.CustomImageURL = image.CustomImageURL;
 				}
 				catch (Exception e)

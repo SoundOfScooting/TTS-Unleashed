@@ -9,7 +9,7 @@ static class ConfigFileX
 		$"{(int) section}: {section}";
 	static string TrimSectionFormat(string section)
 	{
-		var i = section.IndexOf(":");
+		var i = section.IndexOf(':', StringComparison.Ordinal);
 		if ((i >= 0) && int.TryParse(section[..i], out _))
 			section = section[(i + 1)..].TrimStart();
 		return section;

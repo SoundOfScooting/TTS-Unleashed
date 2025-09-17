@@ -82,7 +82,7 @@ public readonly record struct Lua(string Text)
 
 		public static Lua Format(int    value) => (Lua) $"{value}";
 		public static Lua Format(float  value) => (Lua) $"{value}";
-		public static Lua Format(bool   value) => (Lua) $"{value}".ToLower();
+		public static Lua Format(bool   value) => (Lua) $"{value}".ToLowerInvariant();
 		public static Lua Format(string value)
 		{
 			if (value is null)

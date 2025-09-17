@@ -66,7 +66,7 @@ static class Components
 				OnSpawn = GridButtonOnSpawn.ShowInput(
 					Placeholder: "[A/K/Q/J/10/#][C/D/S/H]",
 					ParseSpawnName: input => {
-						input = input.Trim().ToUpper();
+						input = input.Trim().ToUpperInvariant();
 
 						int front_id;
 						if (RandomNames.Contains(input))
@@ -128,7 +128,7 @@ static class Components
 				OnSpawn = GridButtonOnSpawn.ShowInput(
 					Placeholder: "[high]/[low] (material)",
 					ParseSpawnName: input => {
-						var parts = input.ToUpper().Split([' '], StringSplitOptions.RemoveEmptyEntries);
+						var parts = input.ToUpperInvariant().Split([' '], StringSplitOptions.RemoveEmptyEntries);
 						if (parts is [])
 							return null;
 
