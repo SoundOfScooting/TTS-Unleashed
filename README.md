@@ -227,8 +227,9 @@ If you hold Shift, the objects in the hand stash are instead swapped with the on
 If you hold Shift, the selected objects in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.\
 **BUG:** This feature is not well-behaved with non-card objects.
 
-**Modded host and client:** `Material` will include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
-*(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
+**Modded host and client:** `Material` includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
+**Modded host and client:** `Material` will also include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
+*(This won't work if the host doesn't have the Kickstarter Gold reward.)*
 
 **Admin-only:** `Custom` context option is available on objects *(formerly host-only)*.\
 Clients cannot automatically update matching custom objects.\

@@ -1,11 +1,12 @@
 # dev
 
-* Renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll`. To update, delete the old one and add the renamed one.
+* Internal project restructuring - renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll`
+* Renamed settings and added new settings sections (this is automatic)
+* Fixed ConfigurationManager sanitizing special characters in strings
 * Added setting `Menu Holiday`
 * Added multi-line support to object `Name` field
-* Changed setting sections and names (this is automatic)
-* Fixed ConfigurationManager sanitizing special characters in strings
-* Enabled starting singleplayer/hotseat without Steam running and fixed the `-nosteam` launch option.
+* Extended object `Material` for piecepack dice and colored objects (`Mesh Index` and `Card ID` planned in the future)
+* Enabled starting singleplayer/hotseat without Steam running and fixed the `-nosteam` launch option
 
 # v0.1.0
 

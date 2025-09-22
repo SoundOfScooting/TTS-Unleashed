@@ -54,20 +54,6 @@ static class Contextual
 		c.EmitDelegate(bool(bool isServer) => true);
 #endif
 
-		// #gold
-		c.GotoNext(MoveType.Before,
-			// SetActive(((Component)NetworkInstance.GUIContextualGoldBool.get_transform().get_parent()).get_gameObject(), Network.isServer && SteamManager.bKickstarterGold);
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer))),
-			x => x.MatchBrfalse(out _),
-			x => x.MatchLdsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.bKickstarterGold))),
-			x => x.MatchBr(out _),
-			x => x.MatchLdcI4(0)
-		);
-		c.MoveAfterLabels();
-		c.Remove();
-		c.EmitDelegate(bool() =>
-			API.HostModded
-		);
 		// c.RemoveRange(2);
 		// c.Index++;
 		// c.RemoveRange(2);
