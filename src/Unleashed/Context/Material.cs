@@ -158,11 +158,8 @@ sealed class UZContextualMaterial : MonoBehaviour
 	[ModuleInitializer]
 	internal static void Initializer() =>
 		Events.OnStartConnected += OnStartConnected;
-	static void OnStartConnected()
-	{
-		NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>()
-			.Setup();
-	}
+	static void OnStartConnected() =>
+		NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>().Setup();
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]

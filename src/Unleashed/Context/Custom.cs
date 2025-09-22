@@ -5,6 +5,19 @@ namespace Unleashed.Context;
 [HarmonyPatch]
 static class Custom
 {
+	[HarmonyILManipulator]
+	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
+	static void StartContextualIL(ILContext il)
+	{
+		var c = new ILCursor(il);
+		c.GotoNext(MoveType.After,
+			// SetActive(NetworkInstance.GUIContextualCustom, Network.isServer && (bool)InfoObject.GetComponent<CustomObject>());
+			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualCustom))),
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+		);
+		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
+	}
+
 	// #idea: would be nice to use deck import UI for cards to access extra options
 	// #idea: edit each ui panel to add inaccesible parameters
 	[HarmonyILManipulator]

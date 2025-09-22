@@ -39,7 +39,7 @@ static class Events
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
 	static void TriggerStartGlobalContextual() =>
 		OnStartGlobalContextual?.Invoke();
-	internal static void TriggerStartContextual() =>
+	static void TriggerStartContextual() =>
 		OnStartContextual?.Invoke();
 
 	static bool addingAllPlayers; // annoying
@@ -76,6 +76,21 @@ static class Events
 			TriggerPlayersAddOther(playerState);
 			return;
 		}
+	}
+
+	[HarmonyILManipulator]
+	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
+	static void StartContextualIL(ILContext il)
+	{
+		var c = new ILCursor(il);
+		c.GotoNext(MoveType.After,
+			// NetworkInstance.GUIContextualMenu.SetActive(value: true);
+			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMenu))),
+			x => x.MatchLdcI4(1),
+			x => x.MatchCallvirt(AccessTools.Method(typeof(GameObject), nameof(GameObject.SetActive)))
+		);
+		c.Index--;
+		c.EmitDelegate(TriggerStartContextual);
 	}
 }
 

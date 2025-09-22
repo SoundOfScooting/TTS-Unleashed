@@ -227,11 +227,11 @@ If you hold Shift, the objects in the hand stash are instead swapped with the on
 If you hold Shift, the selected objects in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.\
 **BUG:** This feature is not well-behaved with non-card objects.
 
-**Modded host and client:** `Material` includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
-**Modded host and client:** `Material` will also include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
+**Modded host and client:** `Material` context option includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
+It will also include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
 *(This won't work if the host doesn't have the Kickstarter Gold reward.)*
 
-**Admin-only:** `Custom` context option is available on objects *(formerly host-only)*.\
+**Admin-only:** `Custom` context option is available *(formerly host-only)*.\
 Clients cannot automatically update matching custom objects.\
 `Custom Jigsaw` and `Custom PDF` might work but are not fully supported yet for clients.\
 If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect Ratio" changed by clients.
@@ -239,8 +239,10 @@ If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect 
 `Show Hand` context option is available on objects in any hand, not just your own.\
 **BUG:** This feature is buggy *(just like the regular `Show Hand` button)*.
 
-**Admin-only:** `Physics` context option is available on objects *(formerly host-only)*.\
+**Admin-only:** `Physics` context option is available *(formerly host-only)*.\
 **BUG:** The UI might not update client-side but it does apply server-side.
+
+`Scripting` context option is available, but only the GUID button and not the editor *(formerly host-only)*.
 
 `Name` field supports inserting multiple lines just like the `Description` field.
 
