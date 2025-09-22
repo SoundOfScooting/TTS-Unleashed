@@ -54,7 +54,6 @@ public sealed class Main : BaseUnityPlugin
 			Harmony.PatchAll(typeof(Main).Assembly);
 
 			Log.LogInfo(">> Reticulating splines...");
-			Events.Load();
 
 			Log.LogInfo(">> Load complete. <<");
 		}

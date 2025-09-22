@@ -1,4 +1,4 @@
-using Unleashed.Settings;
+using System.Runtime.CompilerServices;
 
 namespace Unleashed;
 
@@ -44,11 +44,12 @@ static class Events
 
 	static bool addingAllPlayers; // annoying
 
-	public static void Load()
+	[ModuleInitializer]
+	internal static void Initializer()
 	{
 		NetworkEvents.OnServerInitialized += OnServerInitialized;
 		NetworkEvents.OnConnectedToServer += OnConnectedToServer;
-		EventManager .OnPlayersAdd        += OnPlayersAdd;
+		EventManager.OnPlayersAdd += OnPlayersAdd;
 	}
 	static void OnServerInitialized() =>
 		addingAllPlayers = false;
