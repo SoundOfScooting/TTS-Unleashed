@@ -87,7 +87,7 @@ static class CameraControls
 		);
 
 		c.Index   = 0;
-		int found = 0;
+		var found = 0;
 		while (c.TryGotoNext(MoveType.After,
 			// zInput.GetButton("Camera Hold Rotate")
 			x => x.MatchLdstr("Camera Hold Rotate"),

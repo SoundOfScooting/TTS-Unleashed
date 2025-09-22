@@ -1,3 +1,4 @@
+using Unleashed.Compat;
 using Unleashed.Settings;
 
 namespace Unleashed;
@@ -60,12 +61,13 @@ static class Commands
 		LogCommand(type, Colour.PurpleHex, $"/{px}loading <opt. %>", "Resets/sets your loading percentage");
 		LogCommand(type, Colour.PurpleHex, $"/{px}copylua",          "Copies the last script executed by the mod");
 		LogCommand(type, Colour.PurpleHex, $"/{px}cmd <command>",    "Executes a system console command from this chat tab");
-#if TRUE_ULTIMATE_POWER
-		LogCommand(type, Colour.PurpleHex, $"/{px}spooflog <message>");
-		LogCommand(type, Colour.PurpleHex, $"/{px}spoofsay <sender ID> <message>");
-		LogCommand(type, Colour.PurpleHex, $"/{px}spoofwhisper <sender ID> <recipient ID> <message>");
-		LogCommand(type, Colour.PurpleHex, $"/{px}spoofteam <sender ID> <message>");
-#endif
+		if (API.TRUE_ULTIMATE_POWER)
+		{
+			LogCommand(type, Colour.PurpleHex, $"/{px}spooflog <message>");
+			LogCommand(type, Colour.PurpleHex, $"/{px}spoofsay <sender ID> <message>");
+			LogCommand(type, Colour.PurpleHex, $"/{px}spoofwhisper <sender ID> <recipient ID> <message>");
+			LogCommand(type, Colour.PurpleHex, $"/{px}spoofteam <sender ID> <message>");
+		}
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Chat), nameof(Chat.ChatCMD))]
@@ -151,7 +153,7 @@ static class Commands
 			SystemConsole.Instance.ProcessCommand(rest, false);
 			return false;
 		}
-#if TRUE_ULTIMATE_POWER
+		if (API.TRUE_ULTIMATE_POWER)
 		if (MessageEqualCmdOpt(message, $"/{px}spooflog", " ", out rest))
 		{
 			if (rest is null)
@@ -162,6 +164,7 @@ static class Commands
 			Chat.Instance.RPC(RPCTarget.Server, Chat.Instance.RPC_Chat, rest);
 			return false;
 		}
+		if (API.TRUE_ULTIMATE_POWER)
 		if (MessageEqualCmdOpt(message, $"/{px}spoofsay", " ", out rest))
 		{
 			if (rest is null or [])
@@ -178,6 +181,7 @@ static class Commands
 			Chat.Instance.RPC(RPCTarget.Server, Chat.Instance.RPC_ChatMessage, sender.id, rest);
 			return false;
 		}
+		if (API.TRUE_ULTIMATE_POWER)
 		if (MessageEqualCmdOpt(message, $"/{px}spoofwhisper", " ", out rest))
 		{
 			if (rest is null or [])
@@ -201,6 +205,7 @@ static class Commands
 				Chat.Instance.RPC(networkPlayer, Chat.Instance.RPC_ChatWhisperMessage, sender.id, rest, recipient.stringColor);
 			return false;
 		}
+		if (API.TRUE_ULTIMATE_POWER)
 		if (MessageEqualCmdOpt(message, $"/{px}spoofteam", " ", out rest))
 		{
 			if (rest is null or [])
@@ -224,7 +229,6 @@ static class Commands
 				Chat.Instance.RPC(recipient.networkPlayer, Chat.Instance.RPC_ChatTeamMessage, sender.id, rest);
 			return false;
 		}
-#endif
 		return true;
 	}
 	[HarmonyILManipulator]

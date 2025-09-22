@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Unleashed.Compat;
 
 namespace Unleashed.Context;
 
@@ -31,11 +32,10 @@ sealed class UZContextualStash : MonoBehaviour
 	static void OnStartConnected()
 	{
 		// after 04 Paste
-#if TRUE_ULTIMATE_POWER
-		new GameObject("04 Pb |SORT| Unlock Stash")
-			.AddComponent<UZContextualStash>()
-			.CreateComponents(Act.GlobalUnlock);
-#endif
+		if (API.TRUE_ULTIMATE_POWER)
+			new GameObject("04 Pb |SORT| Unlock Stash")
+				.AddComponent<UZContextualStash>()
+				.CreateComponents(Act.GlobalUnlock);
 		new GameObject("04 Pc |SORT| Draw Stash")
 			.AddComponent<UZContextualStash>()
 			.CreateComponents(Act.GlobalDraw);

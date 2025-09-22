@@ -164,7 +164,7 @@ static class ToolVectorX
 	static void UpdateVectorEraseIL(ILContext il)
 	{
 		var c = new ILCursor(il);
-		int found = 0;
+		var found = 0;
 		while (c.TryGotoNext(MoveType.Before,
 			// RPCRemoveLine(drawnLine.Key);
 			x => x.MatchCall(AccessTools.Method(typeof(ToolVector), nameof(ToolVector.RPCRemoveLine)))

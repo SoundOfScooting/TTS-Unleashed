@@ -44,15 +44,13 @@ static class Contextual
 		);
 		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
 
-#if TRUE_ULTIMATE_POWER
 		// #todo: either support or remove Scripting but keep GUID
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualScripting, Network.isServer && !string.IsNullOrEmpty(component.GUID));
 			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualScripting))),
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
 		);
-		c.EmitDelegate(bool(bool isServer) => true);
-#endif
+		c.EmitDelegate(bool(bool isServer) => isServer || API.TRUE_ULTIMATE_POWER);
 
 		// c.RemoveRange(2);
 		// c.Index++;
