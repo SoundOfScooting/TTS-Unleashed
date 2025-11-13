@@ -9,6 +9,36 @@ insert_final_newline = true
 
 [*.cs]
 
+#### ========== ####
+#### Formatting ####
+#### ========== ####
+
+# Indentation preferences
+csharp_indent_case_contents_when_block = false
+# Space preferences
+csharp_space_after_cast = true
+
+#### ===== ####
+#### Style ####
+#### ===== ####
+
+# IDE0007: Use implicit type
+dotnet_diagnostic.IDE0007.severity = suggestion
+csharp_style_var_elsewhere = true
+csharp_style_var_for_built_in_types = true
+csharp_style_var_when_type_is_apparent = true
+
+# IDE0036: Order modifiers
+dotnet_diagnostic.IDE0036.severity = suggestion
+
+# IDE0040: Remove accessibility modifiers
+dotnet_diagnostic.IDE0040.severity = suggestion
+dotnet_style_require_accessibility_modifiers = omit_if_default
+
+#### ============ ####
+#### Suppressions ####
+#### ============ ####
+
 # RS0030: Do not use banned APIs
 dotnet_diagnostic.RS0030.severity = error
 
@@ -18,8 +48,7 @@ dotnet_diagnostic.CA1707.severity = none
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
 
-# // #net10
-# CA1822: Mark members as static
+# CA1822: Mark members as static // #net10
 dotnet_diagnostic.CA1822.severity = none
 
 # CA2255: The 'ModuleInitializer' attribute should not be used in libraries

@@ -194,8 +194,8 @@ sealed class UZContextualStash : MonoBehaviour
 			// }
 			case Act.ObjectStash:
 			{
-				bool anyInHand = false;
-				// bool anyStash  = false; // #stash
+				var anyInHand = false;
+				// var anyStash  = false; // #stash
 				foreach (var obj in player.GetSelectedObjects())
 				{
 					// if (anyStash = obj.NPO.IsHandZoneStash) // #stash

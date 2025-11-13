@@ -51,10 +51,10 @@ static class NetworkPhysicsObjectX
 	{
 		public void SetHeldObjectTiltRotationIndex(NetworkPhysicsObject npo, int tiltDelta, int id)
 		{
-			int heldFlipRotationIndex = npo.HeldFlipRotationIndex;
-			int heldSpinRotationIndex = npo.HeldSpinRotationIndex;
-			int heldTiltRotationIndex = npo.HeldTiltRotationIndex;
-			int num = (heldTiltRotationIndex + tiltDelta) % 24;
+			var heldFlipRotationIndex = npo.HeldFlipRotationIndex;
+			var heldSpinRotationIndex = npo.HeldSpinRotationIndex;
+			var heldTiltRotationIndex = npo.HeldTiltRotationIndex;
+			var num = (heldTiltRotationIndex + tiltDelta) % 24;
 
 			var luaGameObjectScript = npo.luaGameObjectScript;
 			var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.stringColor;
