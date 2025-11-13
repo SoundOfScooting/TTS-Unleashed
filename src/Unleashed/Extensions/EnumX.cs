@@ -12,8 +12,6 @@ public static class EnumX
 			Enum.GetName(typeof(TEnum), value);
 		public static string GetName<TEnum>(object value) where TEnum: struct, Enum =>
 			Enum.GetName(typeof(TEnum), value);
-		public static string[] GetNames<TEnum>() where TEnum: struct, Enum =>
-			Enum.GetNames(typeof(TEnum));
 		public static Type GetUnderlyingType<TEnum>() where TEnum: struct, Enum =>
 			Enum.GetUnderlyingType(typeof(TEnum));
 		public static TEnum[] GetValues<TEnum>() where TEnum: struct, Enum =>
@@ -22,11 +20,6 @@ public static class EnumX
 			Enum.IsDefined(typeof(TEnum), value);
 		public static bool IsDefined<TEnum>(object value) where TEnum: struct, Enum =>
 			Enum.IsDefined(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value) where TEnum: struct, Enum =>
-			(TEnum) Enum.Parse(typeof(TEnum), value);
-		public static TEnum Parse<TEnum>(string value, bool ignoreCase) where TEnum: struct, Enum =>
-			(TEnum) Enum.Parse(typeof(TEnum), value, ignoreCase);
-		// [CLSCompliant(false)]
 		public static TEnum ToObject<TEnum>(ulong value) where TEnum: struct, Enum =>
 			(TEnum) Enum.ToObject(typeof(TEnum), value);
 		// [CLSCompliant(false)]
