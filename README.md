@@ -19,7 +19,7 @@ Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 Unleashed is compiled using .NET 10 targetting netstandard2.0.
 
 Copy or symlink all DLL files mentioned in `[REPO]/Unleashed.csproj` from the `[GAME]/Tabletop_Simulator_Data/Managed` folder to the `[REPO]/lib/` folder.\
-Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/bin/edu.sos.unleashed.dll`.\
+Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/artifacts/bin/Unleashed/debug/edu.sos.unleashed.dll`.\
 To disable test features, run `dotnet build -p:TRUE_ULTIMATE_POWER=0` instead.
 
 # Feature overview

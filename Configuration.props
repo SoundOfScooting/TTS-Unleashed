@@ -20,9 +20,6 @@
 			$(AssemblySearchPaths);
 			$(LibsDir);
 		</AssemblySearchPaths>
-
-		<OutputPath>$(SolutionDir)bin/</OutputPath>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 	</PropertyGroup>
 
 	<ItemDefinitionGroup>

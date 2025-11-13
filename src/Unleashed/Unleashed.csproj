@@ -3,7 +3,7 @@
 	<Import Project="../../Configuration.props" />
 
 	<PropertyGroup>
-		<AssemblyName>edu.sos.unleashed</AssemblyName>
+		<AssemblyName>edu.sos.unleashed</AssemblyName> <!-- #bug: not working -->
 		<Product>Unleashed</Product>
 		<Version>0.2.0</Version>
 
