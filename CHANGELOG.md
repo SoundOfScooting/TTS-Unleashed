@@ -6,6 +6,8 @@
 * Added setting `Menu Holiday`
 * Added multi-line support to object `Name` field
 * Extended object `Material` for piecepack dice and colored objects (`Mesh Index` and `Card ID` planned in the future)
+* Removed `/uz` prefix from most commands and renamed command `/uzcmd` to `/sys`
+* Improved commands `/help`, `/kick`, `/ban`, `/promote`, `/mute` and added `/whisper`, `/color`
 * Enabled starting singleplayer/hotseat without Steam running and fixed the `-nosteam` launch option
 
 # v0.1.0

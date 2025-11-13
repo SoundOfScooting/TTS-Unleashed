@@ -246,41 +246,59 @@ If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect 
 
 `Name` field supports inserting multiple lines just like the `Description` field.
 
-## Chat commands
+## Chat
 
-### Modified commands
+### Commands
 
-`/help`\
-Command list slightly modified.\
-`/help -a` *(new)*\
-Lists hidden commands in addition to the regular ones.
+Command arguments that contain spaces must be wrapped in `"` or `'`, which are escaped by `\`.\
+Commands may target players by player ID (e.g. `#1` for the host), player color, or partial player name *(formerly only full name)*, all case-insensitive.
 
-**Admin-only:** `/kick <name>`, `/ban <name>`, `/promote <name>` *(formerly host-only)*\
-As of right now, the player name is case-insensitive but must include all characters.
+`/help (-a|cmd)`\
+Shows command usages, `-a` to list extra commands.
 
-**Admin-only:** `/execute <lua script>` *(formerly host-only)*\
-Equivalent to the `lua <lua script>` console command.
+`/list` *(new)*\
+Lists information about each player: player ID, player name, modded status *(currently only visible to the host)*.
 
-### New commands
+**Admin-only:** `/kick <player> (message, host-only)` *(formerly host-only)*\
+Ejects player from the game.\
+**Host-only:** `/ban <player> (message)`\
+Kicks player and adds them to block list.
 
-`/uzhelp`\
-Lists new modded commands.
+**Admin-only:** `/promote|p <player>` *(formerly host-only)*\
+Promotes or demotes player as admin.
 
-`/uzsettings`\
-Reloads the [settings file](#settings-file) from disk.
+`/mute <player>`\
+Mutes or unmutes player's voice chat *(client-side)*.\
+**Admin-only:** `/mute -s <player> (status)` *(formerly host-only)*\
+Mutes or unmutes player's voice chat *(server-side)*.
 
-`/uzlist`\
-Lists information about each player: player ID, steam name, modded status *(right now only visible to the host)*.
+**Admin-only:** `/execute <lua statement>` *(formerly host-only)*\
+Executes Lua statement.\
+Equivalent to the `lua <statement>` system console command.
 
-`/uzloading`, `/uzloading <percent>`\
-Resets/sets your loading percentage to any value from 0 to 255 *(only values below 100 display)*.\
+`/color|c (-f) (player, admin-only) <color>` *(new)*\
+Changes a player's color, `-f` to force.\
+**Admin-only:** `/color|c -s (player) <seated>` *(new)*\
+Swaps the colors of two players.
+
+`/<color> <message>` *(unchanged)*\
+Whispers the player on this color.\
+`/whisper|w <recipient> <message>` *(new)*\
+Whispers a message to any player.\
+Alternative to `/<color>`, which cannot message spectators.
+
+`/loading|% (0-255)(%)` *(new)*\
+Changes your loading percentage, 100%+ is invisible.\
 This effect is temporary and lasts until the game next changes your loading percentage.
 
-`/uzcopylua`\
-Copies the last script executed by the mod to the clipboard.\
-This is useful to debug internal errors within the mod.
+`/sys <command>` *(new)*\
+Executes a system console command inside this chat tab.\
+For example, `/sys chat_copy` copies the current tab's text instead of the console's text.
 
-`/uzcmd <command>`\
-Executes a system console command from the current chat tab.\
-E.g. `/uzcmd chat_copy` would copy the current tab's text instead of the console's text.
+`/uzsettings` *(new)*\
+Reloads the mod's [settings file](#settings-file) from disk.
+
+`/uzcopylua` *(new)*\
+Copies the last script executed by the mod to the clipboard.\
+This is mainly used to debug internal errors within the mod.
 

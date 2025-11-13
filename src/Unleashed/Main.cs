@@ -20,6 +20,7 @@ public sealed class Main : BaseUnityPlugin
 	public const string PLUGIN_NAME    = PluginInfo.PLUGIN_NAME;
 	public const string PLUGIN_VERSION = PluginInfo.PLUGIN_VERSION;
 	public const string PLUGIN_ABBR    = "UZ";
+	internal const string PLUGIN_ABBR_LOWER = "uz";
 	const string PLUGIN_REPO = "https://github.com/SoundOfScooting/TTS-Unleashed";
 	const string PLUGIN_URL  = $"{PLUGIN_REPO}/releases/tag/v{PLUGIN_VERSION}";
 
@@ -54,6 +55,7 @@ public sealed class Main : BaseUnityPlugin
 			Harmony.PatchAll(typeof(Main).Assembly);
 
 			Log.LogInfo(">> Reticulating splines...");
+			Command.Commands.Load();
 
 			Log.LogInfo(">> Load complete. <<");
 		}
