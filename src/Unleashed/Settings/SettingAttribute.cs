@@ -1,28 +1,28 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Unleashed.Compat;
+using Unleashed.Util;
 
 namespace Unleashed.Settings;
 
-[Conditional("TRUE_ULTIMATE_POWER")]
-sealed class PowerSetting([CallerFilePath] string srcFile = default, [CallerLineNumber] int srcLine = default)
-	: SettingAttribute(srcFile, srcLine);
+[Conditional(nameof(API.TRUE_ULTIMATE_POWER))]
+sealed class PowerSetting([CallerFilePath] string sourceFile = default, [CallerLineNumber] int sourceLine = default)
+	: SettingAttribute(sourceFile, sourceLine);
 
 [AttributeUsage(AttributeTargets.Field)]
-class SettingAttribute([CallerFilePath] string srcFile = default, [CallerLineNumber] int srcLine = default) : Attribute, IComparable<SettingAttribute>
+class SettingAttribute([CallerFilePath] string sourceFile = default, [CallerLineNumber] int sourceLine = default) : Attribute, IComparable<SettingAttribute>
 {
-	public string SrcFile { get; } = srcFile;
-	public int    SrcLine { get; } = srcLine;
-
-	int IComparable<SettingAttribute>.CompareTo(SettingAttribute other) => CompareTo(other);
-	public Comparison CompareTo(SettingAttribute other) =>
-		other is null ? Comparison.GT :
-		Comparison.Compare(SrcFile, other.SrcFile) &&
-		Comparison.Compare(SrcLine, other.SrcLine);
+	public string SourceFile { get; } = sourceFile;
+	public int    SourceLine { get; } = sourceLine;
+	public int CompareTo(SettingAttribute other) =>
+		Comparison.Default(other) ??
+		Comparison.Compare(SourceFile, other.SourceFile) &&
+		Comparison.Compare(SourceLine, other.SourceLine);
 
 	static (SettingAttribute, Setting)[] AllSettings;
 
-	private static bool loaded;
+	static bool loaded;
 	public static void Load()
 	{
 		if (!loaded)

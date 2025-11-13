@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Unleashed.Util;
 using MethodRPCSort = NewNet.NetworkView.MethodRPCSort;
 
 namespace Unleashed.Compat;
@@ -120,41 +121,25 @@ sealed class RemoteX : BaseNetworkAttribute
 		Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader)).Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
 	static void SortAttributesX(List<MethodRPCSort> CustomRPCMethods)
 	{
-		CustomRPCMethods.Sort((a, b) =>
-			CompareAssemblies(
-				a.method.DeclaringType.Assembly,
-				b.method.DeclaringType.Assembly
+		CustomRPCMethods.Sort((lhs, rhs) =>
+			Comparison.Compare(
+				lhs.method.DeclaringType.Assembly,
+				rhs.method.DeclaringType.Assembly,
+				// -1 (non-plugin asm) < 0 (first plugin)
+				a => PluginsOrdered.FindIndex(b => a == b?.GetType()?.Assembly)
 			)
-			&& Comparison.Compare(a.uniqueName, b.uniqueName)
-			&& CompareParameters(
-				a.method.GetGenericArguments(),
-				b.method.GetGenericArguments()
+			&& Comparison.Compare(lhs.uniqueName, rhs.uniqueName)
+			&& Comparison.Compare(
+				lhs.method.GetGenericArguments(),
+				rhs.method.GetGenericArguments(),
+				x => x.Name
 			)
-			&& CompareParameters(
-				a.method.GetParameters().Select(p => p.ParameterType),
-				b.method.GetParameters().Select(p => p.ParameterType)
+			&& Comparison.Compare(
+				lhs.method.GetParameters(),
+				rhs.method.GetParameters(),
+				x => x.ParameterType.Name
 			)
 		);
-		static Comparison CompareAssemblies(Assembly a, Assembly b) =>
-			Comparison.Compare(
-				// -1 (non-plugin asm) < 0 (first plugin)
-				PluginsOrdered.FindIndex(p => p?.GetType()?.Assembly == a),
-				PluginsOrdered.FindIndex(p => p?.GetType()?.Assembly == b)
-			);
-		static Comparison CompareParameters(IEnumerable<Type> a, IEnumerable<Type> b)
-		{
-			using var enmA = a.GetEnumerator();
-			using var enmB = b.GetEnumerator();
-			while (true)
-			{
-				if (!enmA.MoveNext()) return Comparison.LT;
-				if (!enmB.MoveNext()) return Comparison.GT;
-
-				var cmp = Comparison.Compare(enmA.Current.Name, enmB.Current.Name);
-				if (!cmp)
-					return cmp;
-			}
-		}
 	}
 }
 
