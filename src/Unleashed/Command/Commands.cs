@@ -82,6 +82,20 @@ public static class Commands
 				);
 		}
 	}
+
+	static void KickPlayerWithMessage(PlayerState player, string message, bool block = false)
+	{
+		if (player.id == NetworkID.ID)
+		{
+			Chat.Log($"Why are you trying to {(block ? "ban" : "kick")} yourself, silly?", Colour.Red);
+			return;
+		}
+		Chat.SendChat($"{player.name} is {(block ? "banned" : "kicked")}: {message}", Color.yellow);
+		if (block)
+			BlockList.Instance.AddBlock(player.name, player.steamId);
+		NetworkUI.Instance.KickPlayer(player.networkPlayer, message);
+		return;
+	}
 	[Command]
 	sealed class CommandKick : Command
 	{
@@ -101,14 +115,7 @@ public static class Commands
 					Log($"Argument ({nameof(message)}) is host-only!", Main.ErrorColour);
 					return;
 				}
-				// #wip: dedup
-				if (player.id == NetworkID.ID)
-				{
-					Chat.Log("Why are you trying to kick yourself, silly?", Colour.Red);
-					return;
-				}
-				Chat.SendChat(player.name + " is kicked: " + message, Color.yellow);
-				NetworkUI.Instance.KickPlayer(player.networkPlayer, message);
+				KickPlayerWithMessage(player, message);
 				return;
 			}
 			if (ExpectPermission(Network.isAdmin))
@@ -134,14 +141,7 @@ public static class Commands
 					Log($"Argument ({nameof(message)}) is host-only!", Main.ErrorColour);
 					return;
 				}
-				// #wip: dedup
-				if (player.id == NetworkID.ID)
-				{
-					Chat.Log("Why are you trying to ban yourself, silly?", Colour.Red);
-					return;
-				}
-				Chat.SendChat(player.name + " is banned: " + message, Color.red);
-				NetworkUI.Instance.KickPlayer(player.networkPlayer, message);
+				KickPlayerWithMessage(player, message, true);
 				return;
 			}
 			if (ExpectPermission(Network.isServer))
@@ -299,16 +299,8 @@ public static class Commands
 				NetworkUI.Instance.ClientRequestColor(color);
 				return;
 			}
-			// #wip: back to CheckColor?
 			if (ExpectPermission(Network.isAdmin))
-				Lua.Execute(
-					$"""
-					local player = { Lua.GetPlayerBySteamID }({ player.steamId })
-					if player then
-						player.changeColor({ color })
-					end
-					"""
-				);
+				NetworkUI.Instance.CheckColor(color, player.id);
 		}
 	}
 

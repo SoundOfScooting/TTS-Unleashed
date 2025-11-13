@@ -60,7 +60,7 @@ abstract class Command
 	{
 		protected override void OnInvoke() => LogUsageError();
 
-		protected virtual List<Command> SubCommands
+		public virtual List<Command> SubCommands
 		{
 			get
 			{
@@ -99,7 +99,7 @@ abstract class Command
 	{
 		protected override List<Alias> Aliases { get; } = [];
 		protected override List<Usage> Usages  { get; } = [];
-		protected override List<Command> SubCommands { get; } = [];
+		public override List<Command> SubCommands { get; } = [];
 
 		public static IEnumerable<Usage> HelpList
 		{
@@ -188,7 +188,10 @@ abstract class Command
 		foreach (var alias in Aliases.Skip(1))
 			Log($"{alias}", Colour.Grey);
 
-		var usages = Usages; // #wip
+		List<Usage> usages = [
+			..Usages,
+			..(this as Dispatch)?.SubCommands?.SelectMany(x => x.Usages) ?? []
+		];
 		if (usages is [])
 			Log($"No usage found.", Colour.Yellow);
 		else foreach (var usage in usages)
@@ -213,7 +216,7 @@ abstract class Command
 		if (str is null or [])
 			return null;
 
-		// intentional invalid color // #wip: script uses - which conflicts with flags
+		// intentional invalid color
 		if (str is ['!', ..])
 			return str;
 
