@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFramework>netstandard2.1</TargetFramework>
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
@@ -20,6 +20,12 @@
 			$(AssemblySearchPaths);
 			$(LibsDir);
 		</AssemblySearchPaths>
+
+		<RestoreAdditionalProjectSources>
+			https://api.nuget.org/v3/index.json;
+			https://nuget.bepinex.dev/v3/index.json;
+			https://nuget.samboy.dev/v3/index.json
+		</RestoreAdditionalProjectSources>
 	</PropertyGroup>
 
 	<ItemDefinitionGroup>
@@ -37,12 +43,13 @@
 		<Reference Include="Assembly-CSharp-firstpass" Publicize="true" />
 		<Reference Include="MoonsharpDef" />
 		<Reference Include="Utilities" />
+		<Reference Include="com.rlabrecque.steamworks.net.dll" />
 
 		<PackageReference Include="BepInEx.Analyzers"                  Version="1.*" />
-		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.2" />
+		<PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.*" />
 		<PackageReference Include="BepInEx.Core"                       Version="5.*" />
-		<PackageReference Include="BepInEx.PluginInfoProps"            Version="1.*" />
-		<PackageReference Include="UnityEngine.Modules"                Version="2019.4.40" IncludeAssets="compile" />
+		<PackageReference Include="BepInEx.PluginInfoProps"            Version="2.*" />
+		<PackageReference Include="UnityEngine.Modules"                Version="6000.0.62" IncludeAssets="compile" />
 
 		<PackageReference Include="Polyfill"  Version="9.0.2" />
 		<!--

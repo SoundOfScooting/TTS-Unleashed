@@ -103,8 +103,9 @@ static class ServerSetup
 		});
 
 		c.GotoNext(MoveType.After,
-			// switch (UnityEngine.Random.Range(1, 6))
-			x => x.MatchLdcI4(1),
+			// v13.3: switch (UnityEngine.Random.Range(1, 6))
+			// x => x.MatchLdcI4(1),
+			// v14.0: switch (UnityEngine.Random.Range((!bHotseat) ? 1 : 3, 6))
 			x => x.MatchLdcI4(6),
 			x => x.MatchCall(AccessTools.Method(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), [ typeof(int), typeof(int) ]))
 		);

@@ -46,7 +46,7 @@ static class SpawnName
 					!rest.MoveNext() || !int .TryParse(rest.Current, out var MatInt)
 				) return false;
 
-				var npo = __result.GetComponent<NetworkPhysicsObject>();
+				var npo = __result.GetNPO();
 				npo.UseAltSounds = bAltSounds;
 				if (npo.meshSyncScript && MeshInt != -1)
 					npo.meshSyncScript.SetMesh(MeshInt);

@@ -36,7 +36,7 @@ static class ClientVersion
 			return;
 
 		s += VERSION_HEADER.Length;
-		var e = versionnum.IndexOf("\n", s, StringComparison.Ordinal);
+		var e = versionnum.IndexOf('\n', s);
 		if (e < 0)
 			e = versionnum.Length;
 

@@ -206,6 +206,7 @@ static class ToolVectorX
 						continue; // attached was destroyed
 					lines.Add(new(
 						__instance.GetGUID(),
+						drawData.playerSteamID,
 						drawData.attached,
 						erased  .positions,
 						drawData.color,

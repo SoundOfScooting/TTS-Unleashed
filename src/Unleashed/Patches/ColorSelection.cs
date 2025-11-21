@@ -16,7 +16,7 @@ static class UIColorSelectionExtensions
 				drowDownValue:   playerState.stringColor,
 
 				leftButtonText: "OK",
-				leftButtonFunc: label =>
+				leftButtonFunc: (label, _) =>
 				{
 					if (UZCameraHome.NeedToPickHome)
 						UZCameraHome.NeedToPickHome = false;

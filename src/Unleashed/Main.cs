@@ -16,9 +16,9 @@ namespace Unleashed;
 [BepInDependency(CONFIG_MANAGER_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 public sealed class Main : BaseUnityPlugin
 {
-	public const string PLUGIN_GUID    = PluginInfo.PLUGIN_GUID;
-	public const string PLUGIN_NAME    = PluginInfo.PLUGIN_NAME;
-	public const string PLUGIN_VERSION = PluginInfo.PLUGIN_VERSION;
+	public const string PLUGIN_GUID    = MyPluginInfo.PLUGIN_GUID;
+	public const string PLUGIN_NAME    = MyPluginInfo.PLUGIN_NAME;
+	public const string PLUGIN_VERSION = MyPluginInfo.PLUGIN_VERSION;
 	public const string PLUGIN_ABBR    = "UZ";
 	internal const string PLUGIN_ABBR_LOWER = "uz";
 	const string PLUGIN_REPO = "https://github.com/SoundOfScooting/TTS-Unleashed";

@@ -126,7 +126,7 @@ sealed class UZCameraHome : MonoBehaviour
 			drowDownValue:   Current.ToString(),
 
 			leftButtonText: "OK",
-			leftButtonFunc: label =>
+			leftButtonFunc: (label, _) =>
 				Current = Enum.Parse<Home>(label),
 
 			rightButtonText: "Cancel",
