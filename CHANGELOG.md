@@ -1,34 +1,43 @@
 # dev
 
-* Internal project restructuring - renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll`
-* Renamed settings and added new settings sections (this is automatic)
-* Fixed ConfigurationManager sanitizing special characters in strings
+* Updated to game version beta v14.0
+* Refactored project internals <!-- // #todo: and renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll` -->
+<!-- this space intentionally left blank -->
+* Renamed and relocated some settings (settings automatically migrate)
 * Added setting `Menu Holiday`
+* Fixed ConfigurationManager sanitizing special characters in strings
+<!-- this space intentionally left blank -->
 * Added multi-line support to object `Name` field
-* Extended object `Material` for piecepack dice and colored objects (`Mesh Index` and `Card ID` planned in the future)
-* Removed `/uz` prefix from most commands and renamed command `/uzcmd` to `/sys`
-* Improved commands `/help`, `/kick`, `/ban`, `/promote`, `/mute` and added `/whisper`, `/color`
-* Enabled starting singleplayer/hotseat without Steam running and fixed the `-nosteam` launch option
+* Extended object `Material` context (`Mesh Index` and `Card ID` planned)
+<!-- this space intentionally left blank -->
+* Removed `/uz` prefix from most commands and renamed `/uzcmd` to `/sys`
+* Added commands `/whisper`, `/color` and improved `/help`, `/kick`, `/ban`, `/promote`, `/mute`
+<!-- this space intentionally left blank -->
+* Enabled singleplayer/hotseat without running Steam (fixes the `-nosteam` launch option)
 
 # v0.1.0
 
 * Added version number to the title screen
+<!-- this space intentionally left blank -->
 * Added `Nickname` setting
 * Added `Invert Horizontal/Vertical 3P Controls` and `Block Mouse Panning Over UI` settings
 * Added `Enable Fast Commands` setting
 * Added `Auto Join Message` setting
+<!-- this space intentionally left blank -->
 * Added `Specific Card` and `Specific Domino` to objects menu
 * Added kickstarter gold objects to objects menu (if you have that reward)
 * Added `Edit` action to `Custom Rectangle/Square` in tables menu (clients can supply URL remotely)
 * Added `Edit` action to `Custom` in backgrounds menu (clients can supply URL remotely)
+<!-- this space intentionally left blank -->
 * Added `Start Turns`, `Reverse Turns`, `End Turns` to extra name button context
 * Fixed `Pass Turn` (requires modded host and client)
-* Added Black LockObject to color selection (if you aren't promoted, black appears with the lock symbol above it)
+<!-- this space intentionally left blank -->
+* Changed color selection to show black lock symbol when not promoted
 * Added right click to cancel erasing
 * Added ability for clients to add/edit/delete decals
 * Added abiltiy for clients to edit custom object URLS using object context `Custom`
-* Added `Stash`/`Draw Stash` to object/global context menu
-* Added `/uzcopylua`, `/uzcmd` commands
+* Added global/object context `Stash`/`Draw Stash`
+* Added commands `/uzcopylua`, `/uzcmd`
 
 # v0.0.1
 

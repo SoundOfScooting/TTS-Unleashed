@@ -7,102 +7,17 @@ A utility mod for Tabletop Simulator that makes host-only UI available to promot
 Follow installation instructions for BepInEx 5: https://docs.bepinex.dev/articles/user_guide/installation/index.html \
 **BepInEx 6 is not supported.** Make sure to check the version on the top right.
 
-Download the latest [release](https://github.com/SoundOfScooting/TTS-Unleashed/releases) of Unleashed or [build](#compilation) one yourself.\
+Download the latest [release](https://github.com/SoundOfScooting/TTS-Unleashed/releases) of Unleashed or build one yourself.\
 Copy `edu.sos.unleashed.dll` to the folder `[GAME]/BepInEx/plugins/`.
 
 *(optional)* Download ConfigurationManager for BepInEx 5: https://github.com/BepInEx/BepInEx.ConfigurationManager/releases \
 This plugin lets you edit Unleashed's [settings file](#settings-file) while in-game.\
 Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 
-# Compilation
-
-Unleashed is compiled using .NET 10 targetting netstandard2.0.
-
-Copy or symlink all DLL files mentioned in `[REPO]/Unleashed.csproj` from the `[GAME]/Tabletop_Simulator_Data/Managed` folder to the `[REPO]/lib/` folder.\
-Run `dotnet build` from `[REPO]/`. The result will be `[REPO]/artifacts/bin/Unleashed/debug/edu.sos.unleashed.dll`.\
-To disable test features, run `dotnet build -p:TRUE_ULTIMATE_POWER=0` instead.
-
 # Feature overview
 
-Requirements for each feature are listed.\
-Many features require the client to be an admin *(server host or promoted player)*.\
-Some features require both the host and client to be modded.
-
-**NOTE:** As of right now, singleplayer hotseat games are not tested for compatibility.
-
-## Settings file
-
-The plugin generates a config file `edu.sos.unleashed.cfg` in the folder `[GAME]/BepInEx/config/`.
-
-If you have [ConfigurationManager](#installation) installed, you can edit settings in-game by holding Escape and then pressing F1 *(in order)*.\
-To close the settings window, either press the `Close` button or click outside the settings window and press Escape.
-
-### Section [Menu]
-
-`Menu Cursor Color` *(default `Purple`)*\
-The color of the cursor on the main menu.
-
-`Menu Holiday`\
-The holiday logo that appears on the main menu.\
-One of: `Default`, `Thanksgiving`, `Christmas`, `Halloween`, `Random`, `All`
-
-### Section [Setup]
-
-`Initial Player Color` *(default `White`)*\
-The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI/dialog window.
-
-`Initial Background` *(default `Random`)*\
-The initial background after server creation, or `Random`.
-
-`Initial Table` *(default `Random`)*\
-The initial table after server creation, or `Random`.
-
-### Section [Controls]
-
-`Block Mouse Panning Over UI` *(default `true`)*\
-Blocks 'Camera Hold Rotate' control while hovering over UI.\
-This eases right clicking UI elements, but prevents mouse panning over large panels.
-
-`Invert Third-Person Horizontal Axis` *(default `false`)*\
-Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.\
-This aligns them with first-person view and mouse panning.
-
-`Invert Third-Person Vertical Axis` *(default `false`)*\
-Swaps controls 'Camera Down' with 'Camera Up' in third-person view.\
-This aligns them with first-person view and mouse panning.
-
-`Enable Pixel Draw` *(default `true`)*\
-Fully implements the unfinished pixel draw tool, an apparent vector-based rework of the removed pixel paint tool.\
-It is located under the draw toolbar between the circle and erase tools.\
-Each pixel drawn is one vector line.\
-**NOTE:** If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
-
-`Enable Fast Flick` *(default `true`)*\
-Flicking an object when not the host no longer requires two clicks *(previously the first click would only highlight the object)*.\
-**BUG:** This allows you to try *(and fail)* to flick objects that you are prevented from selecting by Lua scripts.
-
-`Enable Fast Commands` *(default `true`)*\
-When shift is not held down, the 'Help' control instead starts typing a command in chat.\
-Best used when 'Help' is bound to `/`.
-
-### Section [Misc]
-
-`Intercept Lua Virus` *(default `true`)*\
-**Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
-**NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
-https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
-
-`Nickname`\
-A nickname used instead of your Steam display name.\
-Nickname changes only take effect when joining a new server.
-
-`Auto Join Message`\
-Message automatically sent in chat when a player joins.\
-Leave empty for no message.
-
-`Auto Promote Steam IDs`\
-A list of Steam IDs that are automatically promoted when joining your server.\
-Invalid IDs do nothing, so you can write comments.
+**Admin-only:** Denotes features that require the user to be an admin *(server host or promoted player)*.\
+**Modded host and client:** Denotes features that require both the host and client to be modded.
 
 ## Objects menu
 
@@ -113,17 +28,17 @@ The format is `[symbol][suit]`, where `[symbol]` is one of `A`, `K`, `Q`, `J`, `
 For example: `AS` for Ace of Spades.
 
 **Modded host and client:** *(new)* Added objects `Chess/Gold/* Gold` and `Dice/Gold/D* Gold` if you have the Kickstarter Gold reward.\
-*(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
+*(Gold material doesn't work if the host doesn't have the Kickstarter Gold reward.)*
 
 **Modded host and client:** *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog window to enter a domino type.\
 The format is `[top]/[bottom] (material)`, where `[top]` and `[bottom]` are integers 0-6, and `(material)` is optional and one of `Plastic`, `Metal`, `Gold`.\
 For example: `3/2 Metal` for a metal domino with 3 on the top and 2 on the bottom.\
-*(Objects cannot be golden if the host doesn't have the Kickstarter Gold reward.)*
+*(Gold material doesn't work if the host doesn't have the Kickstarter Gold reward.)*
 
 ### Tables
 
 *(new)* Added action `Edit` to `Custom Rectangle` and `Custom Square` that lets you edit the URL as a client or as the host.\
-*(new)* Added unused table `Round Plastic`.
+*(new)* Added UI for unused table `Round Plastic`.
 
 ### Backgrounds
 
@@ -195,7 +110,7 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 
 ### Draw tool
 
-See [Enable Pixel Draw](#section-general).
+See [Enable Pixel Draw](#section-controls).
 
 *BUGFIX:* Pressing right click to cancel drawing actually erases the line for all players instead of just yourself.
 
@@ -204,7 +119,7 @@ See [Enable Pixel Draw](#section-general).
 
 <!-- ### Flick tool
 
-See [Enable Fast Flick](#section-general). -->
+See [Enable Fast Flick](#section-controls). -->
 
 ### Decal tool
 
@@ -227,9 +142,10 @@ If you hold Shift, the objects in the hand stash are instead swapped with the on
 If you hold Shift, the selected objects in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.\
 **BUG:** This feature is not well-behaved with non-card objects.
 
-**Modded host and client:** `Material` context option includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
-It will also include `Gold` for chess pieces, dice, and dominoes if you have the Kickstarter Gold reward.\
-*(This won't work if the host doesn't have the Kickstarter Gold reward.)*
+**Modded host and client:** `Material` context option extensions:\
+Includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
+For chess pieces, `Metal` is split into `Chrome`/`Cast Iron` and `Wood` into `Wood Light`/`Wood Dark`.\
+If you and the host have the Kickstarter Gold reward, `Gold` material is available for chess pieces, dice, and dominoes.
 
 **Admin-only:** `Custom` context option is available *(formerly host-only)*.\
 Clients cannot automatically update matching custom objects.\
@@ -301,4 +217,78 @@ Reloads the mod's [settings file](#settings-file) from disk.
 `/uzcopylua` *(new)*\
 Copies the last script executed by the mod to the clipboard.\
 This is mainly used to debug internal errors within the mod.
+
+## Settings file
+
+The plugin generates a config file `edu.sos.unleashed.cfg` in the folder `[GAME]/BepInEx/config/`.
+
+If you have [ConfigurationManager](#installation) installed, you can edit settings in-game by holding Escape and then pressing F1.\
+To close the settings window, either press the `Close` button or click outside the settings window and press Escape.
+
+### Section [Menu]
+
+`Menu Cursor Color` *(default `Purple`)*\
+The color of the cursor on the main menu.
+
+`Menu Holiday`\
+The holiday logo that appears on the main menu.\
+One of: `Default`, `Thanksgiving`, `Christmas`, `Halloween`, `Random`, `All`
+
+### Section [Setup]
+
+`Initial Player Color` *(default `White`)*\
+The initial player color after server creation, or `Choose`/`Dialog` to open the color selection UI/dialog window.
+
+`Initial Background` *(default `Random`)*\
+The initial background after server creation, or `Random`.
+
+`Initial Table` *(default `Random`)*\
+The initial table after server creation, or `Random`.
+
+### Section [Controls]
+
+`Block Mouse Panning Over UI` *(default `true`)*\
+Blocks 'Camera Hold Rotate' control while hovering over UI.\
+This eases right clicking UI elements, but prevents mouse panning over large panels.
+
+`Invert Third-Person Horizontal Axis` *(default `false`)*\
+Swaps controls 'Camera Left' with 'Camera Right' in third-person and top-down view.\
+This aligns them with first-person view and mouse panning.
+
+`Invert Third-Person Vertical Axis` *(default `false`)*\
+Swaps controls 'Camera Down' with 'Camera Up' in third-person view.\
+This aligns them with first-person view and mouse panning.
+
+`Enable Pixel Draw` *(default `true`)*\
+Fully implements the unfinished pixel draw tool, an apparent vector-based rework of the removed pixel paint tool.\
+It is located under the draw toolbar between the circle and erase tools.\
+Each pixel drawn is one vector line.\
+**NOTE:** If disabled, the tool is not added to GUI but is still accessible with the console command `tool_vector_pixel`.
+
+`Enable Fast Flick` *(default `true`)*\
+Flicking an object when not the host no longer requires two clicks *(previously the first click would only highlight the object)*.\
+**BUG:** This allows you to try *(and fail)* to flick objects that you are prevented from selecting by Lua scripts.
+
+`Enable Fast Commands` *(default `true`)*\
+When shift is not held down, the 'Help' control instead starts typing a command in chat.\
+Best used when 'Help' is bound to `/`.
+
+### Section [Misc]
+
+`Intercept Lua Virus` *(default `true`)*\
+**Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
+**NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
+https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
+
+`Nickname`\
+A nickname used instead of your Steam display name.\
+Nickname changes only take effect when joining a new server.
+
+`Auto Join Message`\
+Message automatically sent in chat when a player joins.\
+Leave empty for no message.
+
+`Auto Promote Steam IDs`\
+A list of Steam IDs that are automatically promoted when joining your server.\
+Invalid IDs do nothing, so you can write comments.
 
