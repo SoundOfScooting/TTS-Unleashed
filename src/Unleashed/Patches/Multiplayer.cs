@@ -26,7 +26,22 @@ static class Multiplayer
 			ObjToStr = Setting.IdentityObjectConverter,
 			StrToObj = Setting.IdentityStringConverter,
 		},
+		OnChanged = value => UpdateNickname(),
 	};
+	static void UpdateNickname()
+	{
+		NetworkUI.Instance.SetPlayerName(
+			Nickname.Value is [_, ..] nickname
+				? nickname
+			: SteamManager.SteamName is [_, ..] steamName
+				? steamName
+			: "NotConnectedToSteam" // bugfix
+		);
+		if (Offline.Singleplayer && !NetworkUI.Instance.bHotseat)
+		if (PlayerManager.Instance.MyPlayerState() is {} player)
+			player.name = NetworkUI.Instance.playerName;
+	}
+
 	[Setting]
 	static readonly Setting<string> AutoJoinMessage = new()
 	{
@@ -47,6 +62,7 @@ static class Multiplayer
 			StrToObj = Setting.IdentityStringConverter,
 		},
 	};
+
 	public static string[] SplitAutoPromoteIDs { get; private set; }
 	static string CacheAutoPromoteIDs;
 	[Setting]
@@ -105,13 +121,7 @@ static class Multiplayer
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerServerInitialized))]
 	[HarmonyPatch(typeof(NetworkEvents), nameof(NetworkEvents.TriggerConnectingToServer))]
-	static void TriggerServerInitializedPrefix()
-	{
-		if (Nickname.Value is [_, ..] nickname)
-			NetworkUI.Instance.SetPlayerName(nickname);
-		else if (Offline.NoSteam)
-			NetworkUI.Instance.SetPlayerName("NotConnectedToSteam"); // bugfix
-	}
+	static void TriggerServerInitializedPrefix() => UpdateNickname();
 
 	[ModuleInitializer]
 	internal static void Initializer() =>
@@ -123,9 +133,7 @@ static class Multiplayer
 
 		// #idea: setting to auto-promote as admin
 		if (Network.isServer && SplitAutoPromoteIDs.Contains(playerState.steamId))
-			Wait.Frames(() =>
-				PlayerManager.Instance.PromoteThisPlayer(playerState.name)
-			);
+			Wait.Frames(() => PlayerManager.Instance.PromoteThisPlayer(playerState.name));
 	}
 }
 
