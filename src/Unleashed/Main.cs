@@ -34,6 +34,45 @@ public sealed class Main : BaseUnityPlugin
 	public static ManualLogSource Log   => Instance.Logger;
 	public static new ConfigFile Config => ((BaseUnityPlugin) Instance).Config;
 
+	public static void Try(Action action, ChatMessageType tab = ChatMessageType.Game)
+		=> Try(() =>
+		{
+			action.Invoke();
+			return default(object);
+		}, tab);
+	public static void Catch(Action action, ChatMessageType tab = ChatMessageType.Game)
+		=> Catch(() =>
+		{
+			action.Invoke();
+			return default(object);
+		}, tab);
+	public static T Try<T>(Func<T> func, ChatMessageType tab = ChatMessageType.Game)
+	{
+		try
+		{
+			return func.Invoke();
+		}
+		catch (Exception e)
+		{
+			Log.LogError(e);
+			Chat.LogError(e.ToString(), tab, false);
+			throw;
+		}
+	}
+	public static T Catch<T>(Func<T> func, ChatMessageType tab = ChatMessageType.Game)
+	{
+		try
+		{
+			return func.Invoke();
+		}
+		catch (Exception e)
+		{
+			Log.LogError(e);
+			Chat.LogError(e.ToString(), tab, false);
+			return default;
+		}
+	}
+
 	static string loadErrors;
 	void Awake()
 	{

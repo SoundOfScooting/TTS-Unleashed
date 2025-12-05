@@ -6,19 +6,11 @@ static class PatchChat
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(Chat), nameof(Chat.ChatCMD))]
 	static bool ChatCMDPrefix(string message, ChatMessageType type)
-	{
-		try
+		=> Main.Catch(() =>
 		{
 			// #idea: turn off timestamps during command output?
 			return !Command.Root.Invoke(type, message);
-		}
-		catch (Exception e)
-		{
-			Chat.LogError(e.ToString(), type);
-			Main.Log.LogError(e);
-			return false;
-		}
-	}
+		}, type);
 }
 public static class Commands
 {

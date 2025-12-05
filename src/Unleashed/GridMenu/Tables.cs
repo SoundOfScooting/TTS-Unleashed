@@ -12,14 +12,15 @@ static class Tables
 		foreach (var tableName in new[] { "Custom Rectangle", "Custom Square" })
 		{
 			var custom = __instance.TablesButtons.First(x => x.Name == tableName);
-			(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] = () => {
-				var table = ManagerPhysicsObject.Instance.TableScript;
-				var image = table.GetComponent<CustomImage>();
-				/* if (image && Utilities.RemoveCloneFromName(table.name) == TableScript.GetTablePrefabName(tableName))
-					// doesn't allow "" (equivalent to cancel)
-					image.bCustomUI = true;
-				else  */try
+			(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] =
+				() => Main.Catch(() =>
 				{
+					var table = ManagerPhysicsObject.Instance.TableScript;
+					var image = table.GetComponent<CustomImage>();
+					// if (image && Utilities.RemoveCloneFromName(table.name) == TableScript.GetTablePrefabName(tableName))
+					// 	// doesn't allow "" (equivalent to cancel)
+					// 	image.bCustomUI = true;
+					// else 
 					UICustomImage.Instance.QueueFake(@this =>
 					{
 						@this.CustomImageURL = @this.CustomImageURL.Trim();
@@ -45,13 +46,7 @@ static class Tables
 							: "Custom Table"
 					).ToUpperInvariant());
 					UICustomImage.Instance.CustomImageURL = image.CustomImageURL;
-				}
-				catch (Exception e)
-				{
-					Chat.LogError(e.ToString());
-					Main.Log.LogError(e);
-				}
-			};
+				});
 		}
 		__instance.TablesButtons.Add(new()
 		{

@@ -8,12 +8,13 @@ static class Backgrounds
 	static void InitBackgroundsPrefix(UIGridMenuObjects __instance)
 	{
 		var custom = __instance.BackgroundsButtons.First(x => x.Name == "Custom");
-		(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] = () => {
-			/* if (CustomSky.ActiveCustomSky)
-				// doesn't allow "" (deletes)
-				CustomSky.ActiveCustomSky.bCustomUI = true;
-			else  */try
+		(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] =
+			() => Main.Catch(() =>
 			{
+				// if (CustomSky.ActiveCustomSky)
+				// 	// doesn't allow "" (deletes)
+				// 	CustomSky.ActiveCustomSky.bCustomUI = true;
+				// else
 				if (CustomSky.ActiveCustomSky)
 					UICustomSky.Instance.CustomImageURL = CustomSky.ActiveCustomSky.CustomSkyURL;
 				else
@@ -34,13 +35,7 @@ static class Backgrounds
 						);
 					@this.Close();
 				});
-			}
-			catch (Exception e)
-			{
-				Chat.LogError(e.ToString());
-				Main.Log.LogError(e);
-			}
-		};
+			});
 	}
 }
 
