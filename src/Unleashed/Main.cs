@@ -47,19 +47,10 @@ public sealed class Main : BaseUnityPlugin
 			return default(object);
 		}, tab);
 	public static T Try<T>(Func<T> func, ChatMessageType tab = ChatMessageType.Game)
-	{
-		try
-		{
-			return func.Invoke();
-		}
-		catch (Exception e)
-		{
-			Log.LogError(e);
-			Chat.LogError(e.ToString(), tab, false);
-			throw;
-		}
-	}
+		=> Wrap(func, true, tab);
 	public static T Catch<T>(Func<T> func, ChatMessageType tab = ChatMessageType.Game)
+		=> Wrap(func, false, tab);
+	static T Wrap<T>(Func<T> func, bool rethrow, ChatMessageType tab = ChatMessageType.Game)
 	{
 		try
 		{
@@ -69,6 +60,8 @@ public sealed class Main : BaseUnityPlugin
 		{
 			Log.LogError(e);
 			Chat.LogError(e.ToString(), tab, false);
+			if (rethrow)
+				throw;
 			return default;
 		}
 	}
