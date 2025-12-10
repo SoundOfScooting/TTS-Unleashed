@@ -1,4 +1,4 @@
-namespace Unleashed.Compat;
+namespace Unleashed;
 
 static class API
 {

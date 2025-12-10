@@ -1,5 +1,3 @@
-using Unleashed.Compat;
-
 namespace Unleashed.Context;
 
 [HarmonyPatch]

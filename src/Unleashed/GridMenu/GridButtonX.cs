@@ -1,4 +1,3 @@
-using Unleashed.Compat;
 using static UIGridMenu;
 
 namespace Unleashed.GridMenu;
