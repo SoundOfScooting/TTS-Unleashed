@@ -10,7 +10,7 @@ static class Components
 		"RANDOM", "RAND",
 	];
 
-	const int CardCardIDLimit = 51; // #bug: wrong in base game?
+	const int CardCardIDLimit = 52;
 	static readonly Dictionary<string, int> CardCardID = new()
 	{
 		{ "KC", 0  }, { "QC", 1  }, { "JC", 2  }, { "AC", 3  }, { "10C", 4  }, { "9C", 10 }, { "8C", 11 }, { "7C", 12 }, { "6C", 13 }, { "5C", 14 }, { "4C", 20 }, { "3C", 21 }, { "2C", 22 },
@@ -22,7 +22,7 @@ static class Components
 	static string CardSpawnName(int front_id) =>
 		$"{Main.PLUGIN_GUID}/Card/{SpawnName.SETUP_CARD}/{front_id}";
 
-	const int DominoMeshIndexLimit = 27; // #bug: wrong in base game?
+	const int DominoMeshIndexLimit = 28;
 	static readonly Dictionary<string, int> DominoMeshIndex = new()
 	{
 		{ "0/0", 0  },
