@@ -112,8 +112,6 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 
 See [Enable Pixel Draw](#section-controls).
 
-*BUGFIX:* Pressing right click to cancel drawing actually erases the line for all players instead of just yourself.
-
 *(new)* Pressing right click while erasing stops erasing and redraws all lines that were erased since you started.\
 **NOTE:** As of right now the overlap order of the redrawn lines is preserved, but the redrawn lines appear above all other lines.
 

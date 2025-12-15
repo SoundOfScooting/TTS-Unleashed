@@ -239,26 +239,6 @@ static class ToolVectorX
 			__instance.pointerMode == PointerMode.VectorPixel
 		);
 		c.Emit(OpCodes.Brtrue, skipLabel);
-
-		c.GotoNext(MoveType.Before,
-			// RPCRemoveLine(currentDrawingGuid);
-			x => x.MatchLdarg(0),
-			x => x.MatchLdarg(0),
-			x => x.MatchLdfld(AccessTools.Field (typeof(ToolVector), nameof(ToolVector.currentDrawingGuid))),
-			x => x.MatchCall (AccessTools.Method(typeof(ToolVector), nameof(ToolVector.RPCRemoveLine)))
-		);
-		c.MoveAfterLabels();
-		c.RemoveRange(4);
-		c.GotoNext(MoveType.Before,
-			// EndDrawing();
-			x => x.MatchLdarg(0),
-			x => x.MatchCall(AccessTools.Method(typeof(ToolVector), nameof(ToolVector.EndDrawing)))
-		);
-		c.Index++;
-		c.Remove();
-		c.EmitDelegate(void(ToolVector __instance) =>
-			__instance.RPCRemoveLine(__instance.currentDrawingGuid)
-		);
 	}
 }
 
