@@ -172,7 +172,8 @@ sealed class UZContextualStash : MonoBehaviour
 						)}[b]({hand.TriggerLabel})[/b][-]";
 					return true;
 				}
-				if (player.GetHandStash() || (shiftDown && player.GetHandObjects().Count > 0))
+				var hand2 = HandZone.GetHandZone(player.color, 0, true);
+				if ((hand2 && hand2.Stash) || (shiftDown && player.GetHandObjects().Count > 0))
 					return true;
 				return false;
 			}
