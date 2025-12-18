@@ -65,8 +65,8 @@ static class ServerSetup
 	}
 	enum TableID
 	{
-		Hexagon  = 3,
-		Octagon  = 2,
+		Hexagon  = 2,
+		Octagon  = 3,
 		Square   = 1,
 		Poker    = 6,
 		[Description("RPG")]
