@@ -29,18 +29,51 @@ static class Events
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
-	static void TriggerStartDisconnected() =>
-		OnStartDisconnected?.Invoke();
-	static void TriggerStartConnected() =>
-		OnStartConnected?.Invoke();
-	static void TriggerPlayersAddOther(PlayerState playerState) =>
-		OnPlayersAddOther?.Invoke(playerState);
+	static void TriggerStartDisconnected()
+	{
+		if (OnStartDisconnected is {} action)
+			Main.Try(action, ChatMessageType.System);
+	}
+	static void TriggerStartConnected()
+	{
+		if (OnStartConnected is {} action)
+			Main.Try(action);
+	}
+	static void TriggerPlayersAddOther(PlayerState playerState)
+	{
+		if (OnPlayersAddOther is {} action)
+			Main.Try(() =>
+			{
+				action.Invoke(playerState);
+				return default(object);
+			});
+	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
-	static void TriggerStartGlobalContextual() =>
-		OnStartGlobalContextual?.Invoke();
-	static void TriggerStartContextual() =>
-		OnStartContextual?.Invoke();
+	static void TriggerStartGlobalContextual()
+	{
+		if (OnStartGlobalContextual is {} action)
+			Main.Try(action);
+	}
+	static void TriggerStartContextual()
+	{
+		if (OnStartContextual is {} action)
+			Main.Try(action);
+	}
+	[HarmonyILManipulator]
+	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
+	static void StartContextualIL(ILContext il)
+	{
+		var c = new ILCursor(il);
+		c.GotoNext(MoveType.After,
+			// NetworkInstance.GUIContextualMenu.SetActive(value: true);
+			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMenu))),
+			x => x.MatchLdcI4(1),
+			x => x.MatchCallvirt(AccessTools.Method(typeof(GameObject), nameof(GameObject.SetActive)))
+		);
+		c.Index--;
+		c.EmitDelegate(TriggerStartContextual);
+	}
 
 	static bool addingAllPlayers; // annoying
 
@@ -76,21 +109,6 @@ static class Events
 			TriggerPlayersAddOther(playerState);
 			return;
 		}
-	}
-
-	[HarmonyILManipulator]
-	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
-	static void StartContextualIL(ILContext il)
-	{
-		var c = new ILCursor(il);
-		c.GotoNext(MoveType.After,
-			// NetworkInstance.GUIContextualMenu.SetActive(value: true);
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMenu))),
-			x => x.MatchLdcI4(1),
-			x => x.MatchCallvirt(AccessTools.Method(typeof(GameObject), nameof(GameObject.SetActive)))
-		);
-		c.Index--;
-		c.EmitDelegate(TriggerStartContextual);
 	}
 }
 
