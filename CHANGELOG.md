@@ -1,19 +1,20 @@
-# dev
+# v0.2.0
 
-* Updated to game version beta v14.0
-* Refactored project internals <!-- // #todo: and renamed plugin from `Unleashed.dll` to `edu.sos.unleashed.dll` -->
+* Updated to game version 14.0.3 (Hotfix 2)
+* Refactored project internals
 <!-- this space intentionally left blank -->
-* Renamed and relocated some settings (settings automatically migrate)
-* Added setting `Menu Holiday`
+* Renamed and relocated some settings (automatically migrate)
 * Fixed ConfigurationManager sanitizing special characters in strings
+* Added setting `Menu Holiday`
 <!-- this space intentionally left blank -->
 * Added multi-line support to object `Name` field
-* Extended object `Material` context (`Mesh Index` and `Card ID` planned)
+* Extended object `Material` context to more objects (`Mesh Index` and `Card ID` planned)
 <!-- this space intentionally left blank -->
 * Removed `/uz` prefix from most commands and renamed `/uzcmd` to `/sys`
 * Added commands `/whisper`, `/color` and improved `/help`, `/kick`, `/ban`, `/promote`, `/mute`
 <!-- this space intentionally left blank -->
 * Enabled singleplayer/hotseat without running Steam (fixes the `-nosteam` launch option)
+<!-- * Added Herobrine -->
 
 # v0.1.0
 

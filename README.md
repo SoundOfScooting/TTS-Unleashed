@@ -127,20 +127,18 @@ Client players can add/edit/delete decals in the decal list *(formerly host-only
 
 ### Global context menu
 
-**Admin-only:** *(new)* `Draw Stash` is available when applicable in the global menu, which draws all objects from a hand stash back to its hand.\
+**Admin-only:** *(new)* `Draw Stash` is available, which draws all cards from a hand stash back to its hand.\
 If you hold Ctrl, the target is all hand stashes.\
 Otherwise, if you hover over a hand stash, the target is that one.\
 Otherwise, the target is your own hand stash.\
-If you hold Shift, the objects in the hand stash are instead swapped with the ones in the hand *(renames to `Swap Stash`)*.\
-**BUG:** This feature is not well-behaved with non-card objects.
+If you hold Shift, the cards in the hand stash are instead swapped with the ones in the hand *(renames to `Swap Stash`)*.
 
 ### Object context menu
 
-**Admin-only:** *(new)* `Stash` is available on selected objects in hands, which moves them into their hand stashes until redrawn.\
-If you hold Shift, the selected objects in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.\
-**BUG:** This feature is not well-behaved with non-card objects.
+**Admin-only:** *(new)* `Stash` is available on selected cards in hands, which moves them into their hand stashes until redrawn.\
+If you hold Shift, the selected cards in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.
 
-**Modded host and client:** `Material` context option extensions:\
+**Modded host and client:** `Material` context option is extended:\
 Includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
 For chess pieces, `Metal` is split into `Chrome`/`Cast Iron` and `Wood` into `Wood Light`/`Wood Dark`.\
 If you and the host have the Kickstarter Gold reward, `Gold` material is available for chess pieces, dice, and dominoes.
@@ -283,8 +281,7 @@ A nickname used instead of your Steam display name.\
 Nickname changes only take effect when joining a new server.
 
 `Auto Join Message`\
-Message automatically sent in chat when a player joins.\
-Leave empty for no message.
+Message automatically sent in chat when a player joins.
 
 `Auto Promote Steam IDs`\
 A list of Steam IDs that are automatically promoted when joining your server.\

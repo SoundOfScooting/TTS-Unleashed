@@ -54,7 +54,6 @@ static class Multiplayer
 		Description =
 			"""
 			Message automatically sent in chat when a player joins.
-			Leave empty for no message.
 			""",
 		Attributes  = new()
 		{
