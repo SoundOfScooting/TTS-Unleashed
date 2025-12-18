@@ -90,7 +90,7 @@ public readonly record struct Lua(string Text)
 			var escape = "";
 			while (value.Contains($"]{ escape }]"))
 				escape += "=";
-			return (Lua) $"[{ escape }[{ value }]{ escape }]";
+			return (Lua) $" [{ escape }[{ value }]{ escape }] ";
 		}
 	}
 

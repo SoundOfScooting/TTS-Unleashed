@@ -13,14 +13,7 @@ sealed class UZContextualStash : MonoBehaviour
 		ObjectStash  = 3 << 1 | 0,
 	}
 	Act act;
-	bool IsGlobal => act switch
-	{
-		Act.GlobalDraw   => true,
-		Act.GlobalUnlock => true,
-		Act.ObjectDraw   => false,
-		Act.ObjectStash  => false,
-		_ => throw new UnreachableException(),
-	};
+	bool IsGlobal => (act & Act.GlobalUnlock) != 0;
 
 	UISprite Icon;
 	UILabel Label;
@@ -31,10 +24,9 @@ sealed class UZContextualStash : MonoBehaviour
 	static void OnStartConnected()
 	{
 		// after 04 Paste
-		if (API.TRUE_ULTIMATE_POWER)
-			new GameObject("04 Pb |SORT| Unlock Stash")
-				.AddComponent<UZContextualStash>()
-				.CreateComponents(Act.GlobalUnlock);
+		// new GameObject("04 Pb |SORT| Unlock Stash")
+		// 	.AddComponent<UZContextualStash>()
+		// 	.CreateComponents(Act.GlobalUnlock);
 		new GameObject("04 Pc |SORT| Draw Stash")
 			.AddComponent<UZContextualStash>()
 			.CreateComponents(Act.GlobalDraw);
@@ -42,7 +34,7 @@ sealed class UZContextualStash : MonoBehaviour
 		// after 06 Draw
 		// new GameObject("06 Ds |SORT| Draw Stash")
 		// 	.AddComponent<UZContextualStash>()
-		// 	.CreateComponents(Type.ObjectDraw);
+		// 	.CreateComponents(Act.ObjectDraw);
 		new GameObject("06 Ds |SORT| Stash")
 			.AddComponent<UZContextualStash>()
 			.CreateComponents(Act.ObjectStash);
@@ -84,7 +76,7 @@ sealed class UZContextualStash : MonoBehaviour
 			Events.OnStartContextual -= OnStartContextual;
 	}
 
-	public static bool PositionHoverOverStash(Vector3 pos, HandZone hand)
+	public static bool PositionNearStash(Vector3 pos, HandZone hand)
 	{
 		if      (hand.Stash/*  && !hand.Stash.IsGrabbable */)
 		foreach (var collider in hand.Stash.Colliders)
@@ -126,9 +118,10 @@ sealed class UZContextualStash : MonoBehaviour
 					}
 					return false;
 				}
+
 				if      (player.GetPointerPosition() is {} pos)
 				foreach (var hand in HandZone.GetHandZones())
-				if      (PositionHoverOverStash(pos, hand))
+				if      (PositionNearStash(pos, hand))
 				{
 					target = LuaPlayer.GetHandPlayer(hand.TriggerLabel);
 					Icon.spriteName = "Icon-Toggle";
@@ -149,6 +142,7 @@ sealed class UZContextualStash : MonoBehaviour
 				Icon.spriteName = "Icon-DrawCard6";
 				Label.text = Contextual.LABEL_PADDING +
 					$"{(shiftDown ? "Swap " : "Draw ")}Stash";
+
 				if (ctrlDown)
 				{
 					foreach (var hand in HandZone.GetHandZones())
@@ -159,9 +153,10 @@ sealed class UZContextualStash : MonoBehaviour
 					}
 					return false;
 				}
+
 				if      (player.GetPointerPosition() is {} pos)
 				foreach (var hand in HandZone.GetHandZones())
-				if      (PositionHoverOverStash(pos, hand))
+				if      (PositionNearStash(pos, hand))
 				{
 					target = LuaPlayer.GetHandPlayer(hand.TriggerLabel);
 					Label.text +=
@@ -172,48 +167,32 @@ sealed class UZContextualStash : MonoBehaviour
 						)}[b]({hand.TriggerLabel})[/b][-]";
 					return true;
 				}
+
 				var hand2 = HandZone.GetHandZone(player.color, 0, true);
 				if ((hand2 && hand2.Stash) || (shiftDown && player.GetHandObjects().Count > 0))
 					return true;
 				return false;
 			}
-			// case Type.ObjectDraw:
-			// {
-			// 	if      (!shiftDown) // see ObjectStash
-			// 	foreach (var obj in player.GetSelectedObjects())
-			// 	{
-			// 		var hand = obj.NPO.CurrentPlayerHand;
-			// 		if (hand && hand.NPO.IsHandZoneStash)
-			// 		{
-			// 			Icon.spriteName = "Icon-DrawCard6";
-			// 			Label.text = LABEL_PADDING + "Draw Stash";
-			// 			return true;
-			// 		}
-			// 	}
-			// 	return false;
-			// }
+			case Act.ObjectDraw:
+			{
+				if      (!shiftDown)
+				foreach (var obj in player.GetSelectedObjects())
+				if      (obj.NPO.IsHandZoneStash)
+				{
+					Icon.spriteName = "Icon-DrawCard6";
+					Label.text = Contextual.LABEL_PADDING + "Draw Stash";
+					return true;
+				}
+				return false;
+			}
 			case Act.ObjectStash:
 			{
-				var anyInHand = false;
-				// var anyStash  = false; // #stash
 				foreach (var obj in player.GetSelectedObjects())
-				{
-					// if (anyStash = obj.NPO.IsHandZoneStash) // #stash
-					if (anyInHand = obj.NPO.CurrentPlayerHand)
-						break;
-				}
-				if (anyInHand)
+				if      (obj.NPO.CurrentPlayerHand && (shiftDown || !obj.NPO.IsHandZoneStash))
 				{
 					Icon.spriteName = "Icon-DrawCard6";
 					Label.text = Contextual.LABEL_PADDING +
-						$"{(
-							shiftDown
-								? "Swap "
-							// #stash
-							// : anyStash
-							// 	? "Draw Stash & "
-							: ""
-						)}Stash";
+						$"{(shiftDown ? "Swap " : "")}Stash";
 					return true;
 				}
 				return false;
@@ -225,12 +204,12 @@ sealed class UZContextualStash : MonoBehaviour
 		nameof(LuaAllColors),
 		$"{ Lua.Table(Colour.AllPlayerLabels) }"
 	);
-	public static readonly Lua.Variable LuaHandZonePlayers = new(
-		nameof(LuaHandZonePlayers),
+	public static readonly Lua.Variable LuaAllHandZonePlayers = new(
+		nameof(LuaAllHandZonePlayers),
 		$$"""
 		{}
 		for _,color in ipairs(Player.getAvailableColors()) do
-			table.insert({{ (Lua) nameof(LuaHandZonePlayers) }}, Player[color])
+			table.insert({{ (Lua) nameof(LuaAllHandZonePlayers) }}, Player[color])
 		end
 		"""
 	);
@@ -246,7 +225,7 @@ sealed class UZContextualStash : MonoBehaviour
 		nameof(LuaGetObjectHandPlayer),
 		$"""
 		function (obj)
-			for _,target in ipairs({ LuaHandZonePlayers }) do
+			for _,target in ipairs({ LuaAllHandZonePlayers }) do
 				for _,obj_ in ipairs({ LuaGetPlayerHandObjects }(target)) do
 					if obj == obj_ then
 						return target
@@ -258,21 +237,24 @@ sealed class UZContextualStash : MonoBehaviour
 	);
 	public static readonly Lua LuaTempStashHiderID =
 		(Lua.Literal) $"{ Main.PLUGIN_GUID }/{ nameof(LuaTempStashHiderID) }";
-	public static readonly Lua.Variable LuaHideHandStash = new(
-		nameof(LuaHideHandStash),
+	public static readonly Lua.Variable LuaAttachTempHider = new(
+		nameof(LuaAttachTempHider),
 		$"""
-		function (stash)
-			stash.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
+		function (obj, temp)
+			if not obj or obj.isDestroyed() then return end
+			obj.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
+			if temp == false then return end
+
 			local function removeHider()
-				if stash then
-					stash.attachHider({ LuaTempStashHiderID }, false)
+				if obj then
+					obj.attachHider({ LuaTempStashHiderID }, false)
 				end
 			end
 			Wait.frames(function()
 				Wait.condition(
 					removeHider,
 					function()
-						return not stash or not stash.isSmoothMoving()
+						return not obj or not obj.isSmoothMoving()
 					end,
 					2, removeHider
 				)
@@ -284,32 +266,38 @@ sealed class UZContextualStash : MonoBehaviour
 		nameof(LuaMoveObjectToHandStash),
 		$"""
 		function (obj, target)
-			target = target or { LuaGetObjectHandPlayer }(obj)
-			if target then
-				local old_stash = target.getHandStash()
-				if obj.moveToHandStash() and obj then
-					local stash = target.getHandStash()
-					if (obj == stash) or (stash ~= old_stash) or obj.isDestroyed() then
-						for _,color in ipairs(obj.getSelectingPlayers()) do
-							obj.removeFromPlayerSelection(color)
-						end
-						if (obj ~= stash) then
-							obj.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
-						end
-						--if (obj == stash) or (stash ~= old_stash) then
-							--stash.interactable = true
-							{ LuaHideHandStash }(stash)
-						--end
-						-- // #todo: fix card reveal cases:
-							-- STASH <- CARD (fixed???)
-							-- nothing <- 1  CARD  (fixed)
-							-- nothing <- 2  CARDs (fixed)
-							-- nothing <- 3+ CARDs (broken)
-					end
-				end
-			end
+			{ LuaAttachTempHider }(obj)
+			obj.moveToHandStash()
 		end
 		"""
+		// $"""
+		// function (obj, target)
+		// 	target = target or { LuaGetObjectHandPlayer }(obj)
+		// 	if target then
+		// 		local old_stash = target.getHandStash()
+		// 		if obj.moveToHandStash() and obj then
+		// 			local stash = target.getHandStash()
+		// 			if (obj == stash) or (stash ~= old_stash) or obj.isDestroyed() then
+		// 				for _,color in ipairs(obj.getSelectingPlayers()) do
+		// 					obj.removeFromPlayerSelection(color)
+		// 				end
+		// 				if (obj ~= stash) then
+		// 					obj.attachHider({ LuaTempStashHiderID }, true, { LuaAllColors })
+		// 				end
+		// 				--if (obj == stash) or (stash ~= old_stash) then
+		// 					--stash.interactable = true
+		// 					{ LuaHideHandStash }(stash)
+		// 				--end
+		// 				-- // #todo: fix card reveal cases:
+		// 					-- STASH <- CARD (fixed???)
+		// 					-- nothing <- 1  CARD  (fixed)
+		// 					-- nothing <- 2  CARDs (fixed)
+		// 					-- nothing <- 3+ CARDs (broken)
+		// 			end
+		// 		end
+		// 	end
+		// end
+		// """
 	);
 	public void OnClickContextual()
 	{
@@ -323,46 +311,56 @@ sealed class UZContextualStash : MonoBehaviour
 		{
 			default: throw new UnreachableException();
 			case Act.GlobalUnlock:
+				throw new NotImplementedException();
+			case Act.GlobalDraw:
 				Lua.Execute(
-					$"""
-					local global  = { true }
-					local all     = global and { ctrlDown }
-					local targets =
-						all and { LuaHandZonePlayers }
-						or      { Lua.Table((Lua) $"Player.{ target.color }") }
-					for _,target in ipairs(targets) do
-						if target then
-							local stash = target.getHandStash()
-							if stash then
-								stash.interactable = not stash.interactable
-							end
+					$$"""
+					--[[ {{ (Lua) $"{act}" }} ]]--
+					local all  = {{ ctrlDown }}
+					local swap = {{ shiftDown }}
+
+					local targets = {}
+					for _,target in ipairs(all and {{ LuaAllHandZonePlayers }} or { Player[{{ target.color }}] }) do
+						targets[target] = swap and {{ LuaGetPlayerHandObjects }}(target) or {}
+					end
+
+					for target,objs in pairs(targets) do
+						target.drawHandStash()
+						for _,obj in ipairs(objs) do
+							{{ LuaMoveObjectToHandStash }}(obj, target)
 						end
 					end
 					"""
 				);
 				break;
-			case Act.GlobalDraw:
+			case Act.ObjectDraw:
+				throw new NotImplementedException();
 			case Act.ObjectStash:
 				Lua.Execute(
-					$"""
-					local global  = { act == Act.GlobalDraw }
-					local all     = global and { ctrlDown }
-					local swap    = { shiftDown }
-					local targets =
-						all and { LuaHandZonePlayers }
-						or      { Lua.Table((Lua) $"Player.{ target.color }") }
-					for _,target in ipairs(targets) do
-						if target then
-							local objs =
-								not global and target.getSelectedObjects()
-								or swap    and { LuaGetPlayerHandObjects }(target)
-								or { Lua.Table() }
-							if global or swap then
-								target.drawHandStash()
+					$$"""
+					--[[ {{ (Lua) $"{act}" }} ]]--
+					local swap = {{ shiftDown }}
+
+					local targets = {}
+					for _,obj in ipairs(Player[{{ target.color }}].getSelectedObjects()) do
+						local target = {{ LuaGetObjectHandPlayer }}(obj)
+						if (target ~= nil) then
+							targets[target] = targets[target] or {}
+							-- if (target.getHandStash() ~= obj) then
+								table.insert(targets[target], obj)
+							-- end
+						end
+					end
+
+					for target,objs in pairs(targets) do
+						if swap then
+							if #objs == 0 then
+								objs = {{ LuaGetPlayerHandObjects }}(target)
 							end
-							for _,obj in ipairs(objs) do
-								{ LuaMoveObjectToHandStash }(obj, global and target)
-							end
+							target.drawHandStash()
+						end
+						for _,obj in ipairs(objs) do
+							{{ LuaMoveObjectToHandStash }}(obj, target)
 						end
 					end
 					"""
