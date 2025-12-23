@@ -187,22 +187,6 @@ sealed class UINameButtonX : MonoBehaviour
 		}
 	}
 
-	[ModuleInitializer]
-	internal static void Initializer() =>
-		RemoteX.RegisterOverrides += (RPCMethods) =>
-		{
-			// bugfix
-			// -[Remote(Permission.Admin)]
-			// +[Remote("Turns/Turns.SetPlayerTurn")]
-			RPCMethods.Set(
-				AccessTools.Method(typeof(Turns), nameof(Turns.SetPlayerTurn)),
-				player => player.isAdmin || (
-					API.HostModded &&
-					Turns.Instance.turnsState.PassTurns &&
-					Turns.Instance.IsTurn(PlayerManager.Instance.PlayerStateFromID(player.id).stringColor)
-				)
-			);
-		};
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
 	static bool PromoteThisPlayerPrefix(string name)
