@@ -56,7 +56,8 @@ class Setting<T> : Setting
 		if      (config.MigrateEntryX(new(from.Section, from.Key), out T value))
 			Entry.Value = value;
 
-		Entry.SettingChanged += (sender, args) => OnChanged(Value);
+		if (OnChanged is not null)
+			Entry.SettingChanged += (sender, args) => OnChanged.Invoke(Value);
 		OnLoaded?.Invoke(Value);
 	}
 }
