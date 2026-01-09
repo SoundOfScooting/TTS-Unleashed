@@ -1,16 +1,28 @@
+using System.Runtime.CompilerServices;
+
 namespace Unleashed.Command;
 
 readonly record struct Argument(string Text, bool Quoted = false);
 
 static class Message
 {
-	public static string Join(params IEnumerable<string> @enum) =>
-		@enum.Aggregate((string) null, Join);
-	public static string Join(string a, string b)
+	public static string Join<T>(params IEnumerable<T> values)
+		=> Join(delimiter: " ", values);
+	public static string Join<T>(Func<T, string> converter, params IEnumerable<T> values)
+		=> Join(delimiter: " ", converter: converter, values);
+	[OverloadResolutionPriority(-1)]
+	public static string Join<T>(string delimiter, params IEnumerable<T> values)
+		=> Join(delimiter: delimiter, converter: null, values);
+	[OverloadResolutionPriority(-1)]
+	public static string Join<T>(string delimiter, Func<T, string> converter, params IEnumerable<T> values)
 	{
-		if (a is null) return b;
-		if (b is null) return a;
-		return $"{a} {b}";
+		converter ??= x => $"{x}";
+		return @values.Aggregate(null, (string accum, T value) =>
+		{
+			if (value is null) return accum;
+			if (accum is null) return converter.Invoke(value);
+			return $"{accum}{delimiter}{converter.Invoke(value)}";
+		});
 	}
 
 	public static Argument Bite(ref string rest) =>
@@ -49,8 +61,8 @@ static class Message
 
 				case ('"' or '\'', null):
 					quoted = true;
-					quot  = c;
-					text += msg[s..e++];
+					quot   = c;
+					text  += msg[s..e++];
 					s = e;
 					continue;
 				case ('"' or '\'', {} q) when q == c:

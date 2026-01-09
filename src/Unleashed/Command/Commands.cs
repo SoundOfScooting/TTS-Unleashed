@@ -299,17 +299,22 @@ public static class Commands
 	[Command]
 	sealed class StubCommandColor : Command.Stub
 	{
-		protected override List<Alias> Aliases => field ??= [ new(this, "/<color>") ];
+		protected override List<Alias> Aliases => field ??= [
+			new(this, "/<color>"),
+			.. Colour.HandPlayerLabels.Select(label => new Alias(this, $"/{label}"))
+		];
 		protected override List<Usage> Usages => field ??= [ new(Syntax: $"{Primary} <message>", Desc: "Whispers the player on this color") ];
+		protected override bool Echo => false; // #bug: should be true for /<color>
 	}
 	[Command]
 	sealed class CommandWhisper : Command
 	{
-		protected override List<Alias> Aliases => field ??= [ new(this, "/whisper"), new(this, "/w") ];
+		protected override List<Alias> Aliases => field ??= [ new(this, "/whisper"), new(this, "/w"), new(this, "/msg") ];
 		protected override List<Usage> Usages => field ??=
 		[
 			new(Syntax: $"{Primary} <recipient> <message>", Desc: "Whispers a message to any player"),
 		];
+		protected override bool Echo => false;
 		protected override void OnInvoke()
 		{
 			if (ExpectPlayer(out PlayerState recipient, $"<{nameof(recipient)}>"))
@@ -329,7 +334,6 @@ public static class Commands
 	{
 		protected override List<Alias> Aliases => field ??= [ new(this, "/clear") ];
 		protected override List<Usage> Usages => field ??= [ new(Syntax: Primary, Desc: "Deletes all text from this tab") ];
-
 		protected override bool Echo => false;
 	}
 	[Command]

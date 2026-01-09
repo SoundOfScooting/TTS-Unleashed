@@ -30,7 +30,7 @@ public readonly record struct Lua(string Text)
 				seated.changeColor("Grey")
 				target.changeColor(seated_color)
 
-				if swap and (target_color ~= "Grey") then
+				if swap and (seated.color ~= target_color) then
 					seated.changeColor(target_color)
 				end
 			end

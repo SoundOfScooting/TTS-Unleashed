@@ -4,8 +4,13 @@ namespace Unleashed.Command;
 
 sealed record class Alias(Command Cmd, string Short, string Prefix = null)
 {
-	public override string ToString() =>
-		$"'{Message.Join(Short, "...")}' -> '{Message.Join(Cmd.Primary, Prefix, "...")}'";
+	public static string ToString(Command cmd, IEnumerable<Alias> simple)
+	{
+		var sub = cmd.Base?.Primary != null;
+		return $"'{cmd.Base?.Primary ?? "/"}{Message.Join("|", x => sub ? x.Short : x.Short[1..], simple)} ...' -> '{Message.Join(cmd.Primary, "...")}'";
+	}
+	public override string ToString()
+		=> $"'{Message.Join(Cmd.Base?.Primary, Short, "...")}' -> '{Message.Join(Cmd.Primary, Prefix, "...")}'";
 }
 
 enum Perm { None, Admin, Host }
@@ -163,7 +168,7 @@ abstract class Command
 		return true;
 	}
 
-	protected Command Base { get; private set; }
+	public Command Base { get; private set; }
 
 	public string Primary =>
 		Message.Join(Base?.Primary, Aliases?.FirstOrDefault()?.Short);
@@ -185,7 +190,9 @@ abstract class Command
 		Chat.Log(message, label, Tab);
 	public void LogUsageHelp()
 	{
-		foreach (var alias in Aliases.Skip(1))
+		if ((Alias[]) [..Aliases.Skip(1).Where(x => x.Prefix == null)] is [_, ..] simple)
+			Log(Alias.ToString(this, simple), Colour.Grey);
+		foreach (var alias in Aliases.Skip(1).Where(x => x.Prefix != null))
 			Log($"{alias}", Colour.Grey);
 
 		List<Usage> usages = [
