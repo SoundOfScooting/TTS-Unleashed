@@ -32,17 +32,17 @@ static class Events
 	static void TriggerStartDisconnected()
 	{
 		if (OnStartDisconnected is {} action)
-			Main.Try(action, ChatMessageType.System);
+			Main.Catch(action, ChatMessageType.System);
 	}
 	static void TriggerStartConnected()
 	{
 		if (OnStartConnected is {} action)
-			Main.Try(action);
+			Main.Catch(action);
 	}
 	static void TriggerPlayersAddOther(PlayerState playerState)
 	{
 		if (OnPlayersAddOther is {} action)
-			Main.Try(() =>
+			Main.Catch(() =>
 			{
 				action.Invoke(playerState);
 				return default(object);
@@ -53,12 +53,12 @@ static class Events
 	static void TriggerStartGlobalContextual()
 	{
 		if (OnStartGlobalContextual is {} action)
-			Main.Try(action);
+			Main.Catch(action);
 	}
 	static void TriggerStartContextual()
 	{
 		if (OnStartContextual is {} action)
-			Main.Try(action);
+			Main.Catch(action);
 	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
