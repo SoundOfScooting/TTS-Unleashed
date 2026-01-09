@@ -320,7 +320,7 @@ public static class Commands
 			if (ExpectPlayer(out PlayerState recipient, $"<{nameof(recipient)}>"))
 			if (ExpectRest())
 			foreach (var receiver in Enumerable.Distinct([ Network.player, recipient.networkPlayer ]))
-				Chat.Instance.RPC(receiver, Chat.Instance.RPC_ChatWhisperMessage, NetworkID.ID, Rest, recipient.stringColor);
+				Chat.Instance.RPC(receiver, Chat.Instance.RPC_ChatWhisperMessage, Rest, recipient.stringColor);
 		}
 	}
 	[Command]
@@ -510,105 +510,6 @@ public static class Commands
 		{
 			NGUITools.clipboard = Lua.Latest.Text;
 			Log("Copied.", Main.PluginColour);
-		}
-	}
-
-	[PowerCommand]
-	sealed class CommandSpoof : Command.Dispatch
-	{
-		protected override List<Alias> Aliases => field ??= [ new(this, "/spoof") ];
-		protected override List<Usage> Usages => field ??=
-		[
-			new(Hide: Hide.Hidden, Syntax: $"{Primary} [log| chat|say | whisper|w | team] ..."),
-		];
-
-		[PowerCommand]
-		sealed class CommandSpoofLog : Command
-		{
-			protected override List<Alias> Aliases => field ??= [ new(this, "log") ];
-			protected override List<Usage> Usages => field ??=
-			[
-				new(Syntax: $"{Primary} <message>"),
-			];
-			protected override void OnInvoke()
-			{
-				if (ExpectRest())
-					Chat.Instance.RPC(RPCTarget.All, Chat.Instance.RPC_Chat, Rest);
-			}
-		}
-		[PowerCommand]
-		sealed class CommandSpoofChat : Command
-		{
-			protected override List<Alias> Aliases => field ??= [ new(this, "chat"), new(this, "say") ];
-			protected override List<Usage> Usages => field ??=
-			[
-				new(Syntax: $"{Primary} <sender> <message>"),
-			];
-
-			protected override void OnInvoke()
-			{
-				if (ExpectPlayer(out PlayerState sender, $"<{nameof(sender)}>"))
-				if (ExpectRest())
-					Chat.Instance.RPC(RPCTarget.Server, Chat.Instance.RPC_ChatMessage, sender.id, Rest);
-			}
-		}
-		[PowerCommand]
-		sealed class CommandSpoofWhisper : Command
-		{
-			protected override List<Alias> Aliases => field ??=
-			[
-				new(this, "whisper"), new(this, "w"),
-				new(this, "wg", Prefix: "-g"),
-			];
-			protected override List<Usage> Usages => field ??=
-			[
-				new(Syntax: $"{Primary} (-g) <sender> <recipient> <message>"),
-			];
-			protected override void OnInvoke()
-			{
-				var flagGlobal = Match("-g");
-				if (ExpectPlayer(out PlayerState sender,    $"<{nameof(sender)}>"))
-				if (ExpectPlayer(out PlayerState recipient, $"<{nameof(recipient)}>"))
-				if (ExpectRest())
-				{
-					if (flagGlobal)
-						Chat.Instance.RPC(RPCTarget.All, Chat.Instance.RPC_ChatWhisperMessage, sender.id, Rest, recipient.stringColor);
-					else foreach (var receiver in Enumerable.Distinct([ Network.player, sender.networkPlayer, recipient.networkPlayer ]))
-						Chat.Instance.RPC(receiver,      Chat.Instance.RPC_ChatWhisperMessage, sender.id, Rest, recipient.stringColor);
-				}
-			}
-		}
-		[PowerCommand]
-		sealed class CommandSpoofTeam : Command
-		{
-			protected override List<Alias> Aliases => field ??= [ new(this, "team") ];
-			protected override List<Usage> Usages => field ??=
-			[
-				new(Syntax: $"{Primary} (-a|-g) <sender> <message>"),
-			];
-			protected override void OnInvoke()
-			{
-				var flagAll    = Match("-a");
-				var flagGlobal = !flagAll && Match("-g");
-				if (!ExpectPlayer(out PlayerState sender, $"<{nameof(sender)}>"))
-					return;
-				if (!flagGlobal && !flagAll && sender.team == Team.None)
-				{
-					Log($"<{nameof(sender)}> is not on a Team.", Main.ErrorColour);
-					return;
-				}
-				if (!ExpectRest())
-					return;
-				if (flagGlobal)
-				{
-					var message = "<TEAM> " + Colour.HexFromColour(sender.color) + sender.name + ": [FFFFFF]" + Rest;
-					Chat.Instance.RPC(RPCTarget.All, Chat.Instance.RPC_Chat, message);
-					return;
-				}
-				foreach (var recipient in PlayerManager.Instance.PlayersList)
-				if      (flagAll ? recipient.team != Team.None : recipient.team == sender.team)
-					Chat.Instance.RPC(recipient.networkPlayer, Chat.Instance.RPC_ChatTeamMessage, sender.id, Rest);
-			}
 		}
 	}
 }

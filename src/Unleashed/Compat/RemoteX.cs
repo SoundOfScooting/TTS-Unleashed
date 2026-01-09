@@ -42,15 +42,17 @@ sealed class RemoteX : BaseNetworkAttribute
 		Permission permission = Permission.Client,
 		SendType sendType = SendType.ReliableBuffered,
 		string validationFunction = null,
-		SerializationMethod serializationMethod = SerializationMethod.Default
+		SerializationMethod serializationMethod = SerializationMethod.Default,
+		bool useGlobalValidationFunction = true
 	){
 		this.permission = permission;
 		this.sendType = sendType;
 		this.validationFunction = validationFunction;
 		this.serializationMethod = serializationMethod;
+		this.useGlobalValidationFunction = useGlobalValidationFunction;
 	}
 	public static explicit operator Remote(RemoteX @this) =>
-		new(@this.permission, @this.sendType, @this.validationFunction, @this.serializationMethod);
+		new(@this.permission, @this.sendType, @this.validationFunction, @this.serializationMethod, @this.useGlobalValidationFunction);
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
@@ -58,7 +60,7 @@ sealed class RemoteX : BaseNetworkAttribute
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			// RPCMethods.Sort((MethodRPCSort x, MethodRPCSort y) => x.uniqueName.CompareTo(y.uniqueName));
+			// RPCMethods.Sort((MethodRPCSort x, MethodRPCSort y) => string.Compare(x.uniqueName, y.uniqueName, StringComparison.Ordinal));
 			x => x.MatchCallvirt(AccessTools.Method(typeof(List<MethodRPCSort>), nameof(List<>.Sort), [ typeof(Comparison<MethodRPCSort>) ]))
 		);
 		c.MoveAfterLabels();
@@ -128,16 +130,18 @@ sealed class RemoteX : BaseNetworkAttribute
 				// -1 (non-plugin asm) < 0 (first plugin)
 				a => PluginsOrdered.FindIndex(b => a == b?.GetType()?.Assembly)
 			)
-			&& Comparison.Compare(lhs.uniqueName, rhs.uniqueName)
+			&& Comparison.CompareOrdinal(lhs.uniqueName, rhs.uniqueName)
 			&& Comparison.Compare(
 				lhs.method.GetGenericArguments(),
 				rhs.method.GetGenericArguments(),
-				x => x.Name
+				x => x.Name,
+				Comparison.CompareOrdinal
 			)
 			&& Comparison.Compare(
 				lhs.method.GetParameters(),
 				rhs.method.GetParameters(),
-				x => x.ParameterType.Name
+				x => x.ParameterType.Name,
+				Comparison.CompareOrdinal
 			)
 		);
 	}

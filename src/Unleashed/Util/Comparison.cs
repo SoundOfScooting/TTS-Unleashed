@@ -17,37 +17,41 @@ public readonly record struct Comparison(int Delta) // #want: open enum + extens
 	public static Comparison operator &(Comparison lhs, Comparison rhs) => !lhs ? lhs : rhs;
 	public static Comparison operator |(Comparison lhs, Comparison rhs) =>  lhs ? lhs : rhs;
 
-	public static Comparison? Default<R>(R rhs) =>
-		Default(true, rhs is not null);
-	public static Comparison? Default<L, R>(L lhs, R rhs) =>
-		Default(lhs is not null, rhs is not null);
-	public static Comparison? Default(bool lhsExists, bool rhsExists) =>
-		(lhsExists, rhsExists) switch {
+	public static Comparison? Default<R>(R rhs)
+		=> Default(true, rhs is not null);
+	public static Comparison? Default<L, R>(L lhs, R rhs)
+		=> Default(lhs is not null, rhs is not null);
+	public static Comparison? Default(bool lhsExists, bool rhsExists)
+		=> (lhsExists, rhsExists) switch {
 			(false, false) => EQ,
 			(false, true)  => LT,
 			(true,  false) => GT,
 			(true,  true)  => null,
 		};
 
-	public static Comparison Compare<L, R>(L lhs, R rhs) where L : IComparable<R> =>
-		Default(lhs, rhs) ?? lhs.CompareTo(rhs);
-	public static Comparison Compare<T, U>(T lhs, T rhs, Func<T, U> selector) where U : IComparable<U> =>
-		Compare(selector.Invoke(lhs), selector.Invoke(rhs));
+	public static Comparison Compare<L, R>(L lhs, R rhs) where L : IComparable<R>
+		=> Default(lhs, rhs) ?? lhs.CompareTo(rhs);
+	public static Comparison CompareOrdinal(string lhs, string rhs)
+		=> Default(lhs, rhs) ?? string.CompareOrdinal(lhs, rhs);
 
-	public static Comparison Compare<L, R>(IEnumerable<L> lhs, IEnumerable<R> rhs) where L : IComparable<R>
+	public static Comparison Compare<T, U>(T lhs, T rhs, Func<T, U> selector) where U : IComparable<U>
+		=> Compare(selector.Invoke(lhs), selector.Invoke(rhs));
+
+	public static Comparison Compare<L, R>(IEnumerable<L> lhs, IEnumerable<R> rhs, Func<L, R, Comparison> compare = null) where L : IComparable<R>
 	{
+		compare ??= Compare;
 		using var lhsIter = lhs.GetEnumerator();
 		using var rhsIter = rhs.GetEnumerator();
 		while (true)
 		{
 			if (Default(lhsIter.MoveNext(), rhsIter.MoveNext()) is {} @default)
 				return @default;
-			var cmp = Compare(lhsIter.Current, rhsIter.Current);
+			var cmp = compare.Invoke(lhsIter.Current, rhsIter.Current);
 			if (!cmp)
 				return cmp;
 		}
 	}
-	public static Comparison Compare<T, U>(IEnumerable<T> lhs, IEnumerable<T> rhs, Func<T, U> keySelector) where U : IComparable<U> =>
-		Compare(lhs.Select(keySelector), rhs.Select(keySelector));
+	public static Comparison Compare<T, U>(IEnumerable<T> lhs, IEnumerable<T> rhs, Func<T, U> keySelector, Func<U, U, Comparison> compare = null) where U : IComparable<U>
+		=> Compare(lhs.Select(keySelector), rhs.Select(keySelector), compare: compare);
 }
 

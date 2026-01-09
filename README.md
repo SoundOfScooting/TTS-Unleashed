@@ -81,7 +81,7 @@ If you right click `Change Color`, a dialog window to pick a color opens.\
 If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain seated while picking a color instead of switching to Grey *(see [Color selection](#color-selection))*.
 
 `Change Team` is available on all players *(formerly host-only)*.\
-*(new)* `Blindfold`/`Unblindfold` is available on all players.
+**Admin-only:** *(new)* `Blindfold`/`Unblindfold` is available on all players.
 
 **Admin-only:** `Promote`/`Demote` and `Kick` are available on non-host players *(formerly host-only)*.
 
@@ -153,7 +153,7 @@ If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect 
 `Show Hand` context option is available on objects in any hand, not just your own.\
 **BUG:** This feature is buggy *(just like the regular `Show Hand` button)*.
 
-**Admin-only:** `Physics` context option is available *(formerly host-only)*.\
+`Physics` context option is available *(formerly host-only)*.\
 **BUG:** The UI might not update client-side but it does apply server-side.
 
 `Scripting` context option is available, but only the GUID button and not the editor *(formerly host-only)*.

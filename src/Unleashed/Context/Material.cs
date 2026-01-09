@@ -9,7 +9,7 @@ static class PointerX
 {
 	extension(Pointer @this)
 	{
-		[RemoteX(Permission.Owner, SendType.ReliableNoDelay, "Permissions/Contextual", SerializationMethod.Default)]
+		[RemoteX(Permission.Owner, SendType.ReliableNoDelay, "Contextual")]
 		public void SetMaterialID(string matID)
 		{
 			if (!API.HostModded)

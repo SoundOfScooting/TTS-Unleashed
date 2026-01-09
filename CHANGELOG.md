@@ -1,7 +1,12 @@
 # dev
 
-* Updated to game version 14.0.3 (Hotfix 4)
-* Temporarily disabled extension to `Material`
+* Updated to game version 14.1.5 (Hotfix 3)
+<!-- this space intentionally left blank -->
+* Updated name button `Blindfold`/`Unblindfold` to require admin
+* Fixed name button `Change Team` not checking permissions
+<!-- this space intentionally left blank -->
+* Reverted object `Material` context extensions temporarily
+* Updated object `Physics` context to not require admin
 <!-- this space intentionally left blank -->
 * Fixed commands `/whisper` and `/<color>` echoing
 

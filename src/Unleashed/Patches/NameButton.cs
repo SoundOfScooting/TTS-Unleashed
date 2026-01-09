@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-using Unleashed.Compat;
 using Unleashed.Settings;
 
 namespace Unleashed.Patches;
@@ -69,28 +67,27 @@ sealed class UINameButtonX : MonoBehaviour
 			else
 				items.Add("Start Turns");
 		}
-		if (Turns.Instance.turnsState.Enable)
+		if (Turns.Instance.turnsState.Enable && !Turns.Instance.IsTurn(buttonColor))
 		{
-			if (!Turns.Instance.IsTurn(buttonColor))
-			{
-				if (Turns.Instance.turnsState.PassTurns && Turns.Instance.IsTurn())
-					items.Add("Pass Turn");
-				else if (Network.isAdmin)
-					items.Add("Set Turn");
-			}
+			if (Turns.Instance.turnsState.PassTurns && Turns.Instance.IsTurn())
+				items.Add("Pass Turn");
+			else if (Network.isAdmin)
+				items.Add("Set Turn");
 		}
 
 		if (Network.isAdmin || isOwnButton)
 			items.Add("Change Color");
-		items.Add("Change Team");
+		if (Network.isAdmin || PermissionsOptions.options.ChangeTeam)
+			items.Add("Change Team");
 
 		if (DebugChangeName.Value || (isHotseat && isOwnButton))
 			items.Add("Change Name");
 
-		items.Add(PlayerManager.Instance.IsBlinded(@base.id)
-			? "Unblindfold"
-			: "Blindfold"
-		);
+		if (Network.isAdmin || isOwnButton)
+			items.Add(PlayerManager.Instance.IsBlinded(@base.id)
+				? "Unblindfold"
+				: "Blindfold"
+			);
 		items.Add(PlayerManager.Instance.IsMuted(@base.id)
 			? "Unmute"
 			: "Mute"
@@ -173,7 +170,12 @@ sealed class UINameButtonX : MonoBehaviour
 
 			case "Blindfold":
 			case "Unblindfold":
-				PlayerManager.Instance.ChangeBlindfold(playerID, !playerState.blind);
+				if (playerID == NetworkID.ID)
+				{
+					PlayerManager.Instance.ToggleBlindfold();
+					return false;
+				}
+				PlayerManager.Instance.SetBlindfoldForPlayer(playerID, !playerState.blind);
 				return false;
 
 			case "Unmute":
@@ -185,6 +187,24 @@ sealed class UINameButtonX : MonoBehaviour
 				PlayerManager.Instance.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, playerID, Value == "Server Mute");
 				return false;
 		}
+	}
+
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.SetBlindfoldForPlayer))]
+	static bool SetBlindfoldForPlayerPrefix(int id, bool blind)
+	{
+		if (API.IsServer || !Network.isAdmin)
+			return true;
+		var steamId = PlayerManager.Instance.PlayerStateFromID(id).steamId;
+		Lua.Execute(
+			$"""
+			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			if player then
+				player.blindfolded = { blind }
+			end
+			"""
+		);
+		return false;
 	}
 
 	[HarmonyPrefix]

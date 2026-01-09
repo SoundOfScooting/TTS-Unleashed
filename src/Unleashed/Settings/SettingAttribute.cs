@@ -16,8 +16,8 @@ class SettingAttribute([CallerFilePath] string sourceFile = default, [CallerLine
 	public int    SourceLine { get; } = sourceLine;
 	public int CompareTo(SettingAttribute other) =>
 		Comparison.Default(other) ??
-		Comparison.Compare(SourceFile, other.SourceFile) &&
-		Comparison.Compare(SourceLine, other.SourceLine);
+		Comparison.CompareOrdinal(SourceFile, other.SourceFile) &&
+		Comparison.Compare       (SourceLine, other.SourceLine);
 
 	static (SettingAttribute, Setting)[] AllSettings;
 
