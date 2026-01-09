@@ -152,14 +152,14 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 	}
 }
 
-[HarmonyPatch]
+// [HarmonyPatch]
 sealed class UZContextualMaterial : MonoBehaviour
 {
-	[ModuleInitializer]
-	internal static void Initializer() =>
-		Events.OnStartConnected += OnStartConnected;
-	static void OnStartConnected() =>
-		NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>().Setup();
+	// [ModuleInitializer]
+	// internal static void Initializer() =>
+	// 	Events.OnStartConnected += OnStartConnected;
+	// static void OnStartConnected() =>
+	// 	NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>();
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
@@ -192,7 +192,7 @@ sealed class UZContextualMaterial : MonoBehaviour
 
 	// #todo: add a checkbox for AltSounds on top
 	// #idea: add sub-panel for chess materials
-	void Setup()
+	void Start()
 	{
 		Events.OnStartContextual += OnStartContextual;
 
@@ -207,6 +207,7 @@ sealed class UZContextualMaterial : MonoBehaviour
 			toggle.transform.parent.gameObject.SetActive(false);
 
 		ToggleTable = OldGoldToggle.transform.parent.parent.GetComponent<UITable>();
+		OnStartContextual();
 	}
 	void OnDestroy() =>
 		Events.OnStartContextual -= OnStartContextual;

@@ -138,10 +138,12 @@ If you hold Shift, the cards in the hand stash are instead swapped with the ones
 **Admin-only:** *(new)* `Stash` is available on selected cards in hands, which moves them into their hand stashes until redrawn.\
 If you hold Shift, the selected cards in the hand are instead swapped with the ones in the hand stash *(renames to `Swap Stash`)*.
 
+<!--
 **Modded host and client:** `Material` context option is extended:\
 Includes missing materials for piecepack dice, rounded plastic dice, player tokens, and marbles.\
 For chess pieces, `Metal` is split into `Chrome`/`Cast Iron` and `Wood` into `Wood Light`/`Wood Dark`.\
 If you and the host have the Kickstarter Gold reward, `Gold` material is available for chess pieces, dice, and dominoes.
+-->
 
 **Admin-only:** `Custom` context option is available *(formerly host-only)*.\
 Clients cannot automatically update matching custom objects.\

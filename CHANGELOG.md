@@ -1,3 +1,8 @@
+# dev
+
+* Updated to game version 14.0.3 (Hotfix 4)
+* Temporarily disabled extension to `Material`
+
 # v0.2.0
 
 * Updated to game version 14.0.3 (Hotfix 2)
