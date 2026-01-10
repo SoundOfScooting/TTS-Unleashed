@@ -10,6 +10,8 @@ static class Offline
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(SteamUser),        nameof(SteamUser.GetSteamID))]
+	[HarmonyPatch(typeof(SteamManager),     nameof(SteamManager.GetAvatarFromSteamID))]
+	[HarmonyPatch(typeof(SteamManager),     nameof(SteamManager.IsPlayerVisibleOnline))]
 	[HarmonyPatch(typeof(SteamManager),     nameof(SteamManager.StringToSteamID))]
 	[HarmonyPatch(typeof(UIProfilePotrait), nameof(UIProfilePotrait.OnClick))]
 	static bool SkipNoSteam() =>

@@ -61,10 +61,11 @@ sealed class UINameButtonX : MonoBehaviour
 		{
 			if (Turns.Instance.turnsState.Enable)
 			{
-				items.Add("Stop Turns");
+				if (!isHotseat)
+					items.Add("Stop Turns");
 				items.Add("Reverse Turns");
 			}
-			else
+			else if (!isHotseat)
 				items.Add("Start Turns");
 		}
 		if (Turns.Instance.turnsState.Enable && !Turns.Instance.IsTurn(buttonColor))
@@ -92,12 +93,12 @@ sealed class UINameButtonX : MonoBehaviour
 			? "Unmute"
 			: "Mute"
 		);
-		if (Network.isAdmin)
+		if (Network.isAdmin && !isHotseat)
 		{
 			items.Add("Server Mute");
 			items.Add("Server Unmute");
 		}
-		if (Network.isAdmin && !PlayerManager.Instance.IsHost(@base.id))
+		if (Network.isAdmin && !PlayerManager.Instance.IsHost(@base.id) && !isHotseat)
 		{
 			items.Add(PlayerManager.Instance.IsPromoted(@base.id)
 				? "Demote"
@@ -105,7 +106,7 @@ sealed class UINameButtonX : MonoBehaviour
 			);
 			items.Add("Kick");
 		}
-		if (Network.isServer && !isOwnButton)
+		if (Network.isServer && !isHotseat && !isOwnButton)
 		{
 			items.Add("Ban");
 			items.Add("Give Host");

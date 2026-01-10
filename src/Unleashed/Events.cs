@@ -21,6 +21,28 @@ record struct Event<T>(T Trigger = null) : IEvent<T> where T : Delegate
 [HarmonyPatch]
 static class Events
 {
+	// #generic
+	[HarmonyILManipulator]
+	[HarmonyPatch(typeof(EventUtil), nameof(EventUtil.RaiseSafe), [typeof(Action)])]
+	// [HarmonyPatch(typeof(EventUtil), nameof(EventUtil.RaiseSafe), [typeof(Action<object>), typeof(object)])]
+	// [HarmonyPatch(typeof(EventUtil), nameof(EventUtil.RaiseSafe), [typeof(Action<object,object>), typeof(object), typeof(object)])]
+	static void RaiseSafeIL(ILContext il)
+	{
+		var c = new ILCursor(il);
+		c.GotoNext(MoveType.After,
+			// UnityEngine.Debug.LogException(exception);
+			x => x.MatchCall(AccessTools.Method(typeof(Debug), nameof(Debug.LogException), [typeof(Exception)]))
+		);
+		// for some reason instructions can't be inserted before
+		c.Prev.OpCode  = OpCodes.Dup;
+		c.Prev.Operand = null;
+		c.EmitDelegate(void(Exception exception) =>
+		{
+			Main.Log.LogError(exception);
+			Debug.LogException(exception);
+		});
+	}
+
 	public static event Action OnStartConnected;
 	public static event Action OnStartDisconnected;
 	public static event Action<PlayerState> OnPlayersAddOther;
