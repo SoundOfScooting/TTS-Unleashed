@@ -45,7 +45,7 @@ static class Tables
 							? "Custom Table Square"
 							: "Custom Table"
 					).ToUpperInvariant());
-					UICustomImage.Instance.CustomImageURL = image.CustomImageURL;
+					UICustomImage.Instance.CustomImageURL = image?.CustomImageURL;
 				});
 		}
 		__instance.TablesButtons.Add(new()

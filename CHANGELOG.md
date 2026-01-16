@@ -2,6 +2,8 @@
 
 * Updated to game version 14.1.8 (Hotfix 1)
 <!-- this space intentionally left blank -->
+* Fixed error in Objects -> Tables menu
+<!-- this space intentionally left blank -->
 * Updated name button `Blindfold`/`Unblindfold` to require admin
 * Fixed name button `Change Team` not checking permissions
 <!-- this space intentionally left blank -->
