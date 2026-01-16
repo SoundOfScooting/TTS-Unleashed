@@ -22,7 +22,7 @@ static class NetworkPhysicsObjectX
 	// }
 	extension(Pointer @this)
 	{
-		[RemoteX(Permission.Owner, SendType.ReliableNoDelay, null, SerializationMethod.Default)]
+		[RemoteX(Permission.Owner, SendType.ReliableNoDelay)]
 		public void ChangeHeldTiltRotationIndex(int tiltRotationDelta, int touchId = -1)
 		{
 			if (tiltRotationDelta == 0)

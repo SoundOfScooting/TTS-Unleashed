@@ -114,8 +114,8 @@ static class Events
 		Wait.Time(() => addingAllPlayers = false, 5f); // failsafe
 	}
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(UINotepad), nameof(UINotepad.UpdateNotepadRPC))]
-	static void UpdateNotepadRPCPrefix() =>
+	[HarmonyPatch(typeof(UINotepad), nameof(UINotepad.SetNotepadRPC))]
+	static void SetNotepadRPCRPCPrefix() =>
 		addingAllPlayers = false; // rpc from server in NetworkUI.OnPlayerConnect after all players added
 
 	static void OnPlayersAdd(PlayerState playerState)

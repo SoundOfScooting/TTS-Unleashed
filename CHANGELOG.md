@@ -1,6 +1,6 @@
 # dev
 
-* Updated to game version 14.1.5 (Hotfix 3)
+* Updated to game version 14.1.8 (Hotfix 1)
 <!-- this space intentionally left blank -->
 * Updated name button `Blindfold`/`Unblindfold` to require admin
 * Fixed name button `Change Team` not checking permissions
@@ -8,7 +8,7 @@
 * Reverted object `Material` context extensions temporarily
 * Updated object `Physics` context to not require admin
 <!-- this space intentionally left blank -->
-* Fixed commands `/whisper` and `/<color>` echoing
+* Changed commands `/whisper` and `/<color>` to not echo
 
 # v0.2.0
 
