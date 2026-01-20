@@ -15,7 +15,7 @@ static class ServerSetup
 		],
 		Section     = Section.Setup,
 		Key         = "Initial Player Color",
-		Default     = Colour.White.Label,
+		Default     = Colour.WhiteLabel,
 		Acceptable  = new AcceptableValueList<string>(["Choose", "Dialog", .. Colour.AllPlayerLabels]),
 		Description =
 			"""
@@ -141,7 +141,7 @@ static class ServerSetup
 
 		c.GotoNext(MoveType.Before,
 			// ClientRequestColor("White");
-			x => x.MatchLdstr("White"),
+			x => x.MatchLdstr(Colour.WhiteLabel),
 			x => x.MatchCall(AccessTools.Method(typeof(NetworkUI), nameof(NetworkUI.ClientRequestColor)))
 		);
 		c.MoveAfterLabels();

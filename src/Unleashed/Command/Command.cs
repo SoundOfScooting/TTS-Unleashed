@@ -229,7 +229,7 @@ abstract class Command
 
 		var label = char.ToUpper(str[0], CultureInfo.InvariantCulture) + str[1..].ToLowerInvariant();
 		if (label == "Gray")
-			label = "Grey";
+			label = Colour.GreyLabel;
 		if (Colour.IsColourLabel(label))
 			return label;
 

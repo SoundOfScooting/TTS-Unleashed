@@ -147,7 +147,7 @@ sealed class UZCameraHome : MonoBehaviour
 			return;
 		}
 		if (NeedToPickHome)
-			colourLabel = "Grey";
+			colourLabel = Colour.GreyLabel;
 		else switch (Current)
 		{
 			case Home.Hand:

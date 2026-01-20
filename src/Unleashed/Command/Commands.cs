@@ -253,7 +253,7 @@ public static class Commands
 					return;
 				}
 				color = color_;
-				if (color != "Grey")
+				if (color != Colour.GreyLabel)
 					seated = PlayerManager.Instance.PlayersList.Find(seated => seated.stringColor == color);
 			}
 

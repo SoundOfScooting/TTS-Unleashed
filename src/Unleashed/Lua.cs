@@ -27,7 +27,7 @@ public readonly record struct Lua(string Text)
 				local target_color = target.color
 				local seated_color = seated.color
 
-				seated.changeColor("Grey")
+				seated.changeColor({ Colour.GreyLabel })
 				target.changeColor(seated_color)
 
 				if swap and (seated.color ~= target_color) then

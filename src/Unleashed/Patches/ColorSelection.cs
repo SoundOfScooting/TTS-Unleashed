@@ -126,8 +126,8 @@ sealed class UIColorSelectionX : MonoBehaviour
 		const bool DEBUG_TEST = false;
 		static bool Permitted(string label) =>
 			!DEBUG_TEST && (
-				(label == "Grey") || Network.isAdmin ||
-				((label != "Black") && PermissionsOptions.options.ChangeColor)
+				(label == Colour.GreyLabel) || Network.isAdmin ||
+				((label != Colour.BlackLabel) && PermissionsOptions.options.ChangeColor)
 			);
 		static bool Available(string label) =>
 			DEBUG_TEST ||
@@ -145,7 +145,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 		if     (visible)
 		switch (__instance.label)
 		{
-			case "Grey":
+			case Colour.GreyLabel:
 			{
 				if (VRHMD.isVR)
 				{
@@ -153,13 +153,13 @@ sealed class UIColorSelectionX : MonoBehaviour
 					break;
 				}
 				var position = new Vector3(0f, 3f, 0f);
-				if (CameraController.Instance.bTopDown && !UZCameraHome.NeedToPickHome && Available("Black"))
+				if (CameraController.Instance.bTopDown && !UZCameraHome.NeedToPickHome && Available(Colour.BlackLabel))
 					position.z -= 2f;
 
 				vector = __instance.MainCamera.WorldToScreenPoint(position);
 				break;
 			}
-			case "Black" when !UZCameraHome.NeedToPickHome:
+			case Colour.BlackLabel when !UZCameraHome.NeedToPickHome:
 			{
 				if (VRHMD.isVR)
 				{
