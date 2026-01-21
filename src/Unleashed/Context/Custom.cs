@@ -59,7 +59,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					assetbundle           = {{ __instance.CustomAssetbundleURL }},
@@ -94,7 +94,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					face     = {{ __instance.URLFace }},
@@ -129,7 +129,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					face           = {{ __instance.URLFace }},
@@ -163,7 +163,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					image = {{ __instance.CustomImageURL }},
@@ -194,7 +194,7 @@ static class Custom
 				Tables.setCustomURL({ __instance.CustomImageURL })
 				"""
 				: (Lua.Template) $$"""
-				local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+				local obj = {{ __instance.TargetCustomObject.NPO }}
 				if obj then
 					obj.setCustomObject({
 						image = {{ __instance.CustomImageURL }},
@@ -221,7 +221,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					image           = {{ __instance.CustomImageURL }},
@@ -252,7 +252,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					mesh     = {{ __instance.MeshURL }},
@@ -300,12 +300,19 @@ static class Custom
 		__instance.Close();
 		return false;
 	}
+
+	// #nolt 2904
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	static void TileStartPostfix(UICustomTile __instance) =>
 		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = API.HostModded;
-	// #todo: GetCustomObject parity
-	// #todo: relocate to dedicated Lua fixes/additions
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.GetCustomObject))]
+	static void GetCustomObjectPostfix(LuaGameObjectScript __instance, ref MoonSharp.Interpreter.Table __result)
+	{
+		if (__instance.NPO.customImage && __instance.NPO.customTile)
+			__result["stretch"] = __instance.NPO.customTile.bStretch;
+	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.SetCustomObject))]
 	static void SetCustomObjectPostfix(LuaGameObjectScript __instance, MoonSharp.Interpreter.Table Params)
@@ -318,6 +325,7 @@ static class Custom
 				__instance.NPO.customTile.bStretch = bStretch;
 		}
 	}
+
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.Import))]
 	static bool TileImportPrefix(UICustomTile __instance, bool __runOriginal)
@@ -332,7 +340,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					image        = {{ __instance.CustomImageURL }},
@@ -363,7 +371,7 @@ static class Custom
 		}
 		Lua.Execute(
 			$$"""
-			local obj = getObjectFromGUID({{ __instance.TargetCustomObject.NPO.GUID }})
+			local obj = {{ __instance.TargetCustomObject.NPO }}
 			if obj then
 				obj.setCustomObject({
 					image          = {{ __instance.CustomImageURL }},

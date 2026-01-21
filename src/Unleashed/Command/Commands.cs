@@ -272,10 +272,7 @@ public static class Commands
 				if (ExpectPermission(Network.isAdmin))
 					Lua.Execute(
 						$"""
-						local target = { Lua.GetPlayerBySteamID }({ player.steamId })
-						local seated = { Lua.GetPlayerBySteamID }({ seated.steamId })
-						local swap   = { flagSwap }
-						{ Lua.ChangePlayerColorSeated }(target, seated, swap)
+						{ Lua.ChangePlayerColorSeated }({ player }, { seated }, { flagSwap })
 						"""
 					);
 				return;

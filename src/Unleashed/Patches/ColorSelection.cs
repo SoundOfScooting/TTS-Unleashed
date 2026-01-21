@@ -105,12 +105,10 @@ sealed class UIColorSelectionX : MonoBehaviour
 		if ((seatedID == -1) || (seatedID == targetID))
 			return true;
 
-		var target = PlayerManager.Instance.PlayersDictionary[targetID];
-		var seated = PlayerManager.Instance.PlayersDictionary[seatedID];
 		Lua.Execute(
 			$"""
-			local target = { Lua.GetPlayerBySteamID }({ target.steamId })
-			local seated = { Lua.GetPlayerBySteamID }({ seated.steamId })
+			local target = { PlayerManager.Instance.PlayersDictionary[targetID] })
+			local seated = { PlayerManager.Instance.PlayersDictionary[seatedID] })
 			local swap   = { zInput.GetButton("Shift") }
 			{ Lua.ChangePlayerColorSeated }(target, seated, swap)
 			"""
@@ -181,10 +179,11 @@ sealed class UIColorSelectionX : MonoBehaviour
 				if (VRHMD.isVR)
 				{
 					var f = (float) Math.PI / 5f * Colour.IDFromColour(__instance.colour);
-					vector = new(
-						x: 185f * Mathf.Cos(f) + Screen.width  / 2,
-						y: 185f * Mathf.Sin(f) + Screen.height / 2
-					);
+					vector = new()
+					{
+						x = 185f * Mathf.Cos(f) + Screen.width  / 2,
+						y = 185f * Mathf.Sin(f) + Screen.height / 2,
+					};
 					break;
 				}
 				vector = __instance.MainCamera.WorldToScreenPoint(hand.transform.position);

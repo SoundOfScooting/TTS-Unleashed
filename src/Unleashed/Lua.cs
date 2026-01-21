@@ -5,7 +5,6 @@ namespace Unleashed;
 
 public readonly record struct Lua(string Text)
 {
-	// #todo: not usable in hotseat
 	public static readonly Variable GetPlayerBySteamID = new(
 		nameof(GetPlayerBySteamID),
 		$"""
@@ -41,7 +40,7 @@ public readonly record struct Lua(string Text)
 	public string Text { get => field ?? ""; } = Text;
 	public override string ToString() => Text;
 
-	public static explicit operator Lua(string text) => new(text);
+	public static explicit operator Lua(string rhs) => new(rhs);
 
 	public static Lua Latest { get; private set; }
 	public static void Execute(in Template template)
@@ -50,35 +49,35 @@ public readonly record struct Lua(string Text)
 		LuaGlobalScriptManager.Instance.RPCExecuteScript(Latest.Text);
 	}
 
-	public static Lua Join<T>(IEnumerable<T> @enum, Func<T, Lua> converter, string delimeter = ", ") =>
-		(Lua) @enum.Join(value => converter.Invoke(value).ToString(), delimeter);
-	public static Lua Join(IEnumerable<Lua> @enum, string delimeter = ", ") =>
-		(Lua) @enum.Join(delimiter: delimeter);
-	public static Lua Join(IEnumerable<int>    @enum, string delimeter = ", ") => Join(@enum, Literal.Format, delimeter);
-	public static Lua Join(IEnumerable<float>  @enum, string delimeter = ", ") => Join(@enum, Literal.Format, delimeter);
-	public static Lua Join(IEnumerable<bool>   @enum, string delimeter = ", ") => Join(@enum, Literal.Format, delimeter);
-	public static Lua Join(IEnumerable<string> @enum, string delimeter = ", ") => Join(@enum, Literal.Format, delimeter);
+	public static Lua Join<T>(IEnumerable<T> values, Func<T, Lua> converter, string delimeter = ", ")
+		=> (Lua) values.Join(value => converter.Invoke(value).ToString(), delimeter);
+	public static Lua Join(IEnumerable<Lua> values, string delimeter = ", ")
+		=> (Lua) values.Join(delimiter: delimeter);
+	public static Lua Join(IEnumerable<int>    values, string delimeter = ", ") => Join(values, Literal.Format, delimeter);
+	public static Lua Join(IEnumerable<float>  values, string delimeter = ", ") => Join(values, Literal.Format, delimeter);
+	public static Lua Join(IEnumerable<bool>   values, string delimeter = ", ") => Join(values, Literal.Format, delimeter);
+	public static Lua Join(IEnumerable<string> values, string delimeter = ", ") => Join(values, Literal.Format, delimeter);
 
-	public static Lua Table(Lua lua = default) =>
-		(Lua) $"{{ { lua } }}";
-	public static Lua Table<T>(IEnumerable<T> @enum, Func<T, Lua> converter, string delimeter = ", ") =>
-		Table(Join(@enum, converter, delimeter));
-	public static Lua Table(IEnumerable<Lua>    @enum, string delimeter = ", ") => Table(Join(@enum, delimeter));
-	public static Lua Table(IEnumerable<int>    @enum, string delimeter = ", ") => Table(Join(@enum, delimeter));
-	public static Lua Table(IEnumerable<float>  @enum, string delimeter = ", ") => Table(Join(@enum, delimeter));
-	public static Lua Table(IEnumerable<bool>   @enum, string delimeter = ", ") => Table(Join(@enum, delimeter));
-	public static Lua Table(IEnumerable<string> @enum, string delimeter = ", ") => Table(Join(@enum, delimeter));
+	public static Lua Table(Lua lua = default)
+		=> (Lua) $"{{ { lua } }}";
+	public static Lua Table<T>(IEnumerable<T> values, Func<T, Lua> converter, string delimeter = ", ")
+		=> Table(Join(values, converter, delimeter));
+	public static Lua Table(IEnumerable<Lua>    values, string delimeter = ", ") => Table(Join(values, delimeter));
+	public static Lua Table(IEnumerable<int>    values, string delimeter = ", ") => Table(Join(values, delimeter));
+	public static Lua Table(IEnumerable<float>  values, string delimeter = ", ") => Table(Join(values, delimeter));
+	public static Lua Table(IEnumerable<bool>   values, string delimeter = ", ") => Table(Join(values, delimeter));
+	public static Lua Table(IEnumerable<string> values, string delimeter = ", ") => Table(Join(values, delimeter));
 
 	public readonly ref struct Literal(Lua Lua)
 	{
 		readonly Lua Lua = Lua;
 		public override string ToString() => Lua.ToString();
 
-		public static implicit operator Lua    (Literal @this) => @this.Lua;
-		public static explicit operator Literal(int     value) => new(Format(value));
-		public static explicit operator Literal(float   value) => new(Format(value));
-		public static explicit operator Literal(bool    value) => new(Format(value));
-		public static explicit operator Literal(string  value) => new(Format(value));
+		public static implicit operator Lua    (Literal rhs) => rhs.Lua;
+		public static explicit operator Literal(int     rhs) => new(Format(rhs));
+		public static explicit operator Literal(float   rhs) => new(Format(rhs));
+		public static explicit operator Literal(bool    rhs) => new(Format(rhs));
+		public static explicit operator Literal(string  rhs) => new(Format(rhs));
 
 		public static Lua Format(int    value) => (Lua) $"{value}";
 		public static Lua Format(float  value) => (Lua) $"{value}";
@@ -94,32 +93,25 @@ public readonly record struct Lua(string Text)
 		}
 	}
 
-	public readonly ref struct Script(Lua Body, Variable[] Imports = null)
-	{
-		public Lua Body { get; } = Body;
-		public Variable[] Imports { get => field ?? []; } = Imports;
-
-		public static explicit operator Lua(Script @this) =>
-			Join([.. Variable.ResolveImports(@this.Imports), @this.Body], "\n");
-	}
-
-	public sealed class Variable(string Name, Script Body)
+	public sealed class Variable(string Name, Lua Body, Variable[] Imports)
 	{
 		public Lua Name { get; } = (Lua) Name;
-		public Lua Body { get; } = (Lua) $"local { Name } = { Body.Body }";
-		public Variable[] Imports { get => field ?? []; } = Body.Imports;
+		public Lua Body { get; } = (Lua) $"local { Name } = { Body }";
+		public Variable[] Imports { get => field ?? []; } = Imports;
 
 		public Variable(string Name, Template Body)
-			: this(Name, (Script) Body) { }
+			: this(Name, Body.Body, [.. Body.Imports]) { }
 
-		public static IEnumerable<Lua> ResolveImports(Variable[] imports)
+		public static Lua Join(IEnumerable<Variable> imports, Lua body)
+			=> Lua.Join(ResolveImports(imports, body), "\n");
+		static IEnumerable<Lua> ResolveImports(IEnumerable<Variable> imports, Lua? body = null)
 		{
 			var set   = new HashSet<Variable>();
 			var next  = new Queue<Variable>(imports);
 			var stack = new Stack<Queue<Variable>>();
 			while (true)
 			{
-				if (next.FirstOrDefault() is {} var)
+				if (next.TryPeek(out var var))
 				{
 					if (set.Add(var))
 					{
@@ -136,6 +128,8 @@ public readonly record struct Lua(string Text)
 				}
 				break;
 			}
+			if (body is {} lua)
+				yield return lua;
 		}
 	}
 
@@ -144,42 +138,51 @@ public readonly record struct Lua(string Text)
 	{
 		readonly StringBuilder  builder = new(literalLength);  // min
 		readonly List<Variable> imports = new(formattedCount); // max
-		Lua Body => (Lua) builder.ToString();
 
-		public static explicit operator Script(Template @this) =>
-			new(@this.Body, [.. @this.imports]);
-		public static explicit operator Lua(Template @this) =>
-			(Lua) (Script) @this;
+		public Lua Body => (Lua) builder.ToString();
+		public IEnumerable<Variable> Imports => imports;
 
-		void Append(Lua lua) =>
-			builder.Append(lua.Text);
-		void Import(Variable variable) =>
-			imports.TryAddUnique(variable);
+		public static explicit operator Lua(Template rhs)
+			=> Variable.Join(rhs.imports, rhs.Body);
 
-		public void AppendLiteral  (string text)  => Append((Lua) text);
-		public void AppendFormatted(Lua    lua)   => Append(lua);
-		public void AppendFormatted(int    value) => Append((Literal) value);
-		public void AppendFormatted(float  value) => Append((Literal) value);
-		public void AppendFormatted(bool   value) => Append((Literal) value);
-		public void AppendFormatted(string value) => Append((Literal) value);
-		public void AppendFormatted(Variable variable)
+		void Append(Lua lua)
+			=> builder.Append(lua.Text);
+		Lua Import(Variable variable)
 		{
 			if (variable is null)
 				throw new ArgumentNullException(nameof(variable));
-			Append(variable.Name);
-			Import(variable);
+			imports.TryAddUnique(variable);
+			return variable.Name;
 		}
-		public void AppendFormatted(Script script)
+		Lua Import(Template template)
 		{
-			Append(script.Body);
-			foreach (var variable in script.Imports)
-				Import(variable);
-		}
-		public void AppendFormatted(Template template)
-		{
-			Append(template.Body);
 			foreach (var variable in template.imports)
 				Import(variable);
+			return template.Body;
+		}
+
+		public void AppendLiteral  (string   text)  => Append((Lua) text);
+		public void AppendFormatted(Lua      value) => Append(value);
+		public void AppendFormatted(int      value) => Append((Literal) value);
+		public void AppendFormatted(float    value) => Append((Literal) value);
+		public void AppendFormatted(bool     value) => Append((Literal) value);
+		public void AppendFormatted(string   value) => Append((Literal) value);
+		public void AppendFormatted(Variable value) => Append(Import(value));
+
+		public void AppendFormatted(NetworkPhysicsObject value)
+		{
+			if (value is null)
+				throw new ArgumentNullException(nameof(value));
+			Append(Import((Template) $"""getObjectFromGUID({ value.GUID })"""));
+		}
+		public void AppendFormatted(PlayerState value)
+		{
+			if (value is null)
+				throw new ArgumentNullException(nameof(value));
+			if (NetworkUI.Instance.bHotseat)
+				Append(Import((Template) $"""Player.getPlayers()[{ PlayerManager.Instance.PlayersList.IndexOf(value) }]"""));
+			else
+				Append(Import((Template) $"""{ GetPlayerBySteamID }({ value.steamId })"""));
 		}
 	}
 }

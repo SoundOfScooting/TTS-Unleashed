@@ -196,10 +196,9 @@ sealed class UINameButtonX : MonoBehaviour
 	{
 		if (API.IsServer || !Network.isAdmin)
 			return true;
-		var steamId = PlayerManager.Instance.PlayerStateFromID(id).steamId;
 		Lua.Execute(
 			$"""
-			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			local player = { PlayerManager.Instance.PlayerStateFromID(id) }
 			if player then
 				player.blindfolded = { blind }
 			end
@@ -214,10 +213,10 @@ sealed class UINameButtonX : MonoBehaviour
 	{
 		if (API.IsServer || !Network.isAdmin)
 			return true;
-		var steamId = PlayerManager.Instance.SteamIDFromName(name);
+		var id = PlayerManager.Instance.IDFromName(name);
 		Lua.Execute(
 			$"""
-			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			local player = { PlayerManager.Instance.PlayerStateFromID(id) }
 			if player then
 				player.promote()
 			end
@@ -231,10 +230,10 @@ sealed class UINameButtonX : MonoBehaviour
 	{
 		if (API.IsServer || !Network.isAdmin)
 			return true;
-		var steamId = PlayerManager.Instance.SteamIDFromName(name);
+		var id = PlayerManager.Instance.IDFromName(name);
 		Lua.Execute(
 			$"""
-			local player = { Lua.GetPlayerBySteamID }({ steamId })
+			local player = { PlayerManager.Instance.PlayerStateFromID(id) }
 			if player then
 				player.kick()
 			end
