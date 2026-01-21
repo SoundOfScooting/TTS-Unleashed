@@ -36,6 +36,7 @@
 
 	<PropertyGroup>
 		<PolyStringInterpolation>true</PolyStringInterpolation>
+		<PolyArgumentExceptions>true</PolyArgumentExceptions>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- NOTE: Copy/symlink these from Managed/ to lib/ -->
@@ -51,7 +52,7 @@
 		<PackageReference Include="BepInEx.PluginInfoProps"            Version="2.*" />
 		<PackageReference Include="UnityEngine.Modules"                Version="6000.0.62" IncludeAssets="compile" />
 
-		<PackageReference Include="Polyfill"  Version="9.0.2" />
+		<PackageReference Include="Polyfill"  Version="9.7.3" />
 		<!--
 		<PackageReference Include="PolySharp" Version="1.15.0" />
 		-->

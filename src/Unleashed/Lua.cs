@@ -149,8 +149,7 @@ public readonly record struct Lua(string Text)
 			=> builder.Append(lua.Text);
 		Lua Import(Variable variable)
 		{
-			if (variable is null)
-				throw new ArgumentNullException(nameof(variable));
+			ArgumentNullException.ThrowIfNull(variable);
 			imports.TryAddUnique(variable);
 			return variable.Name;
 		}
@@ -171,14 +170,12 @@ public readonly record struct Lua(string Text)
 
 		public void AppendFormatted(NetworkPhysicsObject value)
 		{
-			if (value is null)
-				throw new ArgumentNullException(nameof(value));
+			ArgumentNullException.ThrowIfNull(value);
 			Append(Import((Template) $"""getObjectFromGUID({ value.GUID })"""));
 		}
 		public void AppendFormatted(PlayerState value)
 		{
-			if (value is null)
-				throw new ArgumentNullException(nameof(value));
+			ArgumentNullException.ThrowIfNull(value);
 			if (NetworkUI.Instance.bHotseat)
 				Append(Import((Template) $"""Player.getPlayers()[{ PlayerManager.Instance.PlayersList.IndexOf(value) }]"""));
 			else

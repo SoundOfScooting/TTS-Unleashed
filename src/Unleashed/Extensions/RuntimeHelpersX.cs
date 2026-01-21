@@ -9,8 +9,7 @@ static class RuntimeHelpersX
 		// #idea: not recognized by compiler?
 		public static T[] GetSubArray<T>(T[] array, Range range)
 		{
-			if (array is null)
-				throw new ArgumentNullException(nameof(array));
+			ArgumentNullException.ThrowIfNull(array);
 
 			var (offset, length) = range.GetOffsetAndLength(array.Length);
 
