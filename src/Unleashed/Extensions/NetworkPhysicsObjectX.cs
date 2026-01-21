@@ -51,6 +51,7 @@ static class NetworkPhysicsObjectX
 	{
 		public void SetHeldObjectTiltRotationIndex(NetworkPhysicsObject npo, int tiltDelta, int id)
 		{
+			_ = @this;
 			var heldFlipRotationIndex = npo.HeldFlipRotationIndex;
 			var heldSpinRotationIndex = npo.HeldSpinRotationIndex;
 			var heldTiltRotationIndex = npo.HeldTiltRotationIndex;

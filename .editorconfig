@@ -48,8 +48,5 @@ dotnet_diagnostic.CA1707.severity = none
 # CA1715: Identifiers should have correct prefix
 dotnet_code_quality.CA1715.exclude_single_letter_type_parameters = true
 
-# CA1822: Mark members as static // #net10
-dotnet_diagnostic.CA1822.severity = none
-
 # CA2255: The 'ModuleInitializer' attribute should not be used in libraries
 dotnet_diagnostic.CA2255.severity = none

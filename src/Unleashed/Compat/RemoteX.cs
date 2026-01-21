@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using Unleashed.Util;
 using MethodRPCSort = NewNet.NetworkView.MethodRPCSort;
 
@@ -8,35 +7,10 @@ namespace Unleashed.Compat;
 // #todo: add version control for both vanilla and modded MethodRPCSort ids
 	// could also use implement string ids?
 
-readonly record struct RPCMethods(List<MethodRPCSort> Base)
-{
-	static string FuncID(MethodInfo method) =>
-		$"{Main.PLUGIN_GUID}/{method.FullDescription()}";
-	public string AddFunc(MethodInfo method, Func<NetworkPlayer, bool> func)
-	{
-		var funcId = FuncID(method);
-		BaseNetworkAttribute.validationFunctions.Add(funcId, func);
-		return funcId;
-	}
-
-	[OverloadResolutionPriority(-1)]
-	public void Set(MethodInfo method, Func<NetworkPlayer, bool> func) =>
-		Set(method, new(validationFunction: AddFunc(method, func)));
-	public void Set(MethodInfo method, RemoteX rpc)
-	{
-		var i = Base.FindIndex(x => x.method == method);
-		var s = Base[i];
-		s.rpc = (Remote) rpc;
-		Base[i] = s;
-	}
-}
-
 [HarmonyPatch]
 [AttributeUsage(AttributeTargets.Method)]
 sealed class RemoteX : BaseNetworkAttribute
 {
-	public static event Action<RPCMethods> RegisterOverrides;
-
 	public SendType sendType = SendType.ReliableBuffered;
 	public RemoteX(
 		Permission permission = Permission.Client,
@@ -71,7 +45,6 @@ sealed class RemoteX : BaseNetworkAttribute
 			// WARNING: DO NOT REMOVE //
 			RPCMethods.Sort(comp);
 			// ////////////////////// //
-			RegisterOverrides?.Invoke(new(RPCMethods));
 
 			List<MethodRPCSort> CustomRPCMethods = [];
 			FindAttributesX(CustomRPCMethods);

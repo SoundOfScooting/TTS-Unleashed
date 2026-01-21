@@ -73,8 +73,6 @@ The popup list shows "*Extra:*" options when opened with right click instead of 
 *Extra:* **Admin-only:** *(new)* `Start Turns` is available on all players when turns are disabled.\
 *Extra:* **Admin-only:** *(new)* `Stop Turns` and `Reverse Turns` are available on all players when turns are enabled.
 
-*BUGFIX:* **Modded host and client:** `Pass Turn` actually works when not promoted.
-
 **Admin-only:** `Change Color` is available on all players *(formerly host-only)*.\
 `Change Color` can be clicked again on the same player to cancel color selection.\
 If you right click `Change Color`, a dialog window to pick a color opens.\

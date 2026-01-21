@@ -27,10 +27,9 @@ static class PlayerStateX
 		public ref bool IsModded => ref @this.Data.IsModded;
 	}
 
-	// #todo: apparently CWT is broken in this Unity version?
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.Remove))]
-	static void RemovePostfix(PlayerState playerState) =>
-		CWT.Remove(playerState);
+	static void RemovePostfix(PlayerState playerState)
+		=> CWT.Remove(playerState);
 }
 

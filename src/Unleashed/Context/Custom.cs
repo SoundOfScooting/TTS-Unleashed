@@ -16,8 +16,6 @@ static class Custom
 		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
 	}
 
-	// #idea: would be nice to use deck import UI for cards to access extra options
-	// #idea: edit each ui panel to add inaccesible parameters
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(CustomAssetbundle),  nameof(CustomAssetbundle .bCustomUI), MethodType.Setter)]
 	[HarmonyPatch(typeof(CustomCard),         nameof(CustomCard        .bCustomUI), MethodType.Setter)]
@@ -42,7 +40,7 @@ static class Custom
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
 	static bool CheckUpdateMatchingCustomObjectsPrefix() =>
-		Network.isServer; // #idea: implement for client?
+		Network.isServer;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
