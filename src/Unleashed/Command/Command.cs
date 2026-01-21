@@ -13,15 +13,15 @@ sealed record class Alias(Command Cmd, string Short, string Prefix = null)
 		=> $"'{Message.Join(Cmd.Base?.Primary, Short, "...")}' -> '{Message.Join(Cmd.Primary, Prefix, "...")}'";
 }
 
-enum Perm { None, Admin, Host }
+enum Perm { None, Admin, Server }
 enum Hide { Normal, Extra, Hidden }
 
 sealed record class Usage(string Syntax, string Desc = null, Perm Perm = Perm.None, Hide Hide = Hide.Normal)
 {
 	bool IsPermitted => Perm switch
 	{
-		Perm.Admin => Network.isAdmin,
-		Perm.Host  => Network.isServer,
+		Perm.Admin  => Network.isAdmin,
+		Perm.Server => Network.isServer,
 		_  => true,
 	};
 	public bool IsVisible(bool flagAll) =>
@@ -258,11 +258,11 @@ abstract class Command
 		}
 		return true;
 	}
-	protected static bool ExpectPermission(bool permitted)
+	protected static bool ExpectPermission(bool permitted, string message = null)
 	{
 		if (!permitted)
 		{
-			Log("Insufficient privileges.", Main.ErrorColour);
+			Log(Message.Join(delimiter: " ", "Insufficient privileges", message) + ".", Main.ErrorColour);
 			return false;
 		}
 		return true;

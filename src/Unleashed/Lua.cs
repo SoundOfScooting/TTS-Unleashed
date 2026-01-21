@@ -169,18 +169,19 @@ public readonly record struct Lua(string Text)
 		public void AppendFormatted(Variable value) => Append(Import(value));
 
 		public void AppendFormatted(NetworkPhysicsObject value)
-		{
-			ArgumentNullException.ThrowIfNull(value);
-			Append(Import((Template) $"""getObjectFromGUID({ value.GUID })"""));
-		}
+			=> Append(
+				value is null ? (Lua) "nil" :
+				Import((Template) $"""getObjectFromGUID({ value.GUID })""")
+			);
 		public void AppendFormatted(PlayerState value)
-		{
-			ArgumentNullException.ThrowIfNull(value);
-			if (NetworkUI.Instance.bHotseat)
-				Append(Import((Template) $"""Player.getPlayers()[{ PlayerManager.Instance.PlayersList.IndexOf(value) }]"""));
-			else
-				Append(Import((Template) $"""{ GetPlayerBySteamID }({ value.steamId })"""));
-		}
+			=> Append(
+				value is null ? (Lua) "nil" :
+				Import(
+					NetworkUI.Instance.bHotseat
+					? (Template) $"""Player.getPlayers()[{ 1+PlayerManager.Instance.PlayersList.IndexOf(value) }]"""
+					: (Template) $"""{ GetPlayerBySteamID }({ value.steamId })"""
+				)
+			);
 	}
 }
 

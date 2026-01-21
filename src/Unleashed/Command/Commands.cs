@@ -14,10 +14,8 @@ static class PatchChat
 }
 public static class Commands
 {
-	public static void Load() =>
-		CommandAttribute.RegisterAll(typeof(Commands), Command.Root.Instance);
-
-	const string px = Main.PLUGIN_ABBR_LOWER;
+	public static void Load()
+		=> CommandAttribute.RegisterAll(typeof(Commands), Command.Root.Instance);
 
 	[Command]
 	sealed class CommandHelp : Command
@@ -102,12 +100,8 @@ public static class Commands
 				return;
 			if (Rest is [_, ..] message)
 			{
-				if (!Network.isServer)
-				{
-					Log($"Argument ({nameof(message)}) is host-only!", Main.ErrorColour);
-					return;
-				}
-				KickPlayerWithMessage(player, message);
+				if (ExpectPermission(Network.isServer, $"for argument <{nameof(message)}>"))
+					KickPlayerWithMessage(player, message);
 				return;
 			}
 			if (ExpectPermission(Network.isAdmin))
@@ -120,7 +114,7 @@ public static class Commands
 		protected override List<Alias> Aliases => field ??= [ new(this, "/ban") ];
 		protected override List<Usage> Usages => field ??=
 		[
-			new(Perm: Perm.Host, Syntax: $"{Primary} <player> (message)", Desc: "Kicks player and adds them to block list"),
+			new(Perm: Perm.Server, Syntax: $"{Primary} <player> (message)", Desc: "Kicks player and adds them to block list"),
 		];
 		protected override void OnInvoke()
 		{
@@ -128,12 +122,8 @@ public static class Commands
 				return;
 			if (Rest is [_, ..] message)
 			{
-				if (!Network.isServer)
-				{
-					Log($"Argument ({nameof(message)}) is host-only!", Main.ErrorColour);
-					return;
-				}
-				KickPlayerWithMessage(player, message, true);
+				if (ExpectPermission(Network.isServer))
+					KickPlayerWithMessage(player, message, true);
 				return;
 			}
 			if (ExpectPermission(Network.isServer))
@@ -187,7 +177,7 @@ public static class Commands
 	[Command]
 	sealed class CommandExecute : Command
 	{
-		protected override List<Alias> Aliases => field ??= [ new(this, "/execute") ];
+		protected override List<Alias> Aliases => field ??= [ new(this, "/execute"), new(this, "/lua") ];
 		protected override List<Usage> Usages => field ??=
 		[
 			new(Perm: Perm.Admin, Syntax: $"{Primary} <lua statement>", Desc: "Executes Lua statement"),
@@ -218,8 +208,8 @@ public static class Commands
 		{
 			var player = PlayerManager.Instance.MyPlayerState();
 
-			var flagForce = Match("-f");
-			var flagSwap  = !flagForce && Match("-s");
+			var flagSwap  = Match("-s");
+			var flagForce = flagSwap || Match("-f");
 
 			var arg1 = Bite();
 			if (arg1.Text is null or [])
@@ -244,18 +234,23 @@ public static class Commands
 			{
 				if (!ExpectPlayer(out seated, $"<{nameof_arg2}>", arg1))
 					return;
+				color = seated.stringColor;
 			}
 			else
 			{
-				if (ParseLabel(arg1.Text) is not {} color_)
+				color = ParseLabel(arg1.Text);
+				if (color is null)
 				{
 					Log($"Invalid <{nameof_arg2}>!", Main.ErrorColour);
 					return;
 				}
-				color = color_;
 				if (color != Colour.GreyLabel)
 					seated = PlayerManager.Instance.PlayersList.Find(seated => seated.stringColor == color);
 			}
+
+			PlayerState temp = null;
+			if (color is ['!', ..])
+				temp = PlayerManager.Instance.PlayersList.Find(seated => seated.stringColor == Colour.WhiteLabel);
 
 			if (seated is not null)
 			{
@@ -272,23 +267,49 @@ public static class Commands
 				if (ExpectPermission(Network.isAdmin))
 					Lua.Execute(
 						$"""
+						local temp = { temp }
+						if temp then
+							temp.changeColor({ Colour.GreyLabel })
+						end
 						{ Lua.ChangePlayerColorSeated }({ player }, { seated }, { flagSwap })
+						if temp then
+							temp.changeColor({ Colour.WhiteLabel })
+						end
 						"""
 					);
 				return;
 			}
 
+			if (temp is not null)
+			{
+				if (!flagForce)
+				{
+					Log($"<{nameof_arg2}> is blocked by {Colour.WhiteLabel}!", Main.ErrorColour);
+					return;
+				}
+				if (ExpectPermission(Network.isAdmin))
+					Lua.Execute(
+						$"""
+						local temp = { temp }
+						if temp then
+							temp.changeColor({ Colour.GreyLabel })
+						end
+						{ player }.changeColor({ color })
+						if temp then
+							temp.changeColor({ Colour.WhiteLabel })
+						end
+						"""
+					);
+				return;
+			}
 			if (player.stringColor == color)
 			{
 				Log($"<{nameof(player)}> is already <{nameof_arg2}>!", Main.ErrorColour);
 				return;
 			}
-			if (player.id == NetworkID.ID && PermissionsOptions.options.ChangeColor)
-			{
+			if ((player.id == NetworkID.ID) && (PermissionsOptions.options.ChangeColor || (color == "Grey")))
 				NetworkUI.Instance.ClientRequestColor(color);
-				return;
-			}
-			if (ExpectPermission(Network.isAdmin))
+			else if (ExpectPermission(Network.isAdmin))
 				NetworkUI.Instance.CheckColor(color, player.id);
 		}
 	}
@@ -301,7 +322,7 @@ public static class Commands
 			.. Colour.HandPlayerLabels.Select(label => new Alias(this, $"/{label}"))
 		];
 		protected override List<Usage> Usages => field ??= [ new(Syntax: $"{Primary} <message>", Desc: "Whispers the player on this color") ];
-		protected override bool Echo => false; // #bug: should be true for /<color>
+		protected override bool Echo => false;
 	}
 	[Command]
 	sealed class CommandWhisper : Command
@@ -472,41 +493,56 @@ public static class Commands
 	}
 
 	[Command]
-	sealed class CommandPXTest : Command
+	sealed class CommandPX : Command.Dispatch
 	{
-		protected override List<Alias> Aliases => field ??= [ new(this, $"/{px}test") ];
-		protected override List<Usage> Usages => field ??= [];
-		protected override void OnInvoke()
-		{
-			/* nop */
-		}
-	}
-	[Command]
-	sealed class CommandPXSettings : Command
-	{
-		protected override List<Alias> Aliases => field ??= [ new(this, $"/{px}settings") ];
+		const string px = Main.PLUGIN_ABBR_LOWER;
+
+		protected override List<Alias> Aliases => field ??= [ new(this, $"/{px}") ];
+
 		protected override List<Usage> Usages => field ??=
 		[
-			new(Syntax: Primary, Desc: "Reloads the mod's settings file from disk"),
+			new(Syntax: $"{Primary} [lua|settings] ...")
 		];
-		protected override void OnInvoke()
+
+		[Command]
+		sealed class SubcommandLua : Command
 		{
-			Settings.SettingAttribute.Load();
-			Log("Reloaded settings file.", Main.PluginColour);
+			protected override List<Alias> Aliases => field ??= [ new(this, "lua") ];
+			protected override List<Usage> Usages => field ??=
+			[
+				new(Syntax: Primary, Desc: "Copies the last script executed by the mod to the clipboard"),
+			];
+			protected override void OnInvoke()
+			{
+				NGUITools.clipboard = Lua.Latest.Text;
+				Log("Copied.", Main.PluginColour);
+			}
 		}
-	}
-	[Command]
-	sealed class CommandPXCopyLua : Command
-	{
-		protected override List<Alias> Aliases => field ??= [ new(this, $"/{px}copylua") ];
-		protected override List<Usage> Usages => field ??=
-		[
-			new(Syntax: Primary, Desc: "Copies the last script executed by the mod to the clipboard"),
-		];
-		protected override void OnInvoke()
+
+		[Command]
+		sealed class SubcommandSettings : Command
 		{
-			NGUITools.clipboard = Lua.Latest.Text;
-			Log("Copied.", Main.PluginColour);
+			protected override List<Alias> Aliases => field ??= [ new(this, "settings") ];
+			protected override List<Usage> Usages => field ??=
+			[
+				new(Syntax: Primary, Desc: "Reloads the mod's settings file from disk"),
+			];
+			protected override void OnInvoke()
+			{
+				Settings.SettingAttribute.Load();
+				Log("Reloaded settings file.", Main.PluginColour);
+			}
+		}
+
+		[PowerCommand]
+		sealed class SubcommandTest : Command
+		{
+			protected override List<Alias> Aliases => field ??= [ new(this, "test") ];
+			protected override List<Usage> Usages => field ??= [];
+			protected override void OnInvoke()
+			{
+				/* nop */
+			}
 		}
 	}
 }

@@ -81,7 +81,7 @@ If you right click `Change Color`, a dialog window to pick a color opens.\
 If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain seated while picking a color instead of switching to Grey *(see [Color selection](#color-selection))*.
 
 `Change Team` is available on all players *(formerly host-only)*.\
-**Admin-only:** *(new)* `Blindfold`/`Unblindfold` is available on all players.
+*Extra:* **Admin-only:** *(new)* `Blindfold`/`Unblindfold` is available on all players.
 
 **Admin-only:** `Promote`/`Demote` and `Kick` are available on non-host players *(formerly host-only)*.
 
@@ -106,7 +106,12 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 
 ### Grab tool
 
-**Modded host and client:** *(new)* When rotating held objects, if you hold Ctrl, the objects are rotated around their 3rd axis *(previously only Alt for 2nd axis)*.
+**Modded host and client:** Held objects can be rotated in all 3 directions.
+| Held keys    | Axis of rotation |
+| ------------ | ---------------- |
+| -            | Spin (Y axis)    |
+| Alt          | Flip (X/Z axis)  |
+| Ctrl *(new)* | Tilt (Z/X axis)  |
 
 ### Draw tool
 
@@ -168,7 +173,8 @@ Command arguments that contain spaces must be wrapped in `"` or `'`, which are e
 Commands may target players by player ID (e.g. `#1` for the host), player color, or partial player name *(formerly only full name)*, all case-insensitive.
 
 `/help (-a|cmd)`\
-Shows command usages, `-a` to list extra commands.
+Shows command usages, `-a` to list extra commands.\
+Use second argument to see all aliases and usages of a command.
 
 `/list` *(new)*\
 Lists information about each player: player ID, player name, modded status *(currently only visible to the host)*.
@@ -178,7 +184,7 @@ Ejects player from the game.\
 **Host-only:** `/ban <player> (message)`\
 Kicks player and adds them to block list.
 
-**Admin-only:** `/promote|p <player>` *(formerly host-only)*\
+**Admin-only:** `/promote <player>` (alias: `/p`) *(formerly host-only)*\
 Promotes or demotes player as admin.
 
 `/mute <player>`\
@@ -186,13 +192,14 @@ Mutes or unmutes player's voice chat *(client-side)*.\
 **Admin-only:** `/mute -s <player> (status)` *(formerly host-only)*\
 Mutes or unmutes player's voice chat *(server-side)*.
 
-**Admin-only:** `/execute <lua statement>` *(formerly host-only)*\
+**Admin-only:** `/execute <lua statement>` (alias: `/lua`) *(formerly host-only)*\
 Executes Lua statement.\
 Equivalent to the `lua <statement>` system console command.
 
-`/color|c (-f) (player, admin-only) <color>` *(new)*\
+`/color (-f) (player) <color>` (alias: `/c`) *(new)*\
 Changes a player's color, `-f` to force.\
-**Admin-only:** `/color|c -s (player) <seated>` *(new)*\
+Supports any string starting with `!` as an invalid color.\
+**Admin-only:** `/color -s (player) <seated>` *(new)*\
 Swaps the colors of two players.
 
 `/<color> <message>` *(unchanged)*\
@@ -209,10 +216,10 @@ This effect is temporary and lasts until the game next changes your loading perc
 Executes a system console command inside this chat tab.\
 For example, `/sys chat_copy` copies the current tab's text instead of the console's text.
 
-`/uzsettings` *(new)*\
+`/uz settings` *(new)*\
 Reloads the mod's [settings file](#settings-file) from disk.
 
-`/uzcopylua` *(new)*\
+`/uz copylua` *(new)*\
 Copies the last script executed by the mod to the clipboard.\
 This is mainly used to debug internal errors within the mod.
 

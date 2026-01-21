@@ -23,7 +23,10 @@ sealed class UINameButtonX : MonoBehaviour
 	{
 		@base  = GetComponent<UINameButton>();
 		button = GetComponent<UIButton>();
-		@base.DoNotConfirm.AddRange([ "Start Turns", "Reverse Turns", "Stop Turns" ]);
+		@base.DoNotConfirm.AddRange([
+			"Start Turns", "Reverse Turns", "Stop Turns",
+			"Mute", "Unmute",
+		]);
 		@base.PopupList.OnPopupListShow += OnPopupListShow;
 	}
 	void OnDestroy() =>
@@ -47,15 +50,15 @@ sealed class UINameButtonX : MonoBehaviour
 	}
 	void OnPopupListShow()
 	{
-		var items = @base.PopupList.items;
-		items.Clear();
-
 		(var isExtra, Extra) = (Extra, false);
 
 		var isHotseat   = NetworkUI.Instance.bHotseat;
 		var isOwnButton = @base.id == NetworkID.HotseatID;
 		var buttonColor =
 			Colour.ColourFromUIColour(button.defaultColor).Label;
+
+		var items = @base.PopupList.items;
+		items.Clear();
 
 		if (isExtra && Network.isAdmin)
 		{
@@ -68,11 +71,11 @@ sealed class UINameButtonX : MonoBehaviour
 			else if (!isHotseat)
 				items.Add("Start Turns");
 		}
-		if (Turns.Instance.turnsState.Enable && !Turns.Instance.IsTurn(buttonColor))
+		if (isHotseat || (Turns.Instance.turnsState.Enable && !Turns.Instance.IsTurn(buttonColor)))
 		{
-			if (Turns.Instance.turnsState.PassTurns && Turns.Instance.IsTurn())
+			if (Turns.Instance.turnsState.PassTurns && (isHotseat || Turns.Instance.IsTurn()))
 				items.Add("Pass Turn");
-			else if (Network.isAdmin)
+			else if (!isHotseat && Network.isAdmin)
 				items.Add("Set Turn");
 		}
 
@@ -84,7 +87,7 @@ sealed class UINameButtonX : MonoBehaviour
 		if (DebugChangeName.Value || (isHotseat && isOwnButton))
 			items.Add("Change Name");
 
-		if (Network.isAdmin || isOwnButton)
+		if (isExtra && (Network.isAdmin || isOwnButton))
 			items.Add(PlayerManager.Instance.IsBlinded(@base.id)
 				? "Unblindfold"
 				: "Blindfold"
@@ -169,8 +172,8 @@ sealed class UINameButtonX : MonoBehaviour
 				__instance.GUIChangeColor();
 				return false;
 
-			case "Blindfold":
 			case "Unblindfold":
+			case "Blindfold":
 				if (playerID == NetworkID.ID)
 				{
 					PlayerManager.Instance.ToggleBlindfold();

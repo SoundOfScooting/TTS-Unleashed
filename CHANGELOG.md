@@ -1,16 +1,20 @@
 # dev
 
-* Updated to game version 14.1.8 (Hotfix 1)
+* Updated to game version 14.1.8 (Hotfix 2)
 <!-- this space intentionally left blank -->
 * Fixed error in Objects -> Tables menu
 <!-- this space intentionally left blank -->
 * Updated name button `Blindfold`/`Unblindfold` to require admin
+* Changed name button `Blindfold`/`Unblindfold` to a right-click option
 * Fixed name button `Change Team` not checking permissions
 <!-- this space intentionally left blank -->
 * Reverted object `Material` context extensions temporarily
 * Updated object `Physics` context to not require admin
 <!-- this space intentionally left blank -->
+* Added support for invalid colors to `/color` (any string starting with `!`)
 * Changed commands `/whisper` and `/<color>` to not echo
+* Moved `/uz***` commands to sub-commands
+<!-- * Removed Herobrine -->
 
 # v0.2.0
 
