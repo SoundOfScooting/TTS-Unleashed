@@ -150,6 +150,7 @@ sealed class UINameButtonX : MonoBehaviour
 				return false;
 
 			case "Change Color":
+				// #cut
 				if (UICamera.currentTouchID != UICameraTouch.LEFT)
 				{
 					UIColorSelection.ShowDialog(playerID);

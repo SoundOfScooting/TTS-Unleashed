@@ -1,4 +1,4 @@
-# dev
+# v0.3.0
 
 * Updated to game version 14.1.8 (Hotfix 2)
 <!-- this space intentionally left blank -->

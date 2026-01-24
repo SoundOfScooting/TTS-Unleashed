@@ -5,7 +5,7 @@
 	<PropertyGroup>
 		<AssemblyName>edu.sos.unleashed</AssemblyName> <!-- #bug: not working -->
 		<Product>Unleashed</Product>
-		<Version>0.2.0</Version>
+		<Version>0.3.0</Version>
 
 		<DefineConstants Condition=" '$(TRUE_ULTIMATE_POWER)' != '0' ">$(DefineConstants);TRUE_ULTIMATE_POWER;</DefineConstants>
 		<DefineConstants Condition=" '$(DEBUG_COMPAT)' == '1' ">$(DefineConstants);DEBUG_COMPAT;</DefineConstants>

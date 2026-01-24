@@ -19,6 +19,10 @@ Copy `ConfigurationManager.dll` to `[GAME]/BepInEx/plugins/`.
 **Admin-only:** Denotes features that require the user to be an admin *(server host or promoted player)*.\
 **Modded host and client:** Denotes features that require both the host and client to be modded.
 
+## Launch options
+
+Bugfix: Singleplayer and hotseat games can actually be started when using the `-nosteam` launch option.
+
 ## Objects menu
 
 ### Components
@@ -70,8 +74,7 @@ While in the color selection UI, if you right click a color/`Hand`, the camera h
 
 The popup list shows "*Extra:*" options when opened with right click instead of left click.
 
-*Extra:* **Admin-only:** *(new)* `Start Turns` is available on all players when turns are disabled.\
-*Extra:* **Admin-only:** *(new)* `Stop Turns` and `Reverse Turns` are available on all players when turns are enabled.
+*Extra:* **Admin-only:** *(new)* `Start Turns`, `Stop Turns`, and `Reverse Turns` are available on all players.
 
 **Admin-only:** `Change Color` is available on all players *(formerly host-only)*.\
 `Change Color` can be clicked again on the same player to cancel color selection.\
@@ -124,7 +127,7 @@ See [Enable Fast Flick](#section-controls). -->
 
 ### Decal tool
 
-Client players can add/edit/delete decals in the decal list *(formerly host-only*).
+Client players can add/edit/delete decals in the decal list *(formerly host-only)*.
 
 ## Contextual
 

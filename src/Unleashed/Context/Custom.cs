@@ -299,7 +299,7 @@ static class Custom
 		return false;
 	}
 
-	// #nolt 2904
+	// #issue https://tabletopsimulator.nolt.io/2904
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
 	static void TileStartPostfix(UICustomTile __instance) =>
