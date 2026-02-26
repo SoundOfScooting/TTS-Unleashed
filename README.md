@@ -281,6 +281,10 @@ Best used when 'Help' is bound to `/`.
 
 ### Section [Misc]
 
+`Chat BBCode` *(default `true`)*\
+Prevents stripping of BBCode in chat messages *(only for modded recipients)*.\
+For example, you can say `[ff0000]this is a [b]red[/b] message[-]`.
+
 `Intercept Lua Virus` *(default `true`)*\
 **Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
 **NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
