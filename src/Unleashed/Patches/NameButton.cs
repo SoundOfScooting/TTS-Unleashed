@@ -71,7 +71,7 @@ sealed class UINameButtonX : MonoBehaviour
 			else if (!isHotseat)
 				items.Add("Start Turns");
 		}
-		if (isHotseat || (Turns.Instance.turnsState.Enable && !Turns.Instance.IsTurn(buttonColor)))
+		if ((isHotseat || Turns.Instance.turnsState.Enable) && (Turns.Instance.turnsState.TurnColor != buttonColor)) // IsTurn is stupid
 		{
 			if (Turns.Instance.turnsState.PassTurns && (isHotseat || Turns.Instance.IsTurn()))
 				items.Add("Pass Turn");

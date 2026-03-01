@@ -34,8 +34,11 @@ sealed class UIColorSelectionX : MonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Start))]
-	static void StartPostfix(UIColorSelection __instance) =>
+	static void StartPostfix(UIColorSelection __instance)
+	{
+		__instance.gameObject.SetActive(true);
 		__instance.gameObject.GetOrAddComponent<UIColorSelectionX>();
+	}
 
 	bool   restartTooltip;
 	string originalTooltip;
@@ -127,13 +130,18 @@ sealed class UIColorSelectionX : MonoBehaviour
 				(label == Colour.GreyLabel) || Network.isAdmin ||
 				((label != Colour.BlackLabel) && PermissionsOptions.options.ChangeColor)
 			);
-		static bool Available(string label) =>
-			DEBUG_TEST ||
-			!PlayerManager.Instance.ColourInUse(label) || (
+		static bool Available(string label)
+		{
+			if (DEBUG_TEST)
+				return true;
+			if (NetworkUI.Instance.bHotseat && label == Colour.GreyLabel)
+				return false;
+			return !PlayerManager.Instance.ColourInUse(label) || (
 				Network.isAdmin &&
 				(zInput.GetButton("Ctrl") || zInput.GetButton("Shift")) &&
 				(label != PlayerManager.Instance.ColourLabelFromID(NetworkID.PlayerID(UIColorSelection.id)))
 			);
+		}
 
 		var permitted = UZCameraHome.NeedToPickHome || Permitted(__instance.label);
 		var available = UZCameraHome.NeedToPickHome || Available(__instance.label);
