@@ -1,6 +1,7 @@
 # dev
 
 * Added setting `Chat BBCode`
+* Fixed commands being case-sensitive
 
 # v0.3.0
 

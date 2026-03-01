@@ -90,7 +90,7 @@ abstract class Command
 			var text = Message.Bite(rest, out var rest1).Text;
 			foreach (var sub   in SubCommands)
 			foreach (var alias in sub.Aliases)
-			if      (text == alias.Short)
+			if      (text.Equals(alias.Short, StringComparison.OrdinalIgnoreCase))
 			{
 				rest = Message.Join(alias.Prefix, rest1);
 				cmd  = sub;
