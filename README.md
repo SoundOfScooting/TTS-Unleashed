@@ -194,7 +194,7 @@ Mutes or unmutes player's voice chat *(client-side)*.\
 Mutes or unmutes player's voice chat *(server-side)*.
 
 **Admin-only:** `/execute <lua statement>` (alias: `/lua`) *(formerly host-only)*\
-Executes Lua statement.\
+Executes Lua statement/expression.\
 Equivalent to the `lua <statement>` system console command.
 
 `/color (-f) (player) <color>` (alias: `/c`) *(new)*\

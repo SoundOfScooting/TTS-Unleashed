@@ -180,7 +180,7 @@ public static class Commands
 		protected override List<Alias> Aliases => field ??= [ new(this, "/execute"), new(this, "/lua") ];
 		protected override List<Usage> Usages => field ??=
 		[
-			new(Perm: Perm.Admin, Syntax: $"{Primary} <lua statement>", Desc: "Executes Lua statement"),
+			new(Perm: Perm.Admin, Syntax: $"{Primary} <lua statement>", Desc: "Executes Lua statement/expression"),
 		];
 		protected override void OnInvoke()
 		{

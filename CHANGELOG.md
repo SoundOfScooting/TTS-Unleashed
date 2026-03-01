@@ -2,6 +2,7 @@
 
 * Updated to game version 14.2.1
 * Added setting `Chat BBCode`
+* Fixed swap/force in color selection
 * Fixed commands being case-sensitive
 
 # v0.3.0

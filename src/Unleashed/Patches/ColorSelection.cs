@@ -110,8 +110,8 @@ sealed class UIColorSelectionX : MonoBehaviour
 
 		Lua.Execute(
 			$"""
-			local target = { PlayerManager.Instance.PlayersDictionary[targetID] })
-			local seated = { PlayerManager.Instance.PlayersDictionary[seatedID] })
+			local target = { PlayerManager.Instance.PlayersDictionary[targetID] }
+			local seated = { PlayerManager.Instance.PlayersDictionary[seatedID] }
 			local swap   = { zInput.GetButton("Shift") }
 			{ Lua.ChangePlayerColorSeated }(target, seated, swap)
 			"""
