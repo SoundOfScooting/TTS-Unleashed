@@ -37,9 +37,9 @@ static class Multiplayer
 				? steamName
 			: "NotConnectedToSteam" // bugfix
 		);
-		if (Offline.Singleplayer && !NetworkUI.Instance.bHotseat)
+		if (Offline.Singleplayer && !NetworkUI.Instance.IsHotseat)
 		if (PlayerManager.Instance.MyPlayerState() is {} player)
-			player.name = NetworkUI.Instance.playerName;
+			player.Name = NetworkUI.Instance.playerName;
 	}
 
 	[Setting]
@@ -131,8 +131,8 @@ static class Multiplayer
 			Chat.SendChatMessage(autoJoin);
 
 		// #idea: setting to auto-promote as admin
-		if (Network.isServer && SplitAutoPromoteIDs.Contains(playerState.steamId))
-			Wait.Frames(() => PlayerManager.Instance.PromoteThisPlayer(playerState.name));
+		if (Network.IsServer && SplitAutoPromoteIDs.Contains(playerState.SteamID))
+			Wait.Frames(() => PlayerManager.Instance.PromoteThisPlayer(playerState.Name));
 	}
 }
 

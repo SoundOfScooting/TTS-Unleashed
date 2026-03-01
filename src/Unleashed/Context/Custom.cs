@@ -9,11 +9,11 @@ static class Custom
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
-			// SetActive(NetworkInstance.GUIContextualCustom, Network.isServer && (bool)InfoObject.GetComponent<CustomObject>());
+			// SetActive(NetworkInstance.GUIContextualCustom, Network.IsServer && (bool)InfoObject.GetComponent<CustomObject>());
 			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualCustom))),
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
 		);
-		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
+		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
 	}
 
 	[HarmonyILManipulator]
@@ -32,15 +32,15 @@ static class Custom
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
 		);
-		c.Next.Operand     = AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
+		c.Next.Operand     = AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
 	}
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
 	static bool CheckUpdateMatchingCustomObjectsPrefix() =>
-		Network.isServer;
+		Network.IsServer;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
@@ -305,22 +305,22 @@ static class Custom
 	static void TileStartPostfix(UICustomTile __instance) =>
 		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = API.HostModded;
 	[HarmonyPostfix]
-	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.GetCustomObject))]
-	static void GetCustomObjectPostfix(LuaGameObjectScript __instance, ref MoonSharp.Interpreter.Table __result)
+	[HarmonyPatch(typeof(LuaObject), nameof(LuaObject.GetCustomObject))]
+	static void GetCustomObjectPostfix(LuaObject __instance, ref MoonSharp.Interpreter.Table __result)
 	{
-		if (__instance.NPO.customImage && __instance.NPO.customTile)
-			__result["stretch"] = __instance.NPO.customTile.bStretch;
+		if (__instance.NPO.CustomImage && __instance.NPO.CustomTile)
+			__result["stretch"] = __instance.NPO.CustomTile.bStretch;
 	}
 	[HarmonyPostfix]
-	[HarmonyPatch(typeof(LuaGameObjectScript), nameof(LuaGameObjectScript.SetCustomObject))]
-	static void SetCustomObjectPostfix(LuaGameObjectScript __instance, MoonSharp.Interpreter.Table Params)
+	[HarmonyPatch(typeof(LuaObject), nameof(LuaObject.SetCustomObject))]
+	static void SetCustomObjectPostfix(LuaObject __instance, MoonSharp.Interpreter.Table Params)
 	{
 		if (Params == null)
 			return;
-		if (__instance.NPO.customImage && __instance.NPO.customTile)
+		if (__instance.NPO.CustomImage && __instance.NPO.CustomTile)
 		{
 			if (Params["stretch"] != null && bool.TryParse(Params["stretch"].ToString(), out var bStretch))
-				__instance.NPO.customTile.bStretch = bStretch;
+				__instance.NPO.CustomTile.bStretch = bStretch;
 		}
 	}
 

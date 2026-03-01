@@ -1,5 +1,6 @@
 # dev
 
+* Updated to game version 14.2.1
 * Added setting `Chat BBCode`
 * Fixed commands being case-sensitive
 

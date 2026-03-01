@@ -17,7 +17,7 @@ static class MenuHoliday
 			""",
 		OnChanged = value =>
 		{
-			if (Network.peerType == NetworkPeerMode.Disconnected)
+			if (Network.PeerType == NetworkPeerMode.Disconnected)
 				NetworkUI.Instance.GUIDisconnected.transform
 					.Find("TTS Logo/Holidays")
 					.GetComponent<UIHoliday>()

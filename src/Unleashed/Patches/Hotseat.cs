@@ -21,14 +21,14 @@ static class Hotseat
 		[HarmonyPrefix]
 		static void Prefix()
 		{
-			if (NetworkUI.Instance.bHotseat)
-				Network.sender = new((ushort) NetworkID.ID);
+			if (NetworkUI.Instance.IsHotseat)
+				Network.Sender = new(Network.ID);
 		}
 		[HarmonyPostfix]
 		static void Postfix()
 		{
-			if (NetworkUI.Instance.bHotseat)
-				Network.sender = NetworkPlayer.GetServerPlayer();
+			if (NetworkUI.Instance.IsHotseat)
+				Network.Sender = NetworkPlayer.GetServerPlayer();
 		}
 	}
 }

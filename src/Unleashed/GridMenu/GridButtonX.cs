@@ -14,7 +14,7 @@ static class GridButtonX
 	{
 		if (__instance.Tags.Contains(TAG_HOST) && !API.HostModded)
 			return __result = false;
-		if (__instance.Tags.Contains(TAG_GOLD) && !SteamManager.bKickstarterGold)
+		if (__instance.Tags.Contains(TAG_GOLD) && !SteamManager.IsKickstarterGold)
 			return __result = false;
 		return true;
 	}

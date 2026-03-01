@@ -20,8 +20,8 @@ sealed record class Usage(string Syntax, string Desc = null, Perm Perm = Perm.No
 {
 	bool IsPermitted => Perm switch
 	{
-		Perm.Admin  => Network.isAdmin,
-		Perm.Server => Network.isServer,
+		Perm.Admin  => Network.IsAdmin,
+		Perm.Server => Network.IsServer,
 		_  => true,
 	};
 	public bool IsVisible(bool flagAll) =>
@@ -307,7 +307,7 @@ abstract class Command
 			player = null;
 			return false;
 		}
-		if (!PlayerManager.Instance.PlayersDictionary.TryGetValue(NetworkID.PlayerID(id), out var fromId))
+		if (!PlayerManager.Instance.PlayersDictionary.TryGetValue(Network.ToID(id), out var fromId))
 		{
 			Log($"Invalid {param}! Could not find player with ID #{id}", Main.ErrorColour);
 			player = null;
@@ -319,7 +319,7 @@ abstract class Command
 	static bool ExpectPlayerFromLabel(out PlayerState player, string param, string label)
 	{
 		var matches = PlayerManager.Instance.PlayersList
-			.FindAll(player => player.stringColor == label);
+			.FindAll(player => player.ColorLabel == label);
 		if (matches is not [ var match ])
 		{
 			var plural = matches is [] ? "No player is" : "Multiple players are";
@@ -333,7 +333,7 @@ abstract class Command
 	static bool ExpectPlayerFromName(out PlayerState player, string param, string name)
 	{
 		var matches = PlayerManager.Instance.PlayersList
-			.FindAll(player => player.name.Contains(name, StringComparison.OrdinalIgnoreCase));
+			.FindAll(player => player.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
 		if (matches is not [ var match ])
 		{
 			var plural = matches is [] ? "No player matches" : "Multiple players match";

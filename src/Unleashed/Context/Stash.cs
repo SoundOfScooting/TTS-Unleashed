@@ -79,7 +79,7 @@ sealed class UZContextualStash : MonoBehaviour
 	public static bool PositionNearStash(Vector3 pos, HandZone hand)
 	{
 		if      (hand.Stash/*  && !hand.Stash.IsGrabbable */)
-		foreach (var collider in hand.Stash.Colliders)
+		foreach (var collider in hand.Stash.colliders)
 		// if      (collider.bounds.Contains(pos with { y = collider.bounds.center.y }))
 		// if      (collider.ClosestPoint(pos = pos with { y = collider.bounds.center.y }) == pos)
 		if      ((collider.ClosestPoint(pos = pos with { y = collider.bounds.center.y }) - pos).magnitude < 1f /* 1e-5f */)
@@ -94,10 +94,10 @@ sealed class UZContextualStash : MonoBehaviour
 		Contextual.Check(gameObject, CheckContextual);
 	bool CheckContextual()
 	{
-		if (!Network.isAdmin) // #compat
+		if (!Network.IsAdmin) // #compat
 			return false;
 
-		var player = LuaGlobalScriptManager.Instance.GlobalPlayer.GetPlayer(NetworkID.ID);
+		var player = LuaGlobal.Instance.GlobalPlayer.GetPlayer(Network.ID);
 		target     = player;
 		ctrlDown   = zInput.GetButton("Ctrl");
 		shiftDown  = zInput.GetButton("Shift");
@@ -301,8 +301,8 @@ sealed class UZContextualStash : MonoBehaviour
 	);
 	public void OnClickContextual()
 	{
-		if (PlayerScript.PointerScript)
-			PlayerScript.PointerScript.ResetInfoObject();
+		if (Pointer.MyPointer)
+			Pointer.MyPointer.ResetInfoObject();
 		InvokeAction();
 	}
 	void InvokeAction()

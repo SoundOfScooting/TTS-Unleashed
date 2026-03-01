@@ -2,13 +2,13 @@ using Unleashed.Compat;
 
 namespace Unleashed.Extensions;
 
-static class NetworkPhysicsObjectX
+static class NetPhysObjectX
 {
 	sealed class Data : MonoBehaviour
 	{
 		public int HeldTiltRotationIndex;
 	}
-	extension(NetworkPhysicsObject @this)
+	extension(NetPhysObject @this)
 	{
 		Data Data => @this.gameObject.GetOrAddComponent<Data>();
 		public bool HasData() => @this.TryGetComponent<Data>(out _);
@@ -27,7 +27,7 @@ static class NetworkPhysicsObjectX
 		{
 			if (tiltRotationDelta == 0)
 				return;
-			if (Network.isClient)
+			if (Network.IsClient)
 			{
 				if (API.HostModded)
 					@this.RPC(RPCTarget.Server, @this.ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
@@ -49,7 +49,7 @@ static class NetworkPhysicsObjectX
 	}
 	extension(ManagerPhysicsObject @this)
 	{
-		public void SetHeldObjectTiltRotationIndex(NetworkPhysicsObject npo, int tiltDelta, int id)
+		public void SetHeldObjectTiltRotationIndex(NetPhysObject npo, int tiltDelta, int id)
 		{
 			_ = @this;
 			var heldFlipRotationIndex = npo.HeldFlipRotationIndex;
@@ -57,10 +57,10 @@ static class NetworkPhysicsObjectX
 			var heldTiltRotationIndex = npo.HeldTiltRotationIndex;
 			var num = (heldTiltRotationIndex + tiltDelta) % 24;
 
-			var luaGameObjectScript = npo.luaGameObjectScript;
-			var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.stringColor;
+			var lua = npo.Lua;
+			var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.ColorLabel;
 			// #todo: wrong
-			if (!luaGameObjectScript || luaGameObjectScript.CheckObjectRotate(heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex))
+			if (!lua || lua.CheckObjectRotate(heldSpinRotationIndex, num, playerColor, heldSpinRotationIndex, heldFlipRotationIndex))
 			{
 				npo.HeldTiltRotationIndex = num;
 				npo.DisableFastDragWhileAnimating();

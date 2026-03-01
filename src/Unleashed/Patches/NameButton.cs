@@ -45,24 +45,24 @@ sealed class UINameButtonX : MonoBehaviour
 	static bool UpdateDropDownReplace(UINameButton __instance)
 	{
 		if (PlayerManager.Instance.PlayersDictionary.TryGetValue(__instance.id, out var playerState))
-			__instance.NameLabel.text = playerState.name;
+			__instance.NameLabel.text = playerState.Name;
 		return false;
 	}
 	void OnPopupListShow()
 	{
 		(var isExtra, Extra) = (Extra, false);
 
-		var isHotseat   = NetworkUI.Instance.bHotseat;
-		var isOwnButton = @base.id == NetworkID.HotseatID;
+		var isHotseat   = NetworkUI.Instance.IsHotseat;
+		var isOwnButton = @base.id == Network.ID;
 		var buttonColor =
 			Colour.ColourFromUIColour(button.defaultColor).Label;
 
 		var items = @base.PopupList.items;
 		items.Clear();
 
-		if (isExtra && Network.isAdmin)
+		if (isExtra && Network.IsAdmin)
 		{
-			if (Turns.Instance.turnsState.Enable)
+			if (Turns.Instance.TurnsState.Enable)
 			{
 				if (!isHotseat)
 					items.Add("Stop Turns");
@@ -71,23 +71,23 @@ sealed class UINameButtonX : MonoBehaviour
 			else if (!isHotseat)
 				items.Add("Start Turns");
 		}
-		if ((isHotseat || Turns.Instance.turnsState.Enable) && (Turns.Instance.turnsState.TurnColor != buttonColor)) // IsTurn is stupid
+		if ((isHotseat || Turns.Instance.TurnsState.Enable) && (Turns.Instance.TurnsState.TurnColor != buttonColor)) // IsTurn is stupid
 		{
-			if (Turns.Instance.turnsState.PassTurns && (isHotseat || Turns.Instance.IsTurn()))
+			if (Turns.Instance.TurnsState.PassTurns && (isHotseat || Turns.Instance.IsTurn()))
 				items.Add("Pass Turn");
-			else if (!isHotseat && Network.isAdmin)
+			else if (!isHotseat && Network.IsAdmin)
 				items.Add("Set Turn");
 		}
 
-		if (Network.isAdmin || isOwnButton)
+		if (Network.IsAdmin || isOwnButton)
 			items.Add("Change Color");
-		if (Network.isAdmin || PermissionsOptions.options.ChangeTeam)
+		if (Network.IsAdmin || PermissionsOptions.Options.ChangeTeam)
 			items.Add("Change Team");
 
 		if (DebugChangeName.Value || (isHotseat && isOwnButton))
 			items.Add("Change Name");
 
-		if (isExtra && (Network.isAdmin || isOwnButton))
+		if (isExtra && (Network.IsAdmin || isOwnButton))
 			items.Add(PlayerManager.Instance.IsBlinded(@base.id)
 				? "Unblindfold"
 				: "Blindfold"
@@ -96,12 +96,12 @@ sealed class UINameButtonX : MonoBehaviour
 			? "Unmute"
 			: "Mute"
 		);
-		if (Network.isAdmin && !isHotseat)
+		if (Network.IsAdmin && !isHotseat)
 		{
 			items.Add("Server Mute");
 			items.Add("Server Unmute");
 		}
-		if (Network.isAdmin && !PlayerManager.Instance.IsHost(@base.id) && !isHotseat)
+		if (Network.IsAdmin && !PlayerManager.Instance.IsHost(@base.id) && !isHotseat)
 		{
 			items.Add(PlayerManager.Instance.IsPromoted(@base.id)
 				? "Demote"
@@ -109,7 +109,7 @@ sealed class UINameButtonX : MonoBehaviour
 			);
 			items.Add("Kick");
 		}
-		if (Network.isServer && !isHotseat && !isOwnButton)
+		if (Network.IsServer && !isHotseat && !isOwnButton)
 		{
 			items.Add("Ban");
 			items.Add("Give Host");
@@ -121,7 +121,7 @@ sealed class UINameButtonX : MonoBehaviour
 	static bool GUIPlayerSelectionPrefix(NetworkUI __instance, string Value, int playerID)
 	{
 		var playerState = PlayerManager.Instance.PlayerStateFromID(playerID);
-		if (!PlayerManager.Instance.NameInUse(playerState.name))
+		if (!PlayerManager.Instance.NameInUse(playerState.Name))
 			return true;
 
 		switch (Value)
@@ -129,23 +129,23 @@ sealed class UINameButtonX : MonoBehaviour
 			default: return true;
 
 			case "Start Turns":
-				Turns.Instance.turnsState = new(
-					Turns.Instance.turnsState,
+				Turns.Instance.TurnsState = new(
+					Turns.Instance.TurnsState,
 					Enable:    true,
-					TurnColor: playerState.stringColor
+					TurnColor: playerState.ColorLabel
 				);
 				return false;
 			case "Stop Turns":
-				Turns.Instance.turnsState = new(
-					Turns.Instance.turnsState,
+				Turns.Instance.TurnsState = new(
+					Turns.Instance.TurnsState,
 					Enable:    false,
 					TurnColor: ""
 				);
 				return false;
 			case "Reverse Turns":
-				Turns.Instance.turnsState = new(
-					Turns.Instance.turnsState,
-					Reverse: !Turns.Instance.turnsState.Reverse
+				Turns.Instance.TurnsState = new(
+					Turns.Instance.TurnsState,
+					Reverse: !Turns.Instance.TurnsState.Reverse
 				);
 				return false;
 
@@ -158,13 +158,13 @@ sealed class UINameButtonX : MonoBehaviour
 				}
 				if (UZCameraHome.NeedToPickHome)
 					UZCameraHome.NeedToPickHome = false;
-				else if (__instance.bNeedToPickColour && playerID == NetworkID.PlayerID(UIColorSelection.id))
+				else if (__instance.bNeedToPickColour && playerID == Network.ToID(UIColorSelection.id))
 				{
 					__instance.bNeedToPickColour = false;
 					return false;
 				}
 
-				if (playerID != NetworkID.ID || zInput.GetButton("Ctrl") || zInput.GetButton("Shift"))
+				if (playerID != Network.ID || zInput.GetButton("Ctrl") || zInput.GetButton("Shift"))
 				{
 					UIColorSelection.id = playerID;
 					__instance.bNeedToPickColour = true;
@@ -175,17 +175,17 @@ sealed class UINameButtonX : MonoBehaviour
 
 			case "Unblindfold":
 			case "Blindfold":
-				if (playerID == NetworkID.ID)
+				if (playerID == Network.ID)
 				{
 					PlayerManager.Instance.ToggleBlindfold();
 					return false;
 				}
-				PlayerManager.Instance.SetBlindfoldForPlayer(playerID, !playerState.blind);
+				PlayerManager.Instance.SetBlindfoldForPlayer(playerID, !playerState.Blind);
 				return false;
 
 			case "Unmute":
 			case "Mute":
-				EventManager.TriggerPlayerMute(playerState.muted ^= true, playerID);
+				EventManager.TriggerPlayerMute(playerState.Muted ^= true, playerID);
 				return false;
 			case "Server Unmute":
 			case "Server Mute":
@@ -198,7 +198,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.SetBlindfoldForPlayer))]
 	static bool SetBlindfoldForPlayerPrefix(int id, bool blind)
 	{
-		if (API.IsServer || !Network.isAdmin)
+		if (API.IsServer || !Network.IsAdmin)
 			return true;
 		Lua.Execute(
 			$"""
@@ -215,7 +215,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.PromoteThisPlayer))]
 	static bool PromoteThisPlayerPrefix(string name)
 	{
-		if (API.IsServer || !Network.isAdmin)
+		if (API.IsServer || !Network.IsAdmin)
 			return true;
 		var id = PlayerManager.Instance.IDFromName(name);
 		Lua.Execute(
@@ -232,7 +232,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.KickThisPlayer))]
 	static bool KickThisPlayerPrefix(string name)
 	{
-		if (API.IsServer || !Network.isAdmin)
+		if (API.IsServer || !Network.IsAdmin)
 			return true;
 		var id = PlayerManager.Instance.IDFromName(name);
 		Lua.Execute(

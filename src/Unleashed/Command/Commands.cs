@@ -65,25 +65,25 @@ public static class Commands
 		{
 			foreach (var player in PlayerManager.Instance.PlayersList)
 				Log(
-					$"{player.id}: {Colour.HexFromLabel(player.stringColor)}{player.name}" +
-						(Colour.IsColourLabel(player.stringColor) ? "" : $" ({player.stringColor})") + "[-]" +
-						(!player.IsModded          ? "" : $" {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]") +
-						(player.id != NetworkID.ID ? "" : " (you)")
+					$"{player.ID}: {Colour.HexFromLabel(player.ColorLabel)}{player.Name}" +
+						(Colour.IsColourLabel(player.ColorLabel) ? "" : $" ({player.ColorLabel})") + "[-]" +
+						(!player.IsModded        ? "" : $" {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]") +
+						(player.ID != Network.ID ? "" : " (you)")
 				);
 		}
 	}
 
 	static void KickPlayerWithMessage(PlayerState player, string message, bool block = false)
 	{
-		if (player.id == NetworkID.ID)
+		if (player.ID == Network.ID)
 		{
 			Chat.Log($"Why are you trying to {(block ? "ban" : "kick")} yourself, silly?", Colour.Red);
 			return;
 		}
-		Chat.SendChat($"{player.name} is {(block ? "banned" : "kicked")}: {message}", Color.yellow);
+		Chat.SendChat($"{player.Name} is {(block ? "banned" : "kicked")}: {message}", Color.yellow);
 		if (block)
-			BlockList.Instance.AddBlock(player.name, player.steamId);
-		NetworkUI.Instance.KickPlayer(player.networkPlayer, message);
+			BlockList.Instance.AddBlock(player.Name, player.SteamID);
+		NetworkUI.Instance.KickPlayer(player.NetworkPlayer, message);
 		return;
 	}
 	[Command]
@@ -100,12 +100,12 @@ public static class Commands
 				return;
 			if (Rest is [_, ..] message)
 			{
-				if (ExpectPermission(Network.isServer, $"for argument <{nameof(message)}>"))
+				if (ExpectPermission(Network.IsServer, $"for argument <{nameof(message)}>"))
 					KickPlayerWithMessage(player, message);
 				return;
 			}
-			if (ExpectPermission(Network.isAdmin))
-				PlayerManager.Instance.KickThisPlayer(player.name);
+			if (ExpectPermission(Network.IsAdmin))
+				PlayerManager.Instance.KickThisPlayer(player.Name);
 		}
 	}
 	[Command]
@@ -122,12 +122,12 @@ public static class Commands
 				return;
 			if (Rest is [_, ..] message)
 			{
-				if (ExpectPermission(Network.isServer))
+				if (ExpectPermission(Network.IsServer))
 					KickPlayerWithMessage(player, message, true);
 				return;
 			}
-			if (ExpectPermission(Network.isServer))
-				PlayerManager.Instance.BanThisPlayer(player.name);
+			if (ExpectPermission(Network.IsServer))
+				PlayerManager.Instance.BanThisPlayer(player.Name);
 		}
 	}
 	[Command]
@@ -141,8 +141,8 @@ public static class Commands
 		protected override void OnInvoke()
 		{
 			if (ExpectPlayer(out PlayerState player, $"<{nameof(player)}>"))
-			if (ExpectPermission(Network.isAdmin))
-				PlayerManager.Instance.PromoteThisPlayer(player.name);
+			if (ExpectPermission(Network.IsAdmin))
+				PlayerManager.Instance.PromoteThisPlayer(player.Name);
 		}
 	}
 	[Command]
@@ -164,14 +164,14 @@ public static class Commands
 				return;
 			if (!flagServer)
 			{
-				EventManager.TriggerPlayerMute(player.muted ^= true, player.id);
+				EventManager.TriggerPlayerMute(player.Muted ^= true, player.ID);
 				return;
 			}
 
-			var status = player.muted;
+			var status = player.Muted;
 			if (ExpectToggle(ref status, !status, $"({nameof(status)})"))
-			if (ExpectPermission(Network.isAdmin))
-				PlayerManager.Instance.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, player.id, status);
+			if (ExpectPermission(Network.IsAdmin))
+				PlayerManager.Instance.RPC(RPCTarget.All, PlayerManager.Instance.RPCMute, player.ID, status);
 		}
 	}
 	[Command]
@@ -185,8 +185,8 @@ public static class Commands
 		protected override void OnInvoke()
 		{
 			if (ExpectRest())
-			if (ExpectPermission(Network.isAdmin))
-				LuaGlobalScriptManager.Instance.RPCExecuteScript(Rest);
+			if (ExpectPermission(Network.IsAdmin))
+				LuaGlobal.Instance.RPCExecuteScript(Rest);
 		}
 	}
 
@@ -234,7 +234,7 @@ public static class Commands
 			{
 				if (!ExpectPlayer(out seated, $"<{nameof_arg2}>", arg1))
 					return;
-				color = seated.stringColor;
+				color = seated.ColorLabel;
 			}
 			else
 			{
@@ -245,12 +245,12 @@ public static class Commands
 					return;
 				}
 				if (color != Colour.GreyLabel)
-					seated = PlayerManager.Instance.PlayersList.Find(seated => seated.stringColor == color);
+					seated = PlayerManager.Instance.PlayersList.Find(seated => seated.ColorLabel == color);
 			}
 
 			PlayerState temp = null;
 			if (color is ['!', ..])
-				temp = PlayerManager.Instance.PlayersList.Find(seated => seated.stringColor == Colour.WhiteLabel);
+				temp = PlayerManager.Instance.PlayersList.Find(seated => seated.ColorLabel == Colour.WhiteLabel);
 
 			if (seated is not null)
 			{
@@ -264,7 +264,7 @@ public static class Commands
 					Log($"<{nameof_arg2}> is already occupied!", Main.ErrorColour);
 					return;
 				}
-				if (ExpectPermission(Network.isAdmin))
+				if (ExpectPermission(Network.IsAdmin))
 					Lua.Execute(
 						$"""
 						local temp = { temp }
@@ -287,7 +287,7 @@ public static class Commands
 					Log($"<{nameof_arg2}> is blocked by {Colour.WhiteLabel}!", Main.ErrorColour);
 					return;
 				}
-				if (ExpectPermission(Network.isAdmin))
+				if (ExpectPermission(Network.IsAdmin))
 					Lua.Execute(
 						$"""
 						local temp = { temp }
@@ -302,15 +302,15 @@ public static class Commands
 					);
 				return;
 			}
-			if (player.stringColor == color)
+			if (player.ColorLabel == color)
 			{
 				Log($"<{nameof(player)}> is already <{nameof_arg2}>!", Main.ErrorColour);
 				return;
 			}
-			if ((player.id == NetworkID.ID) && (PermissionsOptions.options.ChangeColor || (color == "Grey")))
+			if ((player.ID == Network.ID) && (PermissionsOptions.Options.ChangeColor || (color == "Grey")))
 				NetworkUI.Instance.ClientRequestColor(color);
-			else if (ExpectPermission(Network.isAdmin))
-				NetworkUI.Instance.CheckColor(color, player.id);
+			else if (ExpectPermission(Network.IsAdmin))
+				NetworkUI.Instance.CheckColor(color, player.ID);
 		}
 	}
 
@@ -337,8 +337,8 @@ public static class Commands
 		{
 			if (ExpectPlayer(out PlayerState recipient, $"<{nameof(recipient)}>"))
 			if (ExpectRest())
-			foreach (var receiver in Enumerable.Distinct([ Network.player, recipient.networkPlayer ]))
-				Chat.Instance.RPC(receiver, Chat.Instance.RPC_ChatWhisperMessage, Rest, recipient.stringColor);
+			foreach (var receiver in Enumerable.Distinct([ Network.Player, recipient.NetworkPlayer ]))
+				Chat.Instance.RPC(receiver, Chat.Instance.RPC_ChatWhisperMessage, Rest, recipient.ColorLabel);
 		}
 	}
 	[Command]

@@ -11,9 +11,9 @@ static class Scripting
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
-			// SetActive(NetworkInstance.GUIContextualScripting, Network.isServer && !string.IsNullOrEmpty(component.GUID));
+			// SetActive(NetworkInstance.GUIContextualScripting, Network.IsServer && !string.IsNullOrEmpty(component.GUID));
 			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualScripting))),
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
 		);
 		c.EmitDelegate(bool(bool isServer) => true);
 	}

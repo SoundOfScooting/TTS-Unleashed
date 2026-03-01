@@ -17,20 +17,20 @@ class GUIEndTurnX : MonoBehaviour
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
 		);
-		c.Next.Operand =     AccessTools.PropertyGetter(typeof(Network), nameof(Network.isAdmin));
+		c.Next.Operand =     AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
 	}
 
 	void OnAltClick()
 	{
-		if (!Network.isAdmin/* && !Turns.Instance.turnsState.PassTurns*/)
+		if (!Network.IsAdmin/* && !Turns.Instance.turnsState.PassTurns*/)
 			return;
-		Turns.Instance.turnsState.Reverse ^= true;
+		Turns.Instance.TurnsState.Reverse ^= true;
 		{
 			UICamera.SpoofOnClick(gameObject);
 		}
-		Turns.Instance.turnsState.Reverse ^= true;
+		Turns.Instance.TurnsState.Reverse ^= true;
 	}
 }
 [HarmonyPatch]
@@ -45,7 +45,7 @@ sealed class UIStarTurnX : GUIEndTurnX
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.OnClick))]
 	static bool OnClickReplace()
 	{
-		if (Network.isAdmin)
+		if (Network.IsAdmin)
 			Turns.Instance.GUIEndTurn();
 		return false;
 	}
@@ -57,8 +57,8 @@ sealed class UIStarTurnX : GUIEndTurnX
 
 	void OnPlayerPromoted(bool isPromoted, int id)
 	{
-		if (id == NetworkID.ID)
-			GetComponent<UITooltipScript>().Tooltip = isPromoted
+		if (id == Network.ID)
+			GetComponent<UITooltipObject>().Tooltip = isPromoted
 				? "Turn (Click to skip)"
 				: "Turn";
 	}

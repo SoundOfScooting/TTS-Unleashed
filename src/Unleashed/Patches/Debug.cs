@@ -28,8 +28,8 @@ static class Debug
 	// };
 	static void UpdateRewards(bool value)
 	{
-		SteamManager.bKickstarterPointer = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
-		SteamManager.bKickstarterGold    = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
+		SteamManager.IsKickstarterPointer = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
+		SteamManager.IsKickstarterGold    = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
 	}
 
 	[HarmonyPrefix]
@@ -51,8 +51,8 @@ static class Debug
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
-			// bKickstarterGold = SteamApps.BIsSubscribedApp(KickstarterGold);
-			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.bKickstarterGold)))
+			// IsKickstarterGold = SteamApps.BIsSubscribedApp(KickstarterGold);
+			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.IsKickstarterGold)))
 		);
 		c.EmitDelegate(void() =>
 			UpdateRewards(AllRewards.Value)
@@ -74,7 +74,7 @@ static class Debug
 	// [HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.SetSpecificPlayerName))]
 	// static void NetworkUISetSpecificPlayerNamePostfix(NetworkUI __instance, string newName)
 	// {
-	// 	if (!Network.isServer || __instance.bHotseat || __instance.playerIDToSet == -1)
+	// 	if (!Network.IsServer || __instance.IsHotseat || __instance.playerIDToSet == -1)
 	// 		return;
 
 	// 	var player = PlayerManager.Instance.PlayerStateFromID(__instance.playerIDToSet);
@@ -84,9 +84,9 @@ static class Debug
 
 	// 	// would trigger Auto Join Message
 	// 	var playerData = new PlayerManager.PlayerData(player);
-	// 	PlayerManager.Instance.RemovePlayer(player.id);
+	// 	PlayerManager.Instance.RemovePlayer(player.ID);
 	// 	PlayerManager.Instance.AddPlayer   (playerData);
-	// 	// PlayerManager.Instance.RPC(RPCTarget.Others, PlayerManager.Instance.RPCRemovePlayer, player.id);
+	// 	// PlayerManager.Instance.RPC(RPCTarget.Others, PlayerManager.Instance.RPCRemovePlayer, player.ID);
 	// 	// PlayerManager.Instance.RPC(RPCTarget.Others, PlayerManager.Instance.RPCAddPlayer,    playerData);
 	// }
 }

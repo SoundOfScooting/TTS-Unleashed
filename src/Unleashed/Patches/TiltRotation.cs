@@ -79,7 +79,7 @@ static class TiltRotation
 		c.Emit(OpCodes.Ldarg_0);
 		c.Emit(OpCodes.Ldarg_1);
 		c.Emit(OpCodes.Ldloc, 13);
-		c.EmitDelegate(Quaternion(ManagerPhysicsObject __instance, NetworkPhysicsObject grabbedNPO, Quaternion identity) =>
+		c.EmitDelegate(Quaternion(ManagerPhysicsObject __instance, NetPhysObject grabbedNPO, Quaternion identity) =>
 			!grabbedNPO.HasData()
 				? identity
 			: Quaternion.AngleAxis(

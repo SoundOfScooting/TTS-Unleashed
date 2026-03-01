@@ -1,8 +1,8 @@
 namespace Unleashed.Extensions;
 
-static class UITooltipScriptX
+static class UITooltipObjectX
 {
-	extension(UITooltipScript @this)
+	extension(UITooltipObject @this)
 	{
 		public void ChangeTooltip(string text)
 		{

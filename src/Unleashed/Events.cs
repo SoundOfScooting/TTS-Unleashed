@@ -120,13 +120,13 @@ static class Events
 
 	static void OnPlayersAdd(PlayerState playerState)
 	{
-		// Chat.Log($"OnPlayersAdd {playerState.id}", Main.PluginColour);
-		if (playerState.id == NetworkID.ID)
+		// Chat.Log($"OnPlayersAdd {playerState.ID}", Main.PluginColour);
+		if (playerState.ID == Network.ID)
 		{
 			TriggerStartConnected();
 			return;
 		}
-		if (!NetworkUI.Instance.bHotseat && !addingAllPlayers)
+		if (!NetworkUI.Instance.IsHotseat && !addingAllPlayers)
 		{
 			TriggerPlayersAddOther(playerState);
 			return;

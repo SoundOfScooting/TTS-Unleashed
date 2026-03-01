@@ -19,8 +19,8 @@ static class Decals
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			// if (Network.isServer)
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.isServer)))
+			// if (Network.IsServer)
+			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
 		);
 		c.Remove();
 		c.Emit(OpCodes.Ldc_I4_1);
@@ -29,7 +29,7 @@ static class Decals
 	[HarmonyPatch(typeof(DecalManager), nameof(DecalManager.RPCRemoveDecalPallet))]
 	static void RPCRemoveDecalPalletPostfix()
 	{
-		if (Network.isClient && NetworkUI.Instance.GUIDecals.activeInHierarchy)
+		if (Network.IsClient && NetworkUI.Instance.GUIDecals.activeInHierarchy)
 			NetworkUI.Instance.GUIDecals.GetComponent<UIGridMenuDecals>().Reload();
 	}
 }

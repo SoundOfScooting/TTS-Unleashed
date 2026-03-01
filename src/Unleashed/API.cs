@@ -17,7 +17,7 @@ static class API
 		false;
 #endif
 
-	public static bool IsServer   => !DEBUG_COMPAT && Network.isServer;
+	public static bool IsServer   => !DEBUG_COMPAT && Network.IsServer;
 	public static bool HostModded => !DEBUG_COMPAT && PlayerManager.Instance.HostPlayerState().IsModded;
 }
 

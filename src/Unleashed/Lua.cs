@@ -46,7 +46,7 @@ public readonly record struct Lua(string Text)
 	public static void Execute(in Template template)
 	{
 		Latest = (Lua) template;
-		LuaGlobalScriptManager.Instance.RPCExecuteScript(Latest.Text);
+		LuaGlobal.Instance.RPCExecuteScript(Latest.Text);
 	}
 
 	public static Lua Join<T>(IEnumerable<T> values, Func<T, Lua> converter, string delimeter = ", ")
@@ -168,7 +168,7 @@ public readonly record struct Lua(string Text)
 		public void AppendFormatted(string   value) => Append((Literal) value);
 		public void AppendFormatted(Variable value) => Append(Import(value));
 
-		public void AppendFormatted(NetworkPhysicsObject value)
+		public void AppendFormatted(NetPhysObject value)
 			=> Append(
 				value is null ? (Lua) "nil" :
 				Import((Template) $"""getObjectFromGUID({ value.GUID })""")
@@ -177,9 +177,9 @@ public readonly record struct Lua(string Text)
 			=> Append(
 				value is null ? (Lua) "nil" :
 				Import(
-					NetworkUI.Instance.bHotseat
+					NetworkUI.Instance.IsHotseat
 					? (Template) $"""Player.getPlayers()[{ 1+PlayerManager.Instance.PlayersList.IndexOf(value) }]"""
-					: (Template) $"""{ GetPlayerBySteamID }({ value.steamId })"""
+					: (Template) $"""{ GetPlayerBySteamID }({ value.SteamID })"""
 				)
 			);
 	}

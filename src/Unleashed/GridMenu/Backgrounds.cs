@@ -27,7 +27,7 @@ static class Backgrounds
 						Chat.LogError("You must supply a custom image URL.");
 						return;
 					}
-					if (Network.isAdmin)
+					if (Network.IsAdmin)
 						Lua.Execute(
 							$"""
 							Backgrounds.setCustomURL({ @this.CustomImageURL })

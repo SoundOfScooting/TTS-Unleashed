@@ -3,15 +3,15 @@ namespace Unleashed.GridMenu;
 [HarmonyPatch]
 static class SpawnName
 {
-	public const string SETUP_CARD = nameof(CardManagerScript.SetupCard);
-	public const string SET_OBJECT = nameof(NetworkPhysicsObject.SetObject);
+	public const string SETUP_CARD = nameof(CardManager.SetupCard);
+	public const string SET_OBJECT = nameof(NetPhysObject.SetObject);
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(GameMode), nameof(GameMode.SpawnName))]
 	static bool SpawnNamePrefix(GameMode __instance, string ObjectName, Vector3 SpawnPos, bool bLocalSpawn, ref GameObject __result)
 	{
 		// #gold
-		if (!bLocalSpawn && Network.isClient)
+		if (!bLocalSpawn && Network.IsClient)
 			return true;
 
 		var parts = ObjectName.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
@@ -36,8 +36,8 @@ static class SpawnName
 					return false;
 				if (front_id != -1)
 				{
-					CardManagerScript.Instance.SetupCard(__result, front_id);
-					__result.GetComponent<CardScript>().card_id_ = front_id;
+					CardManager.Instance.SetupCard(__result, front_id);
+					__result.GetComponent<CardObject>().card_id_ = front_id;
 				}
 				break;
 			case SET_OBJECT:
@@ -48,10 +48,10 @@ static class SpawnName
 
 				var npo = __result.GetNPO();
 				npo.UseAltSounds = bAltSounds;
-				if (npo.meshSyncScript && MeshInt != -1)
-					npo.meshSyncScript.SetMesh(MeshInt);
-				if (npo.materialSyncScript && MatInt != -1)
-					npo.materialSyncScript.SetMaterial(MatInt);
+				if (npo.MeshChange && MeshInt != -1)
+					npo.MeshChange.SetMesh(MeshInt);
+				if (npo.MaterialChange && MatInt != -1)
+					npo.MaterialChange.SetMaterial(MatInt);
 				break;
 		}
 		return false;

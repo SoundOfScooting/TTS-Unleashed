@@ -173,7 +173,7 @@ public sealed class Main : BaseUnityPlugin
 			OnChanged = value =>
 			{
 				if (loadErrors is null)
-				if (Network.peerType == NetworkPeerMode.Disconnected)
+				if (Network.PeerType == NetworkPeerMode.Disconnected)
 					Utilities.SetCursor(
 						NetworkUI.Instance.StringColorToCursorTexture(value),
 						NetworkUI.HardwareCursorOffest

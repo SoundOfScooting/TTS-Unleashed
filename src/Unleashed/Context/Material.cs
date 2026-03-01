@@ -17,7 +17,7 @@ static class PointerX
 				@this.Material(MaterialID.Compat[matID]);
 				return;
 			}
-			if (Network.isClient)
+			if (Network.IsClient)
 			{
 				@this.RPC(RPCTarget.Server, @this.SetMaterialID, matID);
 				return;
@@ -26,7 +26,7 @@ static class PointerX
 			{
 				if (MaterialClass.Find(npo.gameObject, out var matInt, out var matClass))
 				if (matClass.Lookup(matInt, matID, out var altSounds, out matInt))
-					npo.SetObject(bAltSounds: altSounds, MatInt: matInt);
+					npo.SetObject(useAltSounds: altSounds, matIndex: matInt);
 			}
 		}
 	}
@@ -118,13 +118,13 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 	);
 	public static bool Find(GameObject gameObject, out int matInt, out MaterialClass matClass)
 	{
-		if (!gameObject || gameObject.GetComponent<MaterialSyncScript>() is not {} matSync)
+		if (!gameObject || gameObject.GetComponent<MaterialChangeObject>() is not {} matSync)
 		{
 			matInt = -1;
 			matClass = default;
 			return false;
 		}
-		matInt = matSync.GetMaterial();
+		matInt = matSync.MaterialIndex;
 		switch ((gameObject.tag, Utilities.RemoveCloneFromName(gameObject.name)))
 		{
 			default:
@@ -217,14 +217,14 @@ sealed class UZContextualMaterial : MonoBehaviour
 
 	void OnClickMaterial(int index)
 	{
-		if (PlayerScript.Pointer)
-			PlayerScript.PointerScript.SetMaterialID(MatClass.Slots[index].ID);
+		if (Pointer.MyPointerGO)
+			Pointer.MyPointer.SetMaterialID(MatClass.Slots[index].ID);
 	}
 	bool CheckContextual()
 	{
-		if (!PlayerScript.Pointer)
+		if (!Pointer.MyPointerGO)
 			return false;
-		if (!MaterialClass.Find(PlayerScript.PointerScript.InfoObject, out var matInt, out MatClass))
+		if (!MaterialClass.Find(Pointer.MyPointer.InfoObject, out var matInt, out MatClass))
 			return false;
 
 		if (Toggles.Count < MatClass.Slots.Length)
@@ -240,7 +240,7 @@ sealed class UZContextualMaterial : MonoBehaviour
 			var matID = valid ? MatClass.Slots[i].ID : MaterialID.INVALID;
 			var enabled = valid &&
 				(API.HostModded || MaterialID.Compat.ContainsKey(matID)) &&
-				(SteamManager.bKickstarterGold || matID != MaterialID.GOLD);
+				(SteamManager.IsKickstarterGold || matID != MaterialID.GOLD);
 
 			toggle.GetComponent<BoxCollider2D>().enabled = enabled;
 			toggle.transform.parent.GetComponent<UILabel>().text = Contextual.LABEL_PADDING + matID;
@@ -251,7 +251,7 @@ sealed class UZContextualMaterial : MonoBehaviour
 			toggle.group = 0;
 			{
 				// #hack
-				if (!API.HostModded && PlayerScript.PointerScript.InfoObject.tag == "Chess")
+				if (!API.HostModded && Pointer.MyPointer.InfoObject.tag == "Chess")
 					toggle.value = matID switch {
 						MaterialID.METAL => matInt is 0 or 1,
 						MaterialID.WOOD  => matInt is 2 or 3,

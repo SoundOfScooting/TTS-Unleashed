@@ -89,7 +89,7 @@ sealed class UZCameraHome : MonoBehaviour
 		gameObject.CopyComponent<BoxCollider2D>(@base);
 		gameObject.CopyComponent<UISprite>(@base);
 		gameObject.CopyComponent<UIButton>(@base);
-		gameObject.AddComponent <UITooltipScript>().Tooltip = "Camera Home";
+		gameObject.AddComponent <UITooltipObject>().Tooltip = "Camera Home";
 		gameObject.AddComponent <TweenColor>();
 		// I2.Loc.Localize
 

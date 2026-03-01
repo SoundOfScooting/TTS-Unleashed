@@ -11,7 +11,7 @@ namespace Unleashed.Compat;
 [AttributeUsage(AttributeTargets.Method)]
 sealed class RemoteX : BaseNetworkAttribute
 {
-	public SendType sendType = SendType.ReliableBuffered;
+	public SendType SendType = SendType.ReliableBuffered;
 	public RemoteX(
 		Permission permission = Permission.Client,
 		SendType sendType = SendType.ReliableBuffered,
@@ -19,14 +19,14 @@ sealed class RemoteX : BaseNetworkAttribute
 		SerializationMethod serializationMethod = SerializationMethod.Default,
 		bool useGlobalValidationFunction = true
 	){
-		this.permission = permission;
-		this.sendType = sendType;
-		this.validationFunction = validationFunction;
-		this.serializationMethod = serializationMethod;
-		this.useGlobalValidationFunction = useGlobalValidationFunction;
+		Permission = permission;
+		SendType = sendType;
+		ValidationFunction = validationFunction;
+		SerializationMethod = serializationMethod;
+		UseGlobalValidationFunction = useGlobalValidationFunction;
 	}
 	public static explicit operator Remote(RemoteX @this) =>
-		new(@this.permission, @this.sendType, @this.validationFunction, @this.serializationMethod, @this.useGlobalValidationFunction);
+		new(@this.Permission, @this.SendType, @this.ValidationFunction, @this.SerializationMethod, @this.UseGlobalValidationFunction);
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
@@ -57,7 +57,7 @@ sealed class RemoteX : BaseNetworkAttribute
 	static void DumpAttributes(List<MethodRPCSort> RPCMethods)
 	{
 		foreach (var (i, entry) in RPCMethods.Index())
-			Main.Log.LogWarning($"{i}: {entry.classType} / {entry.method}");
+			Main.Log.LogWarning($"{i}: {entry.ClassType} / {entry.Method}");
 	}
 
 	static List<MethodRPCSort> FindAttributesX(List<MethodRPCSort> CustomRPCMethods)
@@ -98,21 +98,21 @@ sealed class RemoteX : BaseNetworkAttribute
 	{
 		CustomRPCMethods.Sort((lhs, rhs) =>
 			Comparison.Compare(
-				lhs.method.DeclaringType.Assembly,
-				rhs.method.DeclaringType.Assembly,
+				lhs.Method.DeclaringType.Assembly,
+				rhs.Method.DeclaringType.Assembly,
 				// -1 (non-plugin asm) < 0 (first plugin)
 				a => PluginsOrdered.FindIndex(b => a == b?.GetType()?.Assembly)
 			)
-			&& Comparison.CompareOrdinal(lhs.uniqueName, rhs.uniqueName)
+			&& Comparison.CompareOrdinal(lhs.UniqueName, rhs.UniqueName)
 			&& Comparison.Compare(
-				lhs.method.GetGenericArguments(),
-				rhs.method.GetGenericArguments(),
+				lhs.Method.GetGenericArguments(),
+				rhs.Method.GetGenericArguments(),
 				x => x.Name,
 				Comparison.CompareOrdinal
 			)
 			&& Comparison.Compare(
-				lhs.method.GetParameters(),
-				rhs.method.GetParameters(),
+				lhs.Method.GetParameters(),
+				rhs.Method.GetParameters(),
 				x => x.ParameterType.Name,
 				Comparison.CompareOrdinal
 			)

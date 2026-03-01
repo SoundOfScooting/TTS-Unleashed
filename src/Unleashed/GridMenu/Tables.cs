@@ -15,9 +15,9 @@ static class Tables
 			(custom.OptionsPopupActions ??= [])[$"Edit {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]"] =
 				() => Main.Catch(() =>
 				{
-					var table = ManagerPhysicsObject.Instance.TableScript;
+					var table = ManagerPhysicsObject.Instance.TableObject;
 					var image = table.GetComponent<CustomImage>();
-					// if (image && Utilities.RemoveCloneFromName(table.name) == TableScript.GetTablePrefabName(tableName))
+					// if (image && Utilities.RemoveCloneFromName(table.name) == TableObject.GetTablePrefabName(tableName))
 					// 	// doesn't allow "" (equivalent to cancel)
 					// 	image.bCustomUI = true;
 					// else 
@@ -30,7 +30,7 @@ static class Tables
 						// 	Chat.LogError("You must supply a custom image URL.");
 						// 	return;
 						// }
-						if (Network.isAdmin)
+						if (Network.IsAdmin)
 							Lua.Execute(
 								$"""
 								Tables.setTable    ({ tableName });
@@ -52,7 +52,7 @@ static class Tables
 		{
 			Name  = $"Round Plastic {Main.PluginColour.RGBHex}+{Main.PLUGIN_ABBR}[-]",
 			Tags  = [ Main.PLUGIN_GUID, ],
-			Table = TableScript.GetTablePrefabName("Round Plastic"),
+			Table = TableObject.GetTablePrefabName("Round Plastic"),
 		});
 	}
 	[HarmonyILManipulator]

@@ -8,7 +8,7 @@ static class Contextual
 	{
 		gameObject.SetActive(false);
 		if (active())
-			PlayerScript.PointerScript.SetActive(gameObject, true);
+			Pointer.MyPointer.SetActive(gameObject, true);
 	}
 }
 

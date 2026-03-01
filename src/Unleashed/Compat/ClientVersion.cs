@@ -15,7 +15,7 @@ static class ClientVersion
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
-			// base.networkView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
+			// base.NetView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(NetworkUI), nameof(NetworkUI.VersionNumber)))
 		);
 		c.EmitDelegate(string(string VersionNumber) =>
@@ -25,7 +25,7 @@ static class ClientVersion
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
 	static void RegisterPrefix(ref NetworkPlayer __state) =>
-		__state = Network.sender;
+		__state = Network.Sender;
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
 	static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
@@ -50,7 +50,7 @@ static class ClientVersion
 		// Chat.SendChat($"{Colour.GreenHex}{name} is running compatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
 		Wait.Frames(() => Main.Catch(() => 
 		{
-			PlayerManager.Instance.PlayerStateFromID(sender.id).IsModded = true;
+			PlayerManager.Instance.PlayerStateFromID(sender.ID).IsModded = true;
 			PlayerManager.Instance.RPC(sender, RPCSetIsModded, NetworkPlayer.SERVER_ID);
 		}));
 	}

@@ -6,14 +6,14 @@ static class UIColorSelectionExtensions
 	{
 		public static void ShowDialog(int nplayerID = -1)
 		{
-			var playerID    = NetworkID.PlayerID(nplayerID);
+			var playerID    = Network.ToID(nplayerID);
 			var playerState = PlayerManager.Instance.PlayerStateFromID(playerID);
 			UIDialog.ShowDropDown(
 				$"[b]{UZCameraHome.GUIColorText}[/b]" + (
-					(playerID == NetworkID.ID) ? "" : $"\n{playerState.name}"
+					(playerID == Network.ID) ? "" : $"\n{playerState.Name}"
 				),
 				dropDownOptions: [.. Colour.AllPlayerLabels],
-				drowDownValue:   playerState.stringColor,
+				drowDownValue:   playerState.ColorLabel,
 
 				leftButtonText: "OK",
 				leftButtonFunc: (label, _) =>
@@ -44,11 +44,11 @@ sealed class UIColorSelectionX : MonoBehaviour
 	string originalTooltip;
 
 	UIColorSelection @base;
-	UITooltipScript  tooltip;
+	UITooltipObject  tooltip;
 	void Awake()
 	{
 		@base   = GetComponent<UIColorSelection>();
-		tooltip = GetComponent<UITooltipScript>();
+		tooltip = GetComponent<UITooltipObject>();
 		originalTooltip = tooltip.Tooltip;
 	}
 
@@ -79,7 +79,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 		){
 			restartTooltip = false;
 			tooltip.ChangeTooltip(originalTooltip);
-			if (!UZCameraHome.NeedToPickHome && Network.isAdmin)
+			if (!UZCameraHome.NeedToPickHome && Network.IsAdmin)
 			{
 				if (zInput.GetButton("Shift"))
 					tooltip.ChangeTooltip("[SWAP]\n"  + tooltip.Tooltip);
@@ -98,12 +98,12 @@ sealed class UIColorSelectionX : MonoBehaviour
 			UZCameraHome.Current = Enum.Parse<UZCameraHome.Home>(__instance.label);
 			return false;
 		}
-		if (!Network.isAdmin ||
+		if (!Network.IsAdmin ||
 			!zInput.GetButton("Ctrl") && !zInput.GetButton("Shift") ||
 			!PlayerManager.Instance.ColourInUse(__instance.label)
 		) return true;
 
-		var targetID = NetworkID.PlayerID(UIColorSelection.id);
+		var targetID = Network.ToID(UIColorSelection.id);
 		var seatedID = PlayerManager.Instance.IDFromColour(__instance.colour);
 		if ((seatedID == -1) || (seatedID == targetID))
 			return true;
@@ -127,19 +127,19 @@ sealed class UIColorSelectionX : MonoBehaviour
 		const bool DEBUG_TEST = false;
 		static bool Permitted(string label) =>
 			!DEBUG_TEST && (
-				(label == Colour.GreyLabel) || Network.isAdmin ||
-				((label != Colour.BlackLabel) && PermissionsOptions.options.ChangeColor)
+				(label == Colour.GreyLabel) || Network.IsAdmin ||
+				((label != Colour.BlackLabel) && PermissionsOptions.Options.ChangeColor)
 			);
 		static bool Available(string label)
 		{
 			if (DEBUG_TEST)
 				return true;
-			if (NetworkUI.Instance.bHotseat && label == Colour.GreyLabel)
+			if (NetworkUI.Instance.IsHotseat && label == Colour.GreyLabel)
 				return false;
 			return !PlayerManager.Instance.ColourInUse(label) || (
-				Network.isAdmin &&
+				Network.IsAdmin &&
 				(zInput.GetButton("Ctrl") || zInput.GetButton("Shift")) &&
-				(label != PlayerManager.Instance.ColourLabelFromID(NetworkID.PlayerID(UIColorSelection.id)))
+				(label != PlayerManager.Instance.ColourLabelFromID(Network.ToID(UIColorSelection.id)))
 			);
 		}
 

@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
 using Unleashed.Settings;
-using static ToolVector;
+using static VectorToolManager;
 
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-static class ToolVectorX
+static class VectorToolManagerX
 {
 	[ModuleInitializer]
 	internal static void Initializer() =>
@@ -46,7 +46,7 @@ static class ToolVectorX
 
 	public static void UpdateUI()
 	{
-		if (!NetworkUI._Instance || !NetworkUI.Instance.GUIConnected.activeInHierarchy)
+		if (!NetworkUI._instance || !NetworkUI.Instance.GUIConnected.activeInHierarchy)
 			return;
 
 		var DrawT = NetworkUI.Instance.GUIConnected.transform
@@ -134,8 +134,8 @@ static class ToolVectorX
 		);
 	}
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorPixel))]
-	static bool UpdateVectorPixelReplace(ToolVector __instance)
+	[HarmonyPatch(typeof(VectorToolManager), nameof(VectorToolManager.UpdateVectorPixel))]
+	static bool UpdateVectorPixelReplace(VectorToolManager __instance)
 	{
 		if (__instance.VectorActionDown() || (__instance.VectorAction() && __instance.drawing && __instance.CheckMove()))
 			__instance.StartDrawing(2, loop: true);
@@ -144,8 +144,8 @@ static class ToolVectorX
 		return false;
 	}
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
-	static bool UpdateVectorErasePrefix(ToolVector __instance)
+	[HarmonyPatch(typeof(VectorToolManager), nameof(VectorToolManager.UpdateVectorErase))]
+	static bool UpdateVectorErasePrefix(VectorToolManager __instance)
 	{
 		// #todo: somehow preserve overlap order of lines?
 			// redrawn lines are all on top, but at least in relative order to each other
@@ -160,14 +160,14 @@ static class ToolVectorX
 		return !EraseCancelled;
 	}
 	[HarmonyILManipulator]
-	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.UpdateVectorErase))]
+	[HarmonyPatch(typeof(VectorToolManager), nameof(VectorToolManager.UpdateVectorErase))]
 	static void UpdateVectorEraseIL(ILContext il)
 	{
 		var c = new ILCursor(il);
 		var found = 0;
 		while (c.TryGotoNext(MoveType.Before,
 			// RPCRemoveLine(drawnLine.Key);
-			x => x.MatchCall(AccessTools.Method(typeof(ToolVector), nameof(ToolVector.RPCRemoveLine)))
+			x => x.MatchCall(AccessTools.Method(typeof(VectorToolManager), nameof(VectorToolManager.RPCRemoveLine)))
 		)){
 			found++;
 			c.Emit(OpCodes.Ldloc_2);
@@ -177,11 +177,11 @@ static class ToolVectorX
 			c.Index += 3; // annoying
 		}
 		if (found != 2)
-			Main.Log.LogWarning($"{nameof(ToolVectorX)}.{nameof(UpdateVectorEraseIL)} expected 2, found {found}");
+			Main.Log.LogWarning($"{nameof(VectorToolManagerX)}.{nameof(UpdateVectorEraseIL)} expected 2, found {found}");
 	}
 
 	[HarmonyILManipulator]
-	[HarmonyPatch(typeof(ToolVector), nameof(ToolVector.LateUpdate))]
+	[HarmonyPatch(typeof(VectorToolManager), nameof(VectorToolManager.LateUpdate))]
 	static void LateUpdateIL(ILContext il)
 	{
 		var c = new ILCursor(il);
@@ -192,7 +192,7 @@ static class ToolVectorX
 			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButtonDown)))
 		);
 		c.Emit(OpCodes.Ldarg_0);
-		c.EmitDelegate(bool(bool tapDown, ToolVector __instance) =>
+		c.EmitDelegate(bool(bool tapDown, VectorToolManager __instance) =>
 		{
 			if (tapDown && (__instance.pointerMode == PointerMode.VectorErase) && __instance.VectorAction() && !EraseCancelled)
 			{
@@ -231,11 +231,11 @@ static class ToolVectorX
 		c.GotoNext(MoveType.After,
 			// if (zInput.GetButtonDown("Tap") && drawing)
 			x => x.MatchLdarg(0),
-			x => x.MatchLdfld(AccessTools.Field(typeof(ToolVector), nameof(ToolVector.drawing))),
+			x => x.MatchLdfld(AccessTools.Field(typeof(VectorToolManager), nameof(VectorToolManager.drawing))),
 			x => x.MatchBrfalse(out skipLabel)
 		);
 		c.Emit(OpCodes.Ldarg_0); // could instead emit before "Tap" check
-		c.EmitDelegate(bool(ToolVector __instance) =>
+		c.EmitDelegate(bool(VectorToolManager __instance) =>
 			__instance.pointerMode == PointerMode.VectorPixel
 		);
 		c.Emit(OpCodes.Brtrue, skipLabel);

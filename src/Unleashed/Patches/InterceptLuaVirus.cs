@@ -23,12 +23,12 @@ static class InterceptLuaVirus
 	};
 
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(LuaScript), nameof(LuaScript.DoString))]
-	static bool DoStringPrefix(LuaScript __instance) =>
+	[HarmonyPatch(typeof(LuaBase), nameof(LuaBase.DoString))]
+	static bool DoStringPrefix(LuaBase __instance) =>
 		ExecuteScriptPrefix(__instance, __instance.script_code);
 	[HarmonyPrefix]
-	[HarmonyPatch(typeof(LuaScript), nameof(LuaScript.ExecuteScript))]
-	static bool ExecuteScriptPrefix(LuaScript __instance, string script)
+	[HarmonyPatch(typeof(LuaBase), nameof(LuaBase.ExecuteScript))]
+	static bool ExecuteScriptPrefix(LuaBase __instance, string script)
 	{
 		if (!Enabled.Value || !script.Contains("tcejbo gninwapS", StringComparison.OrdinalIgnoreCase))
 			return true;

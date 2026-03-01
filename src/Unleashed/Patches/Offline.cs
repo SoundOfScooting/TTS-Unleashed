@@ -5,8 +5,8 @@ namespace Unleashed.Patches;
 [HarmonyPatch]
 static class Offline
 {
-	public static bool NoSteam      => !SteamManager.bSteam || Utilities.IsLaunchOption("-nosteam");
-	public static bool Singleplayer => Network.maxConnections == 0;
+	public static bool NoSteam      => !SteamManager.IsSteam || Utilities.IsLaunchOption("-nosteam");
+	public static bool Singleplayer => Network.MaxConnections == 0;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(SteamUser),        nameof(SteamUser.GetSteamID))]
