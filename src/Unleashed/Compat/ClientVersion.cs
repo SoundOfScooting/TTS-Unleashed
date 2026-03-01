@@ -28,23 +28,23 @@ static class ClientVersion
 		__state = Network.Sender;
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
-	static void RegisterPostfix(string name, string versionnum, NetworkPlayer __state)
+	static void RegisterPostfix(string registerName, string versionNum, NetworkPlayer __state)
 	{
 		var sender = __state;
-		var s = versionnum.IndexOf(VERSION_HEADER, StringComparison.Ordinal);
+		var s = versionNum.IndexOf(VERSION_HEADER, StringComparison.Ordinal);
 		if (s < 0)
 			return;
 
 		s += VERSION_HEADER.Length;
-		var e = versionnum.IndexOf('\n', s);
+		var e = versionNum.IndexOf('\n', s);
 		if (e < 0)
-			e = versionnum.Length;
+			e = versionNum.Length;
 
-		var clientVersion = new Version(versionnum[s..e]);
+		var clientVersion = new Version(versionNum[s..e]);
 		var hostVersion   = Main.Instance.Info.Metadata.Version;
 		if (clientVersion.Major != hostVersion.Major || clientVersion.Minor != hostVersion.Minor)
 		{
-			Chat.SendChat($"{Colour.YellowHex}{name} is running incompatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
+			Chat.SendChat($"{Colour.YellowHex}{registerName} is running incompatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
 			return;
 		}
 		// Chat.SendChat($"{Colour.GreenHex}{name} is running compatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
