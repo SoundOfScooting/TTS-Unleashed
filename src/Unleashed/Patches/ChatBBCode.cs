@@ -5,8 +5,6 @@ namespace Unleashed.Patches;
 [HarmonyPatch]
 static class ChatBBCode
 {
-	// #idea: multiline chat box
-
 	[Setting]
 	static readonly Setting<bool> BBCode = new()
 	{
@@ -20,10 +18,15 @@ static class ChatBBCode
 			"""
 	};
 
-	// [HarmonyPostfix]
-	// [HarmonyPatch(typeof(UIChatInput), nameof(UIChatInput.Start))]
-	// static void StartPostfix(UIChatInput __instance)
-	// 	=> __instance.gameObject.GetOrAddComponent<UIInputBBCode>().Awake();
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(UIChatInput), nameof(UIChatInput.Start))]
+	static void StartPostfix(UIChatInput __instance)
+	{
+		// __instance.gameObject.GetOrAddComponent<UIInputBBCode>().Awake();
+
+		// #todo: make input box grow and log shrink like MultilineName
+		__instance.transform.Find("Label").GetComponent<UILabel>().multiLine = true;
+	}
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(UIChatInput), nameof(UIChatInput.OnSubmit))]
