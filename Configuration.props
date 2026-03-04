@@ -42,7 +42,7 @@
 		<!-- NOTE: Copy/symlink these from Managed/ to lib/ -->
 		<Reference Include="Assembly-CSharp"           Publicize="true" />
 		<Reference Include="Assembly-CSharp-firstpass" Publicize="true" />
-		<Reference Include="MoonSharp" />
+		<Reference Include="MoonSharp.Interpreter" />
 		<Reference Include="Utilities" />
 		<Reference Include="com.rlabrecque.steamworks.net.dll" />
 
