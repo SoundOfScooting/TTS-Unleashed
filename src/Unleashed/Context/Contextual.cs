@@ -7,7 +7,7 @@ static class Contextual
 	public static void Check(GameObject gameObject, Func<bool> active)
 	{
 		gameObject.SetActive(false);
-		if (active())
+		if (active.Invoke())
 			Pointer.MyPointer.SetActive(gameObject, true);
 	}
 }

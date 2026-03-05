@@ -41,17 +41,11 @@ static class SpawnName
 				}
 				break;
 			case SET_OBJECT:
-				if (!rest.MoveNext() || !bool.TryParse(rest.Current, out var bAltSounds) ||
-					!rest.MoveNext() || !int .TryParse(rest.Current, out var MeshInt) ||
-					!rest.MoveNext() || !int .TryParse(rest.Current, out var MatInt)
+				if (!rest.MoveNext() || !bool.TryParse(rest.Current, out var useAltSounds) ||
+					!rest.MoveNext() || !int .TryParse(rest.Current, out var meshIndex) ||
+					!rest.MoveNext() || !int .TryParse(rest.Current, out var matIndex)
 				) return false;
-
-				var npo = __result.GetNPO();
-				npo.UseAltSounds = bAltSounds;
-				if (npo.MeshChange && MeshInt != -1)
-					npo.MeshChange.SetMesh(MeshInt);
-				if (npo.MaterialChange && MatInt != -1)
-					npo.MaterialChange.SetMaterial(MatInt);
+				__result.GetNPO().SetObject(useAltSounds, meshIndex, matIndex);
 				break;
 		}
 		return false;

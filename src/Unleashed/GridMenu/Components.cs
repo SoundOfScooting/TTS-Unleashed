@@ -38,8 +38,8 @@ static class Components
 	{
 		{ "PLASTIC", 0 }, { "METAL", 1 }, { "GOLD", 2 },
 	};
-	static string DominoSpawnName(int meshInt, int matInt) =>
-		$"{Main.PLUGIN_GUID}/Domino/{SpawnName.SET_OBJECT}/{matInt != 0}/{meshInt}/{matInt}";
+	static string DominoSpawnName(int meshIndex, int matIndex) =>
+		$"{Main.PLUGIN_GUID}/Domino/{SpawnName.SET_OBJECT}/{matIndex != 0}/{meshIndex}/{matIndex}";
 
 	static readonly string[] ChessType = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
 	const int ChessMaterialGold = 4;
@@ -132,28 +132,28 @@ static class Components
 						if (parts is [])
 							return null;
 
-						var meshInt = 0;
+						var meshIndex = 0;
 						if (parts is [ var mesh, .. ] &&
-							!int.TryParse(mesh, out meshInt) &&
-							!DominoMeshIndex.TryGetValue(mesh, out meshInt) &&
-							!DominoMeshIndex.TryGetValue(new([.. mesh.Reverse()]), out meshInt) // bad
+							!int.TryParse(mesh, out meshIndex) &&
+							!DominoMeshIndex.TryGetValue(mesh, out meshIndex) &&
+							!DominoMeshIndex.TryGetValue(new([.. mesh.Reverse()]), out meshIndex) // bad
 						){
 							if (RandomNames.Contains(mesh))
-								meshInt = UnityEngine.Random.Range(0, DominoMeshIndexLimit);
+								meshIndex = UnityEngine.Random.Range(0, DominoMeshIndexLimit);
 							else
 								return null;
 						}
-						var matInt = 0;
+						var matIndex = 0;
 						if (parts is [ _, var mat, .. ] &&
-							!int.TryParse(mat, out matInt) &&
-							!DominoMatIndex.TryGetValue(mat, out matInt)
+							!int.TryParse(mat, out matIndex) &&
+							!DominoMatIndex.TryGetValue(mat, out matIndex)
 						){
 							if (RandomNames.Contains(mat))
-								matInt = UnityEngine.Random.Range(0, DominoMatIndexLimit);
+								matIndex = UnityEngine.Random.Range(0, DominoMatIndexLimit);
 							else
 								return null;
 						}
-						return DominoSpawnName(meshInt, matInt);
+						return DominoSpawnName(meshIndex, matIndex);
 					}
 				),
 			},

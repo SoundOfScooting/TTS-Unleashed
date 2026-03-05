@@ -1,9 +1,10 @@
 # dev
 
-* Updated to game version 14.2.1 h4
+* Updated to game version 14.2.1 (Hotfix 4)
 * Added setting `Chat BBCode`
 * Fixed swap/force in color selection
 * Fixed commands being case-sensitive
+<!-- * Re-added Herobrine -->
 
 # v0.3.0
 
