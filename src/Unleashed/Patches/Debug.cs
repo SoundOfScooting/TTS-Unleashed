@@ -17,7 +17,6 @@ static class Debug
 	{
 		Key       = "All Kickstarter Rewards",
 		Default   = false,
-		OnLoaded  = UpdateRewards,
 		OnChanged = UpdateRewards,
 	};
 	// [PowerSetting]
@@ -28,8 +27,8 @@ static class Debug
 	// };
 	static void UpdateRewards(bool value)
 	{
-		SteamManager.IsKickstarterPointer = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
-		SteamManager.IsKickstarterGold    = value || SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
+		SteamManager.IsKickstarterPointer = SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
+		SteamManager.IsKickstarterGold    = SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
 	}
 
 	[HarmonyPrefix]
@@ -45,30 +44,29 @@ static class Debug
 		return true;
 	}
 
-	[HarmonyILManipulator]
-	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Init))]
-	static void SteamManagerInitIL(ILContext il)
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(SteamApps), nameof(SteamApps.BIsSubscribedApp))]
+	static bool BIsSubscribedAppPrefix(AppId_t appID, ref bool __result)
 	{
-		var c = new ILCursor(il);
-		c.GotoNext(MoveType.After,
-			// IsKickstarterGold = SteamApps.BIsSubscribedApp(KickstarterGold);
-			x => x.MatchStsfld(AccessTools.Field(typeof(SteamManager), nameof(SteamManager.IsKickstarterGold)))
-		);
-		c.EmitDelegate(void() =>
-			UpdateRewards(AllRewards.Value)
-		);
+		switch (appID)
+		{
+			case var a1 when a1 == SteamManager.KickstarterPointer:
+			case var a2 when a2 == SteamManager.KickstarterGold:
+				if (AllRewards.Value)
+					return (false, __result = true).Item1;
+				break;
+			// default:
+			// 	if (ALLDLC.Value)
+			// 		return (false, __result = true).Item1;
+			// 	break;
+		}
+		if (Offline.NoSteam)
+		{
+			__result = false;
+			return false;
+		}
+		return true;
 	}
-	// [HarmonyPrefix]
-	// [HarmonyPatch(typeof(SteamManager), nameof(SteamManager.IsSubscribedApp))]
-	// static bool SteamManagerIsSubscribedAppPrefix(ref bool __result)
-	// {
-	// 	if (AllDLC.Value)
-	// 	{
-	// 		__result = true;
-	// 		return false;
-	// 	}
-	// 	return true;
-	// }
 
 	// [HarmonyPostfix]
 	// [HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.SetSpecificPlayerName))]
