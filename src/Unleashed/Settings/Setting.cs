@@ -5,11 +5,11 @@ namespace Unleashed.Settings;
 
 enum Section
 {
+	Debug = 0,
 	Menu = 1,
 	Setup,
 	Controls,
 	Misc,
-	Debug,
 }
 
 abstract class Setting
