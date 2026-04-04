@@ -37,10 +37,7 @@ static class Debug
 	static bool DeveloperHasPrefix(ref bool __result)
 	{
 		if (DeveloperMode.Value)
-		{
-			__result = true;
-			return false;
-		}
+			return (false, __result = true).Item1;
 		return true;
 	}
 
@@ -61,10 +58,7 @@ static class Debug
 			// 	break;
 		}
 		if (Offline.NoSteam)
-		{
-			__result = false;
-			return false;
-		}
+			return (false, __result = false).Item1;
 		return true;
 	}
 

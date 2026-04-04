@@ -109,10 +109,7 @@ static class VectorToolManagerX
 	{
 		// allow usage even if not in the toolbar
 		if (mode == PointerMode.VectorPixel)
-		{
-			__result = true;
-			return false;
-		}
+			return (false, __result = true).Item1;
 		return true;
 	}
 	[HarmonyILManipulator]

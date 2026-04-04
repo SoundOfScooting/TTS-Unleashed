@@ -13,9 +13,9 @@ static class GridButtonX
 	static bool IsSearchedPrefix(GridButton __instance, ref bool __result)
 	{
 		if (__instance.Tags.Contains(TAG_HOST) && !API.HostModded)
-			return __result = false;
+			return (false, __result = false).Item1;
 		if (__instance.Tags.Contains(TAG_GOLD) && !SteamManager.IsKickstarterGold)
-			return __result = false;
+			return (false, __result = false).Item1;
 		return true;
 	}
 }
