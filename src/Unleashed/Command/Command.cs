@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 
 namespace Unleashed.Command;
@@ -59,7 +60,7 @@ abstract class Command
 	public abstract class Stub : Command
 	{
 		protected override bool IsStub => true;
-		protected sealed override void OnInvoke() => throw new NotSupportedException("Unreachable!");
+		protected sealed override void OnInvoke() => throw new UnreachableException();
 	}
 	public abstract class Dispatch : Command
 	{
