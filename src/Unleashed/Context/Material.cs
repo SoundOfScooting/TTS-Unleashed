@@ -51,10 +51,10 @@ static class MaterialID
 }
 public readonly record struct MaterialSlot(string ID, bool AltSounds = false)
 {
-	public static implicit operator MaterialSlot(string name) =>
-		new(name);
-	public static implicit operator MaterialSlot((string Name, bool AltSounds) @this) =>
-		new(@this.Name, @this.AltSounds);
+	public static implicit operator MaterialSlot(string name)
+		=> new(name);
+	public static implicit operator MaterialSlot((string Name, bool AltSounds) @this)
+		=> new(@this.Name, @this.AltSounds);
 }
 public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(int MatInt, string MatName), int> SlotAlias = null)
 {
@@ -156,10 +156,10 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 sealed class UZContextualMaterial : MonoBehaviour
 {
 	// [ModuleInitializer]
-	// internal static void Initializer() =>
-	// 	Events.OnStartConnected += OnStartConnected;
-	// static void OnStartConnected() =>
-	// 	NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>();
+	// internal static void Initializer()
+	// 	=> Events.OnStartConnected += OnStartConnected;
+	// static void OnStartConnected()
+	// 	=> NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>();
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
@@ -209,11 +209,11 @@ sealed class UZContextualMaterial : MonoBehaviour
 		ToggleTable = OldGoldToggle.transform.parent.parent.GetComponent<UITable>();
 		OnStartContextual();
 	}
-	void OnDestroy() =>
-		Events.OnStartContextual -= OnStartContextual;
+	void OnDestroy()
+		=> Events.OnStartContextual -= OnStartContextual;
 
-	void OnStartContextual() =>
-		Contextual.Check(gameObject, CheckContextual);
+	void OnStartContextual()
+		=> Contextual.Check(gameObject, CheckContextual);
 
 	void OnClickMaterial(int index)
 	{

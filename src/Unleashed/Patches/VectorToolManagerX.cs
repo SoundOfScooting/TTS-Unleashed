@@ -8,10 +8,10 @@ namespace Unleashed.Patches;
 static class VectorToolManagerX
 {
 	[ModuleInitializer]
-	internal static void Initializer() =>
-		Events.OnStartConnected += OnStartConnected;
-	static void OnStartConnected() =>
-		Wait.Frames(UpdateUI);
+	internal static void Initializer()
+		=> Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected()
+		=> Wait.Frames(UpdateUI);
 
 	[Setting]
 	static readonly Setting<bool> EnableDrawPixel = new()
@@ -53,8 +53,8 @@ static class VectorToolManagerX
 			.Find("# Pointer Mode/Anchor/Grid/02 Draw");
 		var ui = DrawT.GetComponent<UIPointerMode>();
 
-		int GetIndex(GameObject go) =>
-			ui.ExpandButtonStructs.FindIndex(expand => expand.Button == go);
+		int GetIndex(GameObject go)
+			=> ui.ExpandButtonStructs.FindIndex(expand => expand.Button == go);
 		void AddX(GameObject go, float dx)
 		{
 			var i = GetIndex(go);
@@ -124,10 +124,11 @@ static class VectorToolManagerX
 			x => x.MatchBneUn(out _)
 		);
 		c.Index++;
-		c.EmitDelegate(PointerMode(PointerMode currentPointerMode) =>
-			(currentPointerMode == PointerMode.VectorPixel)
-				? PointerMode.Paint
-				: currentPointerMode
+		c.EmitDelegate(
+			PointerMode(PointerMode currentPointerMode)
+				=> currentPointerMode == PointerMode.VectorPixel
+					? PointerMode.Paint
+					: currentPointerMode
 		);
 	}
 	[HarmonyPrefix]
@@ -168,8 +169,9 @@ static class VectorToolManagerX
 		)){
 			found++;
 			c.Emit(OpCodes.Ldloc_2);
-			c.EmitDelegate(void(KeyValuePair<uint, VectorDrawData> drawnLine) =>
-				EraseBuffer.Add(new(drawnLine.Value))
+			c.EmitDelegate(
+				void(KeyValuePair<uint, VectorDrawData> drawnLine)
+					=> EraseBuffer.Add(new(drawnLine.Value))
 			);
 			c.Index += 3; // annoying
 		}
@@ -189,40 +191,42 @@ static class VectorToolManagerX
 			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButtonDown)))
 		);
 		c.Emit(OpCodes.Ldarg_0);
-		c.EmitDelegate(bool(bool tapDown, VectorToolManager __instance) =>
-		{
-			if (tapDown && (__instance.pointerMode == PointerMode.VectorErase) && __instance.VectorAction() && !EraseCancelled)
+		c.EmitDelegate(
+			bool(bool tapDown, VectorToolManager __instance) =>
 			{
-				EraseCancelled = true;
+				if (tapDown && (__instance.pointerMode == PointerMode.VectorErase) && __instance.VectorAction() && !EraseCancelled)
+				{
+					EraseCancelled = true;
 
-				List<LineNetworkData> lines = [];
-				foreach (var erased in EraseBuffer.OrderBy(x => x.sortingOrder))
-				{
-					var drawData = erased.drawData;
-					if (drawData.attached != erased.wasAttached)
-						continue; // attached was destroyed
-					lines.Add(new(
-						__instance.GetGUID(),
-						drawData.playerSteamID,
-						drawData.attached,
-						erased  .positions,
-						drawData.color,
-						drawData.thickness,
-						drawData.rotation,
-						drawData.loop,
-						drawData.square
-					));
-					// __instance.RPC(RPCTarget.Others, __instance.RPCAddLine, lineNetworkData);
-					// __instance.RPCAddLine(lineNetworkData);
+					List<LineNetworkData> lines = [];
+					foreach (var erased in EraseBuffer.OrderBy(x => x.sortingOrder))
+					{
+						var drawData = erased.drawData;
+						if (drawData.attached != erased.wasAttached)
+							continue; // attached was destroyed
+						lines.Add(new(
+							__instance.GetGUID(),
+							drawData.playerSteamID,
+							drawData.attached,
+							erased  .positions,
+							drawData.color,
+							drawData.thickness,
+							drawData.rotation,
+							drawData.loop,
+							drawData.square
+						));
+						// __instance.RPC(RPCTarget.Others, __instance.RPCAddLine, lineNetworkData);
+						// __instance.RPCAddLine(lineNetworkData);
+					}
+					if (lines.Count > 0)
+					{
+						__instance.RPC(RPCTarget.Others, __instance.RPCAddLines, lines);
+						__instance.RPCAddLines(lines);
+					}
 				}
-				if (lines.Count > 0)
-				{
-					__instance.RPC(RPCTarget.Others, __instance.RPCAddLines, lines);
-					__instance.RPCAddLines(lines);
-				}
+				return tapDown;
 			}
-			return tapDown;
-		});
+		);
 
 		ILLabel skipLabel = null;
 		c.GotoNext(MoveType.After,
@@ -232,8 +236,9 @@ static class VectorToolManagerX
 			x => x.MatchBrfalse(out skipLabel)
 		);
 		c.Emit(OpCodes.Ldarg_0); // could instead emit before "Tap" check
-		c.EmitDelegate(bool(VectorToolManager __instance) =>
-			__instance.pointerMode == PointerMode.VectorPixel
+		c.EmitDelegate(
+			bool(VectorToolManager __instance)
+				=> __instance.pointerMode == PointerMode.VectorPixel
 		);
 		c.Emit(OpCodes.Brtrue, skipLabel);
 	}

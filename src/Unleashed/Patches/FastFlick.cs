@@ -33,10 +33,11 @@ static class FastFlick
 			x => x.MatchCallvirt(AccessTools.PropertyGetter(typeof(List<NetPhysObject>), nameof(List<>.Count)))
 		);
 		c.Emit(OpCodes.Ldarg_2);
-		c.EmitDelegate(int(int count, NetPhysObject hoverObject) =>
-			Network.IsClient && Enabled.Value && (count == 0) && hoverObject
-				? 1
-				: count
+		c.EmitDelegate(
+			int(int count, NetPhysObject hoverObject)
+				=> Network.IsClient && Enabled.Value && (count == 0) && hoverObject
+					? 1
+					: count
 		);
 	}
 }

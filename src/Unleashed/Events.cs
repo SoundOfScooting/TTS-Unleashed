@@ -12,10 +12,10 @@ interface IEvent<T> where T : Delegate
 record struct Event<T>(T Trigger = null) : IEvent<T> where T : Delegate
 {
 	public T Trigger { get; private set; } = Trigger;
-	public void operator +=(T listener) =>
-		Trigger = (T) Delegate.Combine(Trigger, listener);
-	public void operator -=(T listener) =>
-		Trigger = (T) Delegate.Remove(Trigger, listener);
+	public void operator +=(T listener)
+		=> Trigger = (T) Delegate.Combine(Trigger, listener);
+	public void operator -=(T listener)
+		=> Trigger = (T) Delegate.Remove(Trigger, listener);
 }
 
 [HarmonyPatch]
@@ -36,11 +36,13 @@ static class Events
 		// for some reason instructions can't be inserted before
 		c.Prev.OpCode  = OpCodes.Dup;
 		c.Prev.Operand = null;
-		c.EmitDelegate(void(Exception exception) =>
-		{
-			Main.Log.LogError(exception);
-			Debug.LogException(exception);
-		});
+		c.EmitDelegate(
+			void(Exception exception) =>
+			{
+				Main.Log.LogError(exception);
+				Debug.LogException(exception);
+			}
+		);
 	}
 
 	public static event Action OnStartConnected;
@@ -106,8 +108,8 @@ static class Events
 		NetworkEvents.OnConnectedToServer += OnConnectedToServer;
 		EventManager.OnPlayersAdd += OnPlayersAdd;
 	}
-	static void OnServerInitialized() =>
-		addingAllPlayers = false;
+	static void OnServerInitialized()
+		=> addingAllPlayers = false;
 	static void OnConnectedToServer()
 	{
 		addingAllPlayers = true;
@@ -115,8 +117,8 @@ static class Events
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UINotepad), nameof(UINotepad.SetNotepadRPC))]
-	static void SetNotepadRPCRPCPrefix() =>
-		addingAllPlayers = false; // rpc from server in NetworkUI.OnPlayerConnect after all players added
+	static void SetNotepadRPCRPCPrefix()
+		=> addingAllPlayers = false; // rpc from server in NetworkUI.OnPlayerConnect after all players added
 
 	static void OnPlayersAdd(PlayerState playerState)
 	{

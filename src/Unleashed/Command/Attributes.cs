@@ -12,9 +12,9 @@ sealed class PowerCommandAttribute : CommandAttribute;
 class CommandAttribute([CallerLineNumber] int sourceLine = default) : Attribute, IComparable<CommandAttribute>
 {
 	public int SourceLine { get; } = sourceLine;
-	public int CompareTo(CommandAttribute other) =>
-		Comparison.Default(other) ??
-		Comparison.Compare(SourceLine, other.SourceLine);
+	public int CompareTo(CommandAttribute other)
+		=> Comparison.Default(other)
+		?? Comparison.Compare(SourceLine, other.SourceLine);
 
 	public static void RegisterAll(Type outerType, Command.Dispatch @base)
 	{

@@ -208,10 +208,11 @@ public sealed class Main : BaseUnityPlugin
 			);
 			c.MoveAfterLabels();
 			c.Remove();
-			c.EmitDelegate(Texture2D(NetworkUI __instance) =>
-				__instance.StringColorToCursorTexture(
-					loadErrors is null ? MenuCursorColor.Value : MenuErrorColor.Value
-				)
+			c.EmitDelegate(
+				Texture2D(NetworkUI __instance)
+					=> __instance.StringColorToCursorTexture(
+						loadErrors is null ? MenuCursorColor.Value : MenuErrorColor.Value
+					)
 			);
 		}
 	}

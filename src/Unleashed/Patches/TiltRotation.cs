@@ -33,13 +33,15 @@ static class TiltRotation
 			c.Index--;
 			c.MoveAfterLabels();
 			c.Remove();
-			c.EmitDelegate(void(Pointer __instance, int spinRotationDelta, int touchId) =>
-			{
-				if (zInput.GetButton("Ctrl"))
-					__instance.ChangeHeldTiltRotationIndex(spinRotationDelta, touchId);
-				else
-					__instance.ChangeHeldSpinRotationIndex(spinRotationDelta, touchId);
-			});
+			c.EmitDelegate(
+				void(Pointer __instance, int spinRotationDelta, int touchId) =>
+				{
+					if (zInput.GetButton("Ctrl"))
+						__instance.ChangeHeldTiltRotationIndex(spinRotationDelta, touchId);
+					else
+						__instance.ChangeHeldSpinRotationIndex(spinRotationDelta, touchId);
+				}
+			);
 		}
 
 		c.Index = 0;
@@ -52,13 +54,15 @@ static class TiltRotation
 		c.Index--;
 		c.MoveAfterLabels();
 		c.Remove();
-		c.EmitDelegate(void(Pointer __instance, int flipRotationDelta, int touchId) =>
-		{
-			if (zInput.GetButton("Ctrl"))
-				__instance.ChangeHeldTiltRotationIndex(flipRotationDelta, touchId);
-			else
-				__instance.ChangeHeldFlipRotationIndex(flipRotationDelta, touchId);
-		});
+		c.EmitDelegate(
+			void(Pointer __instance, int flipRotationDelta, int touchId) =>
+			{
+				if (zInput.GetButton("Ctrl"))
+					__instance.ChangeHeldTiltRotationIndex(flipRotationDelta, touchId);
+				else
+					__instance.ChangeHeldFlipRotationIndex(flipRotationDelta, touchId);
+			}
+		);
 	}
 
 	[HarmonyILManipulator]
@@ -79,15 +83,16 @@ static class TiltRotation
 		c.Emit(OpCodes.Ldarg_0);
 		c.Emit(OpCodes.Ldarg_1);
 		c.Emit(OpCodes.Ldloc, 13);
-		c.EmitDelegate(Quaternion(ManagerPhysicsObject __instance, NetPhysObject grabbedNPO, Quaternion identity) =>
-			!grabbedNPO.HasData()
-				? identity
-			: Quaternion.AngleAxis(
-				grabbedNPO.HeldTiltRotationIndex * ManagerPhysicsObject.MIN_ROTATION_DEG,
-				__instance.FlipsAroundZAxis(grabbedNPO.gameObject)
-					? Vector3.right
-					: Vector3.forward
-			) * identity
+		c.EmitDelegate(
+			Quaternion(ManagerPhysicsObject __instance, NetPhysObject grabbedNPO, Quaternion identity)
+				=> !grabbedNPO.HasData()
+					? identity
+				: Quaternion.AngleAxis(
+					grabbedNPO.HeldTiltRotationIndex * ManagerPhysicsObject.MIN_ROTATION_DEG,
+					__instance.FlipsAroundZAxis(grabbedNPO.gameObject)
+						? Vector3.right
+						: Vector3.forward
+				) * identity
 		);
 		c.Emit(OpCodes.Stloc, 13);
 	}

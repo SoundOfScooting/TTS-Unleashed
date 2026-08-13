@@ -24,8 +24,8 @@ static class InterceptLuaVirus
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(LuaBase), nameof(LuaBase.DoString))]
-	static bool DoStringPrefix(LuaBase __instance) =>
-		ExecuteScriptPrefix(__instance, __instance.script_code);
+	static bool DoStringPrefix(LuaBase __instance)
+		=> ExecuteScriptPrefix(__instance, __instance.script_code);
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(LuaBase), nameof(LuaBase.ExecuteScript))]
 	static bool ExecuteScriptPrefix(LuaBase __instance, string script)

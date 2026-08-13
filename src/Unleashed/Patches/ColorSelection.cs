@@ -125,8 +125,8 @@ sealed class UIColorSelectionX : MonoBehaviour
 	static bool UpdateReplace(UIColorSelection __instance)
 	{
 		const bool DEBUG_TEST = false;
-		static bool Permitted(string label) =>
-			!DEBUG_TEST && (
+		static bool Permitted(string label)
+			=> !DEBUG_TEST && (
 				(label == Colour.GreyLabel) || Network.IsAdmin ||
 				((label != Colour.BlackLabel) && PermissionsOptions.Options.ChangeColor)
 			);

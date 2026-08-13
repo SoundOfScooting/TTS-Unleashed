@@ -14,8 +14,8 @@ sealed class UINameButtonX : MonoBehaviour
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
-	static void StartPostfix(UINameButton __instance) =>
-		__instance.gameObject.GetOrAddComponent<UINameButtonX>();
+	static void StartPostfix(UINameButton __instance)
+		=> __instance.gameObject.GetOrAddComponent<UINameButtonX>();
 
 	UINameButton @base;
 	UIButton button;
@@ -29,8 +29,8 @@ sealed class UINameButtonX : MonoBehaviour
 		]);
 		@base.PopupList.OnPopupListShow += OnPopupListShow;
 	}
-	void OnDestroy() =>
-		@base.PopupList.OnPopupListShow -= OnPopupListShow;
+	void OnDestroy()
+		=> @base.PopupList.OnPopupListShow -= OnPopupListShow;
 
 	bool Extra;
 	void OnAltClick()

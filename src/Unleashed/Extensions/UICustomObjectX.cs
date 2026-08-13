@@ -3,10 +3,10 @@ namespace Unleashed.Extensions;
 [HarmonyPatch]
 static class UICustomObjectX
 {
-	public static void QueueFake(this UICustomImage @this, Action<UICustomImage> onImport) =>
-		@this.QueueFake<UICustomImage>(onImport);
-	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport) =>
-		@this.QueueFake<UICustomSky>(onImport);
+	public static void QueueFake(this UICustomImage @this, Action<UICustomImage> onImport)
+		=> @this.QueueFake<UICustomImage>(onImport);
+	public static void QueueFake(this UICustomSky @this, Action<UICustomSky> onImport)
+		=> @this.QueueFake<UICustomSky>(onImport);
 
 	sealed class Data : MonoBehaviour // #want: Data<T>, List<Action<T>>
 	{
@@ -18,8 +18,8 @@ static class UICustomObjectX
 		Data Data => @this.gameObject.GetOrAddComponent<Data>();
 		List<Delegate> OnImportFakeQueue => @this.Data.OnImportFakeQueue;
 
-		public bool TargettingFake() =>
-			@this.CustomObjectQueue is [null, ..];
+		public bool TargettingFake()
+			=> @this.CustomObjectQueue is [null, ..];
 
 		// overloaded above
 		void QueueFake(Action<T> onImport)
@@ -61,16 +61,16 @@ static class UICustomObjectX
 		}
 	}
 
-	static object Invoke(object @this, string method) =>
-		AccessTools.Method(typeof(UICustomObjectX), method)
+	static object Invoke(object @this, string method)
+		=> AccessTools.Method(typeof(UICustomObjectX), method)
 			.MakeGenericMethod(@this.GetType())
 			.Invoke(null, [@this]);
 
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.OnEnable))]
-	static bool BaseOnEnablePrefix(object __instance) =>
-		!(bool) Invoke(__instance, nameof(BaseOnEnableFake));
+	static bool BaseOnEnablePrefix(object __instance)
+		=> !(bool) Invoke(__instance, nameof(BaseOnEnableFake));
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.OnEnable))]
 	static bool ImageOnEnablePrefix(UICustomImage __instance)
@@ -94,20 +94,20 @@ static class UICustomObjectX
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Update))]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
-	static bool BaseUpdatePrefix(object __instance) =>
-		!(bool) Invoke(__instance, nameof(TargettingFake));
+	static bool BaseUpdatePrefix(object __instance)
+		=> !(bool) Invoke(__instance, nameof(TargettingFake));
 
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.Close))]
-	static void BaseClosePrefix(object __instance) =>
-		Invoke(__instance, nameof(BaseCloseFake));
+	static void BaseClosePrefix(object __instance)
+		=> Invoke(__instance, nameof(BaseCloseFake));
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomImage), nameof(UICustomImage.Import))]
 	[HarmonyPatch(typeof(UICustomSky),   nameof(UICustomSky  .Import))]
 	[HarmonyPriority(Priority.HigherThanNormal)]
-	static bool ImportFakePrefix(object __instance) =>
-		!(bool) Invoke(__instance, nameof(ImportFake));
+	static bool ImportFakePrefix(object __instance)
+		=> !(bool) Invoke(__instance, nameof(ImportFake));
 }
 

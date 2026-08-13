@@ -449,8 +449,8 @@ public static class Commands
 			new(Hide: Hide.Extra, Syntax: Primary, Desc: "Enables the developer console tab"),
 		];
 		// bugfix: doesn't report invalid command
-		protected override void OnInvoke() =>
-			Chat.Instance.ShowDeveloperConsole(); // useless :)
+		protected override void OnInvoke()
+			=> Chat.Instance.ShowDeveloperConsole(); // useless :)
 	}
 
 	[Command]

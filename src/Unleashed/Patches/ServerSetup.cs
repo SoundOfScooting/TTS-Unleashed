@@ -94,13 +94,15 @@ static class ServerSetup
 			x => x.MatchCall(AccessTools.Method(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), [ typeof(int), typeof(int) ]))
 		);
 		// c.Emit(OpCodes.Ldloca, 4);
-		c.EmitDelegate(int(int num/*, ref GameObject gameObject*/) =>
-		{
-			var num2 =  InitialBackground.Value;
-			if (num2 == BackgroundID.Random)
-				return num;
-			return (int) num2;
-		});
+		c.EmitDelegate(
+			int(int num/*, ref GameObject gameObject*/) =>
+			{
+				var num2 =  InitialBackground.Value;
+				if (num2 == BackgroundID.Random)
+					return num;
+				return (int) num2;
+			}
+		);
 
 		c.GotoNext(MoveType.After,
 			// v13.3: switch (UnityEngine.Random.Range(1, 6))
@@ -110,34 +112,36 @@ static class ServerSetup
 			x => x.MatchCall(AccessTools.Method(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), [ typeof(int), typeof(int) ]))
 		);
 		c.Emit(OpCodes.Ldloca, 0);
-		c.EmitDelegate(int(int num, ref GameObject gameObject2) =>
-		{
-			var num2 = InitialTable.Value;
-			switch (num2)
+		c.EmitDelegate(
+			int(int num, ref GameObject gameObject2) =>
 			{
-				case TableID.Random:
-					return num;
-				case TableID.RandomPlus:
-					num2 = (TableID) UnityEngine.Random.Range(1, 7+1);
-					break;
-				case TableID.RandomPlusPlus:
-					num2 = (TableID) UnityEngine.Random.Range(1, 8+1);
-					break;
+				var num2 = InitialTable.Value;
+				switch (num2)
+				{
+					case TableID.Random:
+						return num;
+					case TableID.RandomPlus:
+						num2 = (TableID) UnityEngine.Random.Range(1, 7+1);
+						break;
+					case TableID.RandomPlusPlus:
+						num2 = (TableID) UnityEngine.Random.Range(1, 8+1);
+						break;
+				}
+				switch (num2)
+				{
+					case TableID.Poker:
+						gameObject2 = GameMode.Instance.PokerTable;
+						break;
+					case TableID.Glass:
+						gameObject2 = GameMode.Instance.GlassTable;
+						break;
+					case TableID.Plastic:
+						gameObject2 = GameMode.Instance.GetPrefab("Table_Plastic");
+						break;
+				}
+				return (int) num2;
 			}
-			switch (num2)
-			{
-				case TableID.Poker:
-					gameObject2 = GameMode.Instance.PokerTable;
-					break;
-				case TableID.Glass:
-					gameObject2 = GameMode.Instance.GlassTable;
-					break;
-				case TableID.Plastic:
-					gameObject2 = GameMode.Instance.GetPrefab("Table_Plastic");
-					break;
-			}
-			return (int) num2;
-		});
+		);
 
 		c.GotoNext(MoveType.Before,
 			// ClientRequestColor("White");
@@ -146,22 +150,24 @@ static class ServerSetup
 		);
 		c.MoveAfterLabels();
 		c.RemoveRange(2);
-		c.EmitDelegate(void(NetworkUI __instance) =>
-		{
-			switch (InitialColour.Value)
+		c.EmitDelegate(
+			void(NetworkUI __instance) =>
 			{
-				case "Choose":
-					__instance.GUIChangeColor();
-					break;
-				case "Dialog":
-					__instance.bNeedToPickColour = false;
-					UIColorSelection.ShowDialog();
-					break;
-				default:
-					__instance.ClientRequestColor(InitialColour.Value);
-					break;
+				switch (InitialColour.Value)
+				{
+					case "Choose":
+						__instance.GUIChangeColor();
+						break;
+					case "Dialog":
+						__instance.bNeedToPickColour = false;
+						UIColorSelection.ShowDialog();
+						break;
+					default:
+						__instance.ClientRequestColor(InitialColour.Value);
+						break;
+				}
 			}
-		});
+		);
 	}
 }
 

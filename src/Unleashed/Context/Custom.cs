@@ -39,8 +39,8 @@ static class Custom
 	// #generic
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomObject<MonoBehaviour>), nameof(UICustomObject<>.CheckUpdateMatchingCustomObjects))]
-	static bool CheckUpdateMatchingCustomObjectsPrefix() =>
-		Network.IsServer;
+	static bool CheckUpdateMatchingCustomObjectsPrefix()
+		=> Network.IsServer;
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UICustomAssetbundle), nameof(UICustomAssetbundle.Import))]
@@ -302,8 +302,8 @@ static class Custom
 	// #issue https://tabletopsimulator.nolt.io/2904
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UICustomTile), nameof(UICustomTile.OnEnable))]
-	static void TileStartPostfix(UICustomTile __instance) =>
-		__instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = API.HostModded;
+	static void TileStartPostfix(UICustomTile __instance)
+		=> __instance.StretchToggle.GetComponent<BoxCollider2D>().enabled = API.HostModded;
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(LuaObject), nameof(LuaObject.GetCustomObject))]
 	static void GetCustomObjectPostfix(LuaObject __instance, ref MoonSharp.Interpreter.Table __result)

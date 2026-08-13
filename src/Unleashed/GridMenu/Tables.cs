@@ -68,10 +68,11 @@ static class Tables
 		c.MoveAfterLabels();
 		c.Emit(OpCodes.Dup);
 		c.Index++;
-		c.EmitDelegate(Color(GridButtonTable tablesButton, Color color) =>
-			tablesButton.Tags.Contains(Main.PLUGIN_GUID)
-				? tablesButton.SpriteColor
-				: color
+		c.EmitDelegate(
+			Color(GridButtonTable tablesButton, Color color)
+				=> tablesButton.Tags.Contains(Main.PLUGIN_GUID)
+					? tablesButton.SpriteColor
+					: color
 		);
 	}
 }

@@ -33,8 +33,9 @@ static class UIPopupListX
 		);
 		c.MoveAfterLabels();
 		c.Emit(OpCodes.Ldarg_0);
-		c.EmitDelegate(void(UIPopupList __instance) =>
-			__instance.TriggerPopupListShow()
+		c.EmitDelegate(
+			void(UIPopupList __instance)
+				=> __instance.TriggerPopupListShow()
 		);
 	}
 }

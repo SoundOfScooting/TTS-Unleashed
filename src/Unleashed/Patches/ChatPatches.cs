@@ -43,17 +43,19 @@ static class ChatPatches
 			x => x.MatchLdcI4((int) ControlType.Keyboard),
 			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButtonDown)))
 		);
-		c.EmitDelegate(bool(bool helpDown) =>
-		{
-			if (!helpDown || !Enabled.Value || zInput.GetButton("Shift"))
-				return helpDown;
-			if (!UICamera.SelectIsInput())
+		c.EmitDelegate(
+			bool(bool helpDown) =>
 			{
-				UIChatInput.Instance.ChatButtonOnClick();
-				UIChatInput.Instance.mInput.value = "/";
+				if (!helpDown || !Enabled.Value || zInput.GetButton("Shift"))
+					return helpDown;
+				if (!UICamera.SelectIsInput())
+				{
+					UIChatInput.Instance.ChatButtonOnClick();
+					UIChatInput.Instance.mInput.value = "/";
+				}
+				return false;
 			}
-			return false;
-		});
+		);
 	}
 
 	[HarmonyPostfix]
@@ -77,8 +79,9 @@ static class ChatPatches
 		);
 		c.MoveAfterLabels();
 		c.Remove();
-		c.EmitDelegate(string(string text)
-			=> BBCode.Value ? text : NGUIText.StripSymbols(text)
+		c.EmitDelegate(
+			string(string text)
+				=> BBCode.Value ? text : NGUIText.StripSymbols(text)
 		);
 	}
 }

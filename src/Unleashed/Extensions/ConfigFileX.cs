@@ -5,8 +5,8 @@ namespace Unleashed.Extensions;
 
 static class ConfigFileX
 {
-	public static string FormatSection(Section section) =>
-		$"{(int) section}: {section}";
+	public static string FormatSection(Section section)
+		=> $"{(int) section}: {section}";
 	static string TrimSectionFormat(string section)
 	{
 		var i = section.IndexOf(':', StringComparison.Ordinal);
@@ -28,25 +28,25 @@ static class ConfigFileX
 	}
 	extension(ConfigFile @this)
 	{
-		public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, string description = "", AcceptableValueBase acceptableValues = null, params object[] tags) =>
-			@this.BindX(new(section, key), defaultValue, new ConfigDescription(description, acceptableValues, tags));
+		public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, string description = "", AcceptableValueBase acceptableValues = null, params object[] tags)
+			=> @this.BindX(new(section, key), defaultValue, new ConfigDescription(description, acceptableValues, tags));
 
-		// public ConfigEntry<T> BindX<T>(ConfigDefinition definition, T defaultValue, string description = "", AcceptableValueBase acceptableValues = null, params object[] tags) =>
-		// 	@this.BindX(definition,        defaultValue, new ConfigDescription(description, acceptableValues, tags));
+		// public ConfigEntry<T> BindX<T>(ConfigDefinition definition, T defaultValue, string description = "", AcceptableValueBase acceptableValues = null, params object[] tags)
+		// 	=> @this.BindX(definition,        defaultValue, new ConfigDescription(description, acceptableValues, tags));
 
-		// public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, string description = "", params object[] tags) =>
-		// 	@this.BindX(new(section, key), defaultValue, new ConfigDescription(description, null, tags));
+		// public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, string description = "", params object[] tags)
+		// 	=> @this.BindX(new(section, key), defaultValue, new ConfigDescription(description, null, tags));
 
-		// public ConfigEntry<T> BindX<T>(ConfigDefinition definition, T defaultValue, string description = "", params object[] tags) =>
-		// 	@this.BindX(definition,        defaultValue, new ConfigDescription(description, null, tags));
+		// public ConfigEntry<T> BindX<T>(ConfigDefinition definition, T defaultValue, string description = "", params object[] tags)
+		// 	=> @this.BindX(definition,        defaultValue, new ConfigDescription(description, null, tags));
 
-		// public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, ConfigDescription description) =>
-		// 	@this.BindX(new(section, key), defaultValue, description);
+		// public ConfigEntry<T> BindX<T>(string section, string key,  T defaultValue, ConfigDescription description)
+		// 	=> @this.BindX(new(section, key), defaultValue, description);
 
-		Dictionary<ConfigDefinition, ConfigEntryBase> Entries =>
-			new Traverse(@this).Property<Dictionary<ConfigDefinition, ConfigEntryBase>>("Entries").Value;
-		Dictionary<ConfigDefinition, string> OrphanedEntries =>
-			new Traverse(@this).Property<Dictionary<ConfigDefinition, string>>("OrphanedEntries").Value;
+		Dictionary<ConfigDefinition, ConfigEntryBase> Entries
+			=> new Traverse(@this).Property<Dictionary<ConfigDefinition, ConfigEntryBase>>("Entries").Value;
+		Dictionary<ConfigDefinition, string> OrphanedEntries
+			=> new Traverse(@this).Property<Dictionary<ConfigDefinition, string>>("OrphanedEntries").Value;
 
 		public bool MigrateEntryX<T>(ConfigDefinition oldDefinition, out T value)
 		{

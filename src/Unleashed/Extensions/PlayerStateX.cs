@@ -11,10 +11,10 @@ static class PlayerStateX
 		Events.OnStartConnected    += OnStartConnected;
 		Events.OnStartDisconnected += OnStartDisconnected;
 	}
-	static void OnStartConnected() =>
-		PlayerManager.Instance.MyPlayerState().IsModded = true;
-	static void OnStartDisconnected() =>
-		CWT = [];
+	static void OnStartConnected()
+		=> PlayerManager.Instance.MyPlayerState().IsModded = true;
+	static void OnStartDisconnected()
+		=> CWT = [];
 
 	static ConditionalWeakTable<PlayerState, Data> CWT;
 	sealed class Data

@@ -25,8 +25,8 @@ sealed class RemoteX : BaseNetworkAttribute
 		SerializationMethod = serializationMethod;
 		UseGlobalValidationFunction = useGlobalValidationFunction;
 	}
-	public static explicit operator Remote(RemoteX @this) =>
-		new(@this.Permission, @this.SendType, @this.ValidationFunction, @this.SerializationMethod, @this.UseGlobalValidationFunction);
+	public static explicit operator Remote(RemoteX @this)
+		=> new(@this.Permission, @this.SendType, @this.ValidationFunction, @this.SerializationMethod, @this.UseGlobalValidationFunction);
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkView), nameof(NetworkView.FindAttributeAssemblies))]
@@ -40,19 +40,21 @@ sealed class RemoteX : BaseNetworkAttribute
 		c.MoveAfterLabels();
 		c.Remove();
 		c.MoveAfterLabels();
-		c.EmitDelegate(void(List<MethodRPCSort> RPCMethods, Comparison<MethodRPCSort> comp) =>
-		{
-			// WARNING: DO NOT REMOVE //
-			RPCMethods.Sort(comp);
-			// ////////////////////// //
+		c.EmitDelegate(
+			void(List<MethodRPCSort> RPCMethods, Comparison<MethodRPCSort> comp) =>
+			{
+				// WARNING: DO NOT REMOVE //
+				RPCMethods.Sort(comp);
+				// ////////////////////// //
 
-			List<MethodRPCSort> CustomRPCMethods = [];
-			FindAttributesX(CustomRPCMethods);
-			SortAttributesX(CustomRPCMethods);
-			RPCMethods.AddRange(CustomRPCMethods);
+				List<MethodRPCSort> CustomRPCMethods = [];
+				FindAttributesX(CustomRPCMethods);
+				SortAttributesX(CustomRPCMethods);
+				RPCMethods.AddRange(CustomRPCMethods);
 
-			// DumpAttributes(RPCMethods);
-		});
+				// DumpAttributes(RPCMethods);
+			}
+		);
 	}
 	static void DumpAttributes(List<MethodRPCSort> RPCMethods)
 	{
@@ -96,8 +98,8 @@ sealed class RemoteX : BaseNetworkAttribute
 		Traverse.Create(typeof(BepInEx.Bootstrap.Chainloader)).Field("_plugins").GetValue<List<BepInEx.BaseUnityPlugin>>();
 	static void SortAttributesX(List<MethodRPCSort> CustomRPCMethods)
 	{
-		CustomRPCMethods.Sort((lhs, rhs) =>
-			Comparison.Compare(
+		CustomRPCMethods.Sort((lhs, rhs)
+			=> Comparison.Compare(
 				lhs.Method.DeclaringType.Assembly,
 				rhs.Method.DeclaringType.Assembly,
 				// -1 (non-plugin asm) < 0 (first plugin)

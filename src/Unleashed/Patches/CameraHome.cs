@@ -69,8 +69,8 @@ sealed class UZCameraHome : MonoBehaviour
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UITopBar), nameof(UITopBar.Awake))]
-	static void AwakePostfix() =>
-		_ = new GameObject("02 CameraHome", typeof(UZCameraHome));
+	static void AwakePostfix()
+		=> _ = new GameObject("02 CameraHome", typeof(UZCameraHome));
 	void Awake()
 	{
 		CreateComponents();
@@ -126,8 +126,8 @@ sealed class UZCameraHome : MonoBehaviour
 			drowDownValue:   Current.ToString(),
 
 			leftButtonText: "OK",
-			leftButtonFunc: (label, _) =>
-				Current = Enum.Parse<Home>(label),
+			leftButtonFunc: (label, _)
+				=> Current = Enum.Parse<Home>(label),
 
 			rightButtonText: "Cancel",
 			rightButtonFunc: null

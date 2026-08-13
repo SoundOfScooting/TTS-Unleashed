@@ -19,8 +19,8 @@ sealed class UZContextualStash : MonoBehaviour
 	UILabel Label;
 
 	[ModuleInitializer]
-	internal static void Initializer() =>
-		Events.OnStartConnected += OnStartConnected;
+	internal static void Initializer()
+		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 	{
 		// after 04 Paste
@@ -90,8 +90,8 @@ sealed class UZContextualStash : MonoBehaviour
 	bool ctrlDown, shiftDown;
 	LuaPlayer target;
 
-	void OnStartContextual() =>
-		Contextual.Check(gameObject, CheckContextual);
+	void OnStartContextual()
+		=> Contextual.Check(gameObject, CheckContextual);
 	bool CheckContextual()
 	{
 		if (!Network.IsAdmin) // #compat

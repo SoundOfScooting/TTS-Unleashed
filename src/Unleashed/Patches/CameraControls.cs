@@ -65,10 +65,11 @@ static class CameraControls
 		);
 		c.Index -= 2;
 		c.Remove();
-		c.EmitDelegate(float(float x, float dx) =>
-			InvertHorizontalAxis.Value
-				? x - dx
-				: x + dx
+		c.EmitDelegate(
+			float(float x, float dx)
+				=> InvertHorizontalAxis.Value
+					? x - dx
+					: x + dx
 		);
 
 		c.GotoNext(MoveType.After,
@@ -80,10 +81,11 @@ static class CameraControls
 		);
 		c.Index -= 2;
 		c.Remove();
-		c.EmitDelegate(float(float y, float dy) =>
-			InvertVerticalAxis.Value
-				? y + dy
-				: y - dy
+		c.EmitDelegate(
+			float(float y, float dy)
+				=> InvertVerticalAxis.Value
+					? y + dy
+					: y - dy
 		);
 
 		c.Index   = 0;
@@ -95,11 +97,12 @@ static class CameraControls
 			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButton)))
 		)){
 			found++;
-			c.EmitDelegate(bool(bool cameraHoldRotateDown) =>
-				cameraHoldRotateDown && !(
-					BlockMousePanningOverUI.Value &&
-					UICamera.HoverOverUI()
-				)
+			c.EmitDelegate(
+				bool(bool cameraHoldRotateDown)
+					=> cameraHoldRotateDown && !(
+						BlockMousePanningOverUI.Value &&
+						UICamera.HoverOverUI()
+					)
 			);
 		}
 		if (found != 2)

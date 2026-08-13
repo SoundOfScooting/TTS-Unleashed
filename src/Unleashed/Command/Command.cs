@@ -25,8 +25,8 @@ sealed record class Usage(string Syntax, string Desc = null, Perm Perm = Perm.No
 		Perm.Server => Network.IsServer,
 		_  => true,
 	};
-	public bool IsVisible(bool flagAll) =>
-		Hide switch
+	public bool IsVisible(bool flagAll)
+		=> Hide switch
 		{
 			Hide.Hidden => false,
 			Hide.Extra  => flagAll,
@@ -84,8 +84,8 @@ abstract class Command
 			SubCommands.Add(sub);
 		}
 
-		public bool Remaining(string rest) =>
-			rest is [_, ..] && SubCommands is not [];
+		public bool Remaining(string rest)
+			=> rest is [_, ..] && SubCommands is not [];
 		public bool Resolve(ref string rest, out Command cmd)
 		{
 			var text = Message.Bite(rest, out var rest1).Text;
@@ -171,8 +171,8 @@ abstract class Command
 
 	public Command Base { get; private set; }
 
-	public string Primary =>
-		Message.Join(Base?.Primary, Aliases?.FirstOrDefault()?.Short);
+	public string Primary
+		=> Message.Join(Base?.Primary, Aliases?.FirstOrDefault()?.Short);
 	protected abstract List<Alias> Aliases { get; }
 	protected abstract List<Usage> Usages  { get; }
 
@@ -183,12 +183,12 @@ abstract class Command
 	protected static ChatMessageType Tab { get; private set; }
 	protected static string Rest;
 
-	protected static void Log(string message, Colour colour, bool broadcast = false) =>
-		Chat.Log(message, colour, Tab, broadcast);
-	protected static void Log(string message) =>
-		Chat.Log(message, Colour.White, Tab);
-	protected static void Log(string message, string label) =>
-		Chat.Log(message, label, Tab);
+	protected static void Log(string message, Colour colour, bool broadcast = false)
+		=> Chat.Log(message, colour, Tab, broadcast);
+	protected static void Log(string message)
+		=> Chat.Log(message, Colour.White, Tab);
+	protected static void Log(string message, string label)
+		=> Chat.Log(message, label, Tab);
 	public void LogUsageHelp()
 	{
 		if ((Alias[]) [..Aliases.Skip(1).Where(x => x.Prefix == null)] is [_, ..] simple)
@@ -269,8 +269,8 @@ abstract class Command
 		return true;
 	}
 
-	protected bool ExpectToggle(ref bool @bool, string param) =>
-		ExpectToggle(ref @bool, null, param);
+	protected bool ExpectToggle(ref bool @bool, string param)
+		=> ExpectToggle(ref @bool, null, param);
 	protected bool ExpectToggle(ref bool @bool, bool? @default, string param)
 	{
 		switch (Bite().Text?.ToLowerInvariant())

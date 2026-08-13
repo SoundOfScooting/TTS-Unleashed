@@ -15,11 +15,11 @@ static class UITooltipObjectX
 			@this.Apply();
 		}
 
-		bool IsStarting =>
-			UIHoverText.text == @this.translatedTooltip;
-		bool IsFinished =>
-			UIHoverText.text == @this.translatedDelayTooltip && @this.translatedTooltip == "" ||
-			UIHoverText.text == @this.translatedTooltip + UIHoverText.DelayTooltipSpacer + @this.translatedDelayTooltip;
+		bool IsStarting
+			=> UIHoverText.text == @this.translatedTooltip;
+		bool IsFinished
+			=> UIHoverText.text == @this.translatedDelayTooltip && @this.translatedTooltip == ""
+			|| UIHoverText.text == @this.translatedTooltip + UIHoverText.DelayTooltipSpacer + @this.translatedDelayTooltip;
 
 		public void Apply()
 		{

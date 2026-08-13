@@ -4,8 +4,8 @@ namespace Unleashed.Compat;
 static class ClientVersion
 {
 	[RemoteX(Permission.Server)]
-	static void RPCSetIsModded(PlayerManager @this, ushort id) =>
-		@this.PlayerStateFromID(id).IsModded = true;
+	static void RPCSetIsModded(PlayerManager @this, ushort id)
+		=> @this.PlayerStateFromID(id).IsModded = true;
 
 	const string VERSION_HEADER = $"\n{Main.PLUGIN_GUID} V";
 
@@ -18,14 +18,15 @@ static class ClientVersion
 			// base.NetView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
 			x => x.MatchCall(AccessTools.PropertyGetter(typeof(NetworkUI), nameof(NetworkUI.VersionNumber)))
 		);
-		c.EmitDelegate(string(string VersionNumber) =>
-			VersionNumber + VERSION_HEADER + Main.PLUGIN_VERSION
+		c.EmitDelegate(
+			string(string VersionNumber)
+				=> VersionNumber + VERSION_HEADER + Main.PLUGIN_VERSION
 		);
 	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
-	static void RegisterPrefix(ref NetworkPlayer __state) =>
-		__state = Network.Sender;
+	static void RegisterPrefix(ref NetworkPlayer __state)
+		=> __state = Network.Sender;
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Register))]
 	static void RegisterPostfix(string registerName, string versionNum, NetworkPlayer __state)

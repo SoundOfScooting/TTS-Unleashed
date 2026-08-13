@@ -6,10 +6,10 @@ namespace Unleashed.Patches;
 class GUIEndTurnX : MonoBehaviour
 {
 	[ModuleInitializer]
-	internal static void Initializer() =>
-		Events.OnStartConnected += OnStartConnected;
-	static void OnStartConnected() =>
-		NetworkUI.Instance.GUIEndTurn.GetOrAddComponent<GUIEndTurnX>();
+	internal static void Initializer()
+		=> Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected()
+		=> NetworkUI.Instance.GUIEndTurn.GetOrAddComponent<GUIEndTurnX>();
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Turns), nameof(Turns.GUIEndTurn))]
@@ -38,8 +38,8 @@ sealed class UIStarTurnX : GUIEndTurnX
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.Awake))]
-	static void AwakePostfix(UIStarTurn __instance) =>
-		__instance.gameObject.GetOrAddComponent<UIStarTurnX>();
+	static void AwakePostfix(UIStarTurn __instance)
+		=> __instance.gameObject.GetOrAddComponent<UIStarTurnX>();
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.OnClick))]
@@ -50,10 +50,10 @@ sealed class UIStarTurnX : GUIEndTurnX
 		return false;
 	}
 
-	void Awake() =>
-		EventManager.OnPlayerPromoted += OnPlayerPromoted;
-	void OnDestroy() =>
-		EventManager.OnPlayerPromoted -= OnPlayerPromoted;
+	void Awake()
+		=> EventManager.OnPlayerPromoted += OnPlayerPromoted;
+	void OnDestroy()
+		=> EventManager.OnPlayerPromoted -= OnPlayerPromoted;
 
 	void OnPlayerPromoted(bool isPromoted, int id)
 	{

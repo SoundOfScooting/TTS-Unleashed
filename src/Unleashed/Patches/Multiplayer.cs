@@ -123,8 +123,8 @@ static class Multiplayer
 	static void TriggerServerInitializedPrefix() => UpdateNickname();
 
 	[ModuleInitializer]
-	internal static void Initializer() =>
-		Events.OnPlayersAddOther += OnPlayersAddOther;
+	internal static void Initializer()
+		=> Events.OnPlayersAddOther += OnPlayersAddOther;
 	static void OnPlayersAddOther(PlayerState playerState)
 	{
 		if (AutoJoinMessage.Value is [_, ..] autoJoin)

@@ -17,16 +17,16 @@ static class Message
 	public static string Join<T>(string delimiter, Func<T, string> converter, params IEnumerable<T> values)
 	{
 		converter ??= x => $"{x}";
-		return @values.Aggregate(null, (string accum, T value) =>
-		{
-			if (value is null) return accum;
-			if (accum is null) return converter.Invoke(value);
-			return $"{accum}{delimiter}{converter.Invoke(value)}";
-		});
+		return @values.Aggregate(null,
+			(string accum, T value)
+				=> value is null ? accum
+				:  accum is null ? converter.Invoke(value)
+				:  $"{accum}{delimiter}{converter.Invoke(value)}"
+		);
 	}
 
-	public static Argument Bite(ref string rest) =>
-		Bite(rest, out rest);
+	public static Argument Bite(ref string rest)
+		=> Bite(rest, out rest);
 	public static Argument Bite(string msg, out string rest)
 	{
 		var text = "";

@@ -16,20 +16,20 @@ static class GameObjectX
 
 	extension(GameObject @this)
 	{
-		public Transform CopyParent(GameObject other) =>
-			@this.CopyParent(other.transform);
-		public Transform CopyParent(Component other) =>
-			@this.CopyParent(other.transform);
-		public Transform CopyParent(Transform src) =>
-			@this.transform.CopyParent(src);
+		public Transform CopyParent(GameObject other)
+			=> @this.CopyParent(other.transform);
+		public Transform CopyParent(Component other)
+			=> @this.CopyParent(other.transform);
+		public Transform CopyParent(Transform src)
+			=> @this.transform.CopyParent(src);
 
-		public T CopyComponent<T>(GameObject other) where T : Component =>
-			@this.CopyComponent(other.GetComponent<T>());
-		public T CopyComponent<T>(Component other) where T : Component =>
-			@this.CopyComponent(other.GetComponent<T>());
+		public T CopyComponent<T>(GameObject other) where T : Component
+			=> @this.CopyComponent(other.GetComponent<T>());
+		public T CopyComponent<T>(Component other) where T : Component
+			=> @this.CopyComponent(other.GetComponent<T>());
 		[OverloadResolutionPriority(1)]
-		public T CopyComponent<T>(T source) where T : Component =>
-			@this.AddComponent<T>().Copy(source);
+		public T CopyComponent<T>(T source) where T : Component
+			=> @this.AddComponent<T>().Copy(source);
 	}
 	extension(Transform @this)
 	{

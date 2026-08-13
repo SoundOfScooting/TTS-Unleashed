@@ -19,8 +19,8 @@ static class Components
 		{ "KH", 30 }, { "QH", 31 }, { "JH", 32 }, { "AH", 33 }, { "10H", 34 }, { "9H", 40 }, { "8H", 41 }, { "7H", 42 }, { "6H", 43 }, { "5H", 44 }, { "4H", 49 }, { "3H", 50 }, { "2H", 51 },
 		{ "JK", 52 }, { "JOKER", 52 },
 	};
-	static string CardSpawnName(int front_id) =>
-		$"{Main.PLUGIN_GUID}/Card/{SpawnName.SETUP_CARD}/{front_id}";
+	static string CardSpawnName(int front_id)
+		=> $"{Main.PLUGIN_GUID}/Card/{SpawnName.SETUP_CARD}/{front_id}";
 
 	const int DominoMeshIndexLimit = 28;
 	static readonly Dictionary<string, int> DominoMeshIndex = new()
@@ -38,18 +38,18 @@ static class Components
 	{
 		{ "PLASTIC", 0 }, { "METAL", 1 }, { "GOLD", 2 },
 	};
-	static string DominoSpawnName(int meshIndex, int matIndex) =>
-		$"{Main.PLUGIN_GUID}/Domino/{SpawnName.SET_OBJECT}/{matIndex != 0}/{meshIndex}/{matIndex}";
+	static string DominoSpawnName(int meshIndex, int matIndex)
+		=> $"{Main.PLUGIN_GUID}/Domino/{SpawnName.SET_OBJECT}/{matIndex != 0}/{meshIndex}/{matIndex}";
 
 	static readonly string[] ChessType = ["Pawn", "Rook", "Knight", "Bishop", "Queen", "King"];
 	const int ChessMaterialGold = 4;
-	static string ChessGoldSpawnName(string type) =>
-		$"{Main.PLUGIN_GUID}/Chess_{type}/{SpawnName.SET_OBJECT}/{false}/{-1}/{ChessMaterialGold}";
+	static string ChessGoldSpawnName(string type)
+		=> $"{Main.PLUGIN_GUID}/Chess_{type}/{SpawnName.SET_OBJECT}/{false}/{-1}/{ChessMaterialGold}";
 
 	static readonly string[] DiceType  = ["4", "6", "8", "10", "12", "20"];
 	const int DiceMaterialGold = 2;
-	static string DiceGoldSpawnName(string type) =>
-		$"{Main.PLUGIN_GUID}/Die_{type}/{SpawnName.SET_OBJECT}/{true}/{-1}/{DiceMaterialGold}";
+	static string DiceGoldSpawnName(string type)
+		=> $"{Main.PLUGIN_GUID}/Die_{type}/{SpawnName.SET_OBJECT}/{true}/{-1}/{DiceMaterialGold}";
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIGridMenuObjects), nameof(UIGridMenuObjects.InitComponents))]
