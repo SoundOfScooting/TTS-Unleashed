@@ -136,8 +136,8 @@ public readonly record struct Lua(string Text)
 	[InterpolatedStringHandler]
 	public readonly ref struct Template(int literalLength, int formattedCount)
 	{
-		readonly StringBuilder  builder = new(literalLength);  // min
-		readonly List<Variable> imports = new(formattedCount); // max
+		readonly StringBuilder  builder = new(literalLength); // min
+		readonly List<Variable> imports = [with(formattedCount)]; // max
 
 		public Lua Body => (Lua) builder.ToString();
 		public IEnumerable<Variable> Imports => imports;

@@ -45,12 +45,12 @@ static class GameObjectX
 	}
 	extension<T>(T @this) where T : Component
 	{
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("ApiDesign", "RS0030:Do not use banned APIs", Justification = "<Pending>")]
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "<Pending>")]
 		public T Copy(T source)
 		{
+#pragma warning disable RS0030 // Do not use banned APIs
 			@this = @this.GetCopyOf(source);
-			switch ((@this, source))
+#pragma warning restore RS0030 // Do not use banned APIs
+			switch (@this, source)
 			{
 				case (UISprite dst, UISprite src):
 					dst.type = src.type;

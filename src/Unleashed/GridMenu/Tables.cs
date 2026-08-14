@@ -20,7 +20,7 @@ static class Tables
 					// if (image && Utilities.RemoveCloneFromName(table.name) == TableObject.GetTablePrefabName(tableName))
 					// 	// doesn't allow "" (equivalent to cancel)
 					// 	image.bCustomUI = true;
-					// else 
+					// else
 					UICustomImage.Instance.QueueFake(@this =>
 					{
 						@this.CustomImageURL = @this.CustomImageURL.Trim();

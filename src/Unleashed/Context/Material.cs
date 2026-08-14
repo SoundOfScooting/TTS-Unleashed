@@ -125,7 +125,7 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 			return false;
 		}
 		matInt = matSync.MaterialIndex;
-		switch ((gameObject.tag, Utilities.RemoveCloneFromName(gameObject.name)))
+		switch (gameObject.tag, Utilities.RemoveCloneFromName(gameObject.name))
 		{
 			default:
 				matClass = default;
@@ -177,7 +177,7 @@ sealed class UZContextualMaterial : MonoBehaviour
 			// SetActive(NetworkInstance.GUIContextualMaterial, enabled: false);
 			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMaterial))),
 			x => x.MatchLdcI4(0),
-			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.SetActive)))			
+			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.SetActive)))
 		);
 		var e = c.Index;
 		c.Index = s;

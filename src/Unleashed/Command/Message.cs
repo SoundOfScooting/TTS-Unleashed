@@ -46,7 +46,7 @@ static class Message
 				return new(text, quoted);
 			}
 			var c = msg[e];
-			switch ((c, quot))
+			switch (c, quot)
 			{
 				default:
 					e++;

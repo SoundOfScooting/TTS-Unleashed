@@ -49,7 +49,7 @@ static class ClientVersion
 			return;
 		}
 		// Chat.SendChat($"{Colour.GreenHex}{name} is running compatible {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-] version V{clientVersion}.");
-		Wait.Frames(() => Main.Catch(() => 
+		Wait.Frames(() => Main.Catch(() =>
 		{
 			PlayerManager.Instance.PlayerStateFromID(sender.ID).IsModded = true;
 			PlayerManager.Instance.RPC(sender, RPCSetIsModded, NetworkPlayer.SERVER_ID);
