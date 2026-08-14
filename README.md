@@ -108,11 +108,11 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 ### Grab tool
 
 **Modded host and client:** Held objects can be rotated in all 3 directions.
-| Held keys    | Axis of rotation |
-| ------------ | ---------------- |
-| -            | Spin (Y axis)    |
-| Alt          | Flip (X/Z axis)  |
-| Ctrl *(new)* | Tilt (Z/X axis)  |
+| Held keys    | Axis of rotation       |
+| ------------ | ---------------------- |
+| -            | Spin (Y axis)          |
+| Alt          | Flip (X axis / Z axis) |
+| Ctrl *(new)* | Tilt (Z axis / X axis) |
 
 ### Draw tool
 
@@ -162,7 +162,8 @@ If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect 
 `Physics` context option is available *(formerly host-only)*.\
 **BUG:** The UI might not update client-side but it does apply server-side.
 
-`Scripting` context option is available, but only the GUID button and not the editor *(formerly host-only)*.
+`Scripting` context tab is available, but only the `GUID` option and not the editor *(formerly host-only)*.\
+**Host-only:** Right-clicking `GUID` opens a dialog window to change the GUID.
 
 `Name` field supports inserting multiple lines just like the `Description` field.
 

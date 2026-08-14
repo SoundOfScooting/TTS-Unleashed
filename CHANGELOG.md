@@ -3,6 +3,7 @@
 * Updated to game version 14.2.1 (Hotfix 4)
 * Added setting `Chat BBCode`
 * Fixed swap/force in color selection
+* Added ability to change GUID to object context
 * Fixed commands being case-sensitive
 <!-- * Re-added Herobrine -->
 
