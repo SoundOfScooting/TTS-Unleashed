@@ -64,7 +64,7 @@ sealed class UZContextualEphemeral : MonoBehaviour
 		c.GotoNext(MoveType.After,
 			// if (netPhysObject.IsSaved && !netPhysObject.IsDestroyed)
 			x => x.MatchLdloc(10),
-			x => x.MatchCallvirt(AccessTools.PropertyGetter(typeof(NetPhysObject), nameof(NetPhysObject.IsSaved)))
+			x => x.MatchCallvirt(() => NetPhysObject.__instance().IsSaved)
 		);
 		c.Emit(OpCodes.Ldloc, 10);
 		c.EmitDelegate(
@@ -124,9 +124,9 @@ sealed class UZContextualEphemeral : MonoBehaviour
 			// nPO.DoesNotPersist = base.NPO.DoesNotPersist;
 			x => x.MatchLdloc(out local),
 			x => x.MatchLdarg(0),
-			x => x.MatchCall    (AccessTools.PropertyGetter(typeof(ContainerObject), nameof(ContainerObject.NPO))),
-			x => x.MatchCallvirt(AccessTools.PropertyGetter(typeof(NetPhysObject),   nameof(NetPhysObject.DoesNotPersist))),
-			x => x.MatchCallvirt(AccessTools.PropertySetter(typeof(NetPhysObject),   nameof(NetPhysObject.DoesNotPersist)))
+			x => x.MatchCall    (() => ContainerObject.__instance().NPO),
+			x => x.MatchCallvirt(() => NetPhysObject.__instance().DoesNotPersist),
+			x => x.MatchCallvirt(() => NetPhysObject.__instance().DoesNotPersist, MethodType.Setter)
 		);
 		c.Emit(OpCodes.Ldarg_0);
 		c.Emit(OpCodes.Ldloc, local);

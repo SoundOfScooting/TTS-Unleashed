@@ -20,7 +20,7 @@ static class Decals
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// if (Network.IsServer)
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
+			x => x.MatchCall(() => Network.IsServer)
 		);
 		c.Remove();
 		c.Emit(OpCodes.Ldc_I4_1);

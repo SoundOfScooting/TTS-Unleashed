@@ -4,6 +4,7 @@ global using MonoMod.Cil;
 global using NewNet;
 global using UnityEngine;
 global using Unleashed.Extensions;
+global using Unleashed.Util;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -204,7 +205,7 @@ public sealed class Main : BaseUnityPlugin
 			var c = new ILCursor(il);
 			c.GotoNext(MoveType.Before,
 				// Utilities.SetCursor(WhiteCursorTexture, HardwareCursorOffest);
-				x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.WhiteCursorTexture)))
+				x => x.MatchLdfld(() => NetworkUI.__instance().WhiteCursorTexture)
 			);
 			c.MoveAfterLabels();
 			c.Remove();

@@ -62,7 +62,7 @@ static class UICustomObjectX
 	}
 
 	static object Invoke(object @this, string method)
-		=> AccessTools.Method(typeof(UICustomObjectX), method)
+		=> typeof(UICustomObjectX).Method(method)
 			.MakeGenericMethod(@this.GetType())
 			.Invoke(null, [@this]);
 

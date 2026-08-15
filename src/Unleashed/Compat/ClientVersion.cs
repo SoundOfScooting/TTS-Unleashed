@@ -16,7 +16,7 @@ static class ClientVersion
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// base.NetView.RPC(RPCTarget.Server, Register, playerName, VersionNumber, SystemInfo.deviceUniqueIdentifier, VRHMD.isVR);
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(NetworkUI), nameof(NetworkUI.VersionNumber)))
+			x => x.MatchCall(() => NetworkUI.__instance().VersionNumber)
 		);
 		c.EmitDelegate(
 			string(string VersionNumber)

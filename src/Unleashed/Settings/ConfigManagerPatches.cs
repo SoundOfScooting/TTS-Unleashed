@@ -18,9 +18,9 @@ static class ConfigManagerPatches
 			Keybind_P.Value = new(KeyCode.F1, KeyCode.Escape);
 
 		Main.Harmony.Patch(
-			AccessTools.Method(info.Instance.GetType(), "Update"),
+			info.Instance.GetType().Method("Update"),
 			postfix:
-				new(AccessTools.Method(typeof(ConfigManagerPatches), nameof(UpdatePostfix)))
+				new(Reflect.Method(UpdatePostfix))
 		);
 	}
 

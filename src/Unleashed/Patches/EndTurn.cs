@@ -17,9 +17,9 @@ class GUIEndTurnX : MonoBehaviour
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
+			x => x.MatchCall(() => Network.IsServer)
 		);
-		c.Next.Operand =     AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
+		c.Next.OperandAsGetter = () => Network.IsAdmin;
 	}
 
 	void OnAltClick()

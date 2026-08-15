@@ -91,7 +91,7 @@ static class ServerSetup
 			// int num = UnityEngine.Random.Range(1, 9);
 			x => x.MatchLdcI4(1),
 			x => x.MatchLdcI4(9),
-			x => x.MatchCall(AccessTools.Method(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), [ typeof(int), typeof(int) ]))
+			x => x.MatchCall((Func<int, int, int>) UnityEngine.Random.Range)
 		);
 		// c.Emit(OpCodes.Ldloca, 4);
 		c.EmitDelegate(
@@ -107,9 +107,9 @@ static class ServerSetup
 		c.GotoNext(MoveType.After,
 			// v13.3: switch (UnityEngine.Random.Range(1, 6))
 			// x => x.MatchLdcI4(1),
-			// v14.0+: switch (UnityEngine.Random.Range((!IsHotseat) ? 1 : 3, 6))
+			// v14.0: switch (UnityEngine.Random.Range((!IsHotseat) ? 1 : 3, 6))
 			x => x.MatchLdcI4(6),
-			x => x.MatchCall(AccessTools.Method(typeof(UnityEngine.Random), nameof(UnityEngine.Random.Range), [ typeof(int), typeof(int) ]))
+			x => x.MatchCall((Func<int, int, int>) UnityEngine.Random.Range)
 		);
 		c.Emit(OpCodes.Ldloca, 0);
 		c.EmitDelegate(
@@ -146,7 +146,7 @@ static class ServerSetup
 		c.GotoNext(MoveType.Before,
 			// ClientRequestColor("White");
 			x => x.MatchLdstr(Colour.WhiteLabel),
-			x => x.MatchCall(AccessTools.Method(typeof(NetworkUI), nameof(NetworkUI.ClientRequestColor)))
+			x => x.MatchCall(NetworkUI.__instance().ClientRequestColor)
 		);
 		c.MoveAfterLabels();
 		c.RemoveRange(2);

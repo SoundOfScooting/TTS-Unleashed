@@ -26,7 +26,7 @@ static class TiltRotation
 				// 2: (skipped)
 				// 3: ChangeHeldSpinRotationIndex(num4);
 				x => x.MatchLdcI4(-1),
-				x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.ChangeHeldSpinRotationIndex)))
+				x => x.MatchCall(Pointer.__instance().ChangeHeldSpinRotationIndex)
 			);
 			if (i == 2)
 				continue;
@@ -49,7 +49,7 @@ static class TiltRotation
 			// ChangeHeldFlipRotationIndex(12);
 			x => x.MatchLdcI4(12),
 			x => x.MatchLdcI4(-1),
-			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.ChangeHeldFlipRotationIndex)))
+			x => x.MatchCall(Pointer.__instance().ChangeHeldFlipRotationIndex)
 		);
 		c.Index--;
 		c.MoveAfterLabels();
@@ -77,7 +77,7 @@ static class TiltRotation
 				// 1: identity = Quaternion.AngleAxis(grabbedNPO.HeldRotationOffset.z, Vector3.forward) * identity;
 				// 2: identity = Quaternion.AngleAxis(grabbedNPO.HeldFlipRotationIndex * 15, axis) * identity;
 				// 3: identity = Quaternion.AngleAxis(grabbedNPO.HeldSpinRotationIndex * 15, Vector3.up) * identity;
-				x => x.MatchCall(AccessTools.Method(typeof(Quaternion), "op_Multiply", [ typeof(Quaternion), typeof(Quaternion) ])),
+				x => x.MatchCall(typeof(Quaternion).Method("op_Multiply", [ typeof(Quaternion), typeof(Quaternion) ])),
 				x => x.MatchStloc(13)
 			);
 		c.Emit(OpCodes.Ldarg_0);

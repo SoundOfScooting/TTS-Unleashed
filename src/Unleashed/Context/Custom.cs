@@ -10,10 +10,10 @@ static class Custom
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualCustom, Network.IsServer && (bool)InfoObject.GetComponent<CustomObject>());
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualCustom))),
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
+			x => x.MatchLdfld(() => NetworkUI.__instance().GUIContextualCustom),
+			x => x.MatchCall(() => Network.IsServer)
 		);
-		c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
+		c.Prev.OperandAsGetter = () => Network.IsAdmin;
 	}
 
 	[HarmonyILManipulator]
@@ -32,9 +32,9 @@ static class Custom
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
+			x => x.MatchCall(() => Network.IsServer)
 		);
-		c.Next.Operand     = AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
+		c.Next.OperandAsGetter = () => Network.IsAdmin;
 	}
 	// #generic
 	[HarmonyPrefix]

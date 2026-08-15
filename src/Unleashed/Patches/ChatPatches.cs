@@ -41,7 +41,7 @@ static class ChatPatches
 		c.GotoNext(MoveType.After,
 			x => x.MatchLdstr("Help"),
 			x => x.MatchLdcI4((int) ControlType.Keyboard),
-			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButtonDown)))
+			x => x.MatchCall(zInput.GetButtonDown)
 		);
 		c.EmitDelegate(
 			bool(bool helpDown) =>
@@ -75,7 +75,7 @@ static class ChatPatches
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			x => x.MatchCall(AccessTools.Method(typeof(NGUIText), nameof(NGUIText.StripSymbols)))
+			x => x.MatchCall(NGUIText.StripSymbols)
 		);
 		c.MoveAfterLabels();
 		c.Remove();

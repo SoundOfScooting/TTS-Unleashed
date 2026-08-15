@@ -119,7 +119,7 @@ static class VectorToolManagerX
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// else if (CurrentPointerMode == PointerMode.Paint)
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Pointer), nameof(Pointer.CurrentPointerMode))),
+			x => x.MatchCall(() => Pointer.__instance().CurrentPointerMode),
 			x => x.MatchLdcI4((int) PointerMode.Paint),
 			x => x.MatchBneUn(out _)
 		);
@@ -165,7 +165,7 @@ static class VectorToolManagerX
 		var found = 0;
 		while (c.TryGotoNext(MoveType.Before,
 			// RPCRemoveLine(drawnLine.Key);
-			x => x.MatchCall(AccessTools.Method(typeof(VectorToolManager), nameof(VectorToolManager.RPCRemoveLine)))
+			x => x.MatchCall(VectorToolManager.__instance().RPCRemoveLine)
 		)){
 			found++;
 			c.Emit(OpCodes.Ldloc_2);
@@ -188,7 +188,7 @@ static class VectorToolManagerX
 			// if (zInput.GetButtonDown("Tap") && drawing)
 			x => x.MatchLdstr("Tap"),
 			x => x.MatchLdcI4(0),
-			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButtonDown)))
+			x => x.MatchCall(zInput.GetButtonDown)
 		);
 		c.Emit(OpCodes.Ldarg_0);
 		c.EmitDelegate(
@@ -232,7 +232,7 @@ static class VectorToolManagerX
 		c.GotoNext(MoveType.After,
 			// if (zInput.GetButtonDown("Tap") && drawing)
 			x => x.MatchLdarg(0),
-			x => x.MatchLdfld(AccessTools.Field(typeof(VectorToolManager), nameof(VectorToolManager.drawing))),
+			x => x.MatchLdfld(() => VectorToolManager.__instance().drawing),
 			x => x.MatchBrfalse(out skipLabel)
 		);
 		c.Emit(OpCodes.Ldarg_0); // could instead emit before "Tap" check

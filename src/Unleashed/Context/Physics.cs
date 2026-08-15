@@ -10,10 +10,10 @@ static class Physics
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualPhysics, Network.IsServer && flag);
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualPhysics))),
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsServer)))
+			x => x.MatchLdfld(() => NetworkUI.__instance().GUIContextualPhysics),
+			x => x.MatchCall(() => Network.IsServer)
 		);
-		// c.Previous.Operand = AccessTools.PropertyGetter(typeof(Network), nameof(Network.IsAdmin));
+		// c.Prev.OperandAsGetter = () => Network.IsAdmin;
 		c.EmitDelegate(bool(bool isServer) => Network.IsAdmin || PermissionsOptions.Options.Contextual);
 	}
 }

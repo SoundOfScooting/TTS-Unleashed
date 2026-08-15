@@ -25,11 +25,12 @@ static class UIPopupListX
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
+			// #audit: comment is wrong
 			// Singleton<UIPalette>.Instance.InitTheme(this);
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Singleton<UIPalette>), nameof(Singleton<>.Instance))),
+			x => x.MatchCall(() => UIPalette.Instance),
 			x => x.MatchLdarg(0),
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Singleton<UIPalette>), nameof(Singleton<>.Instance))),
-			x => x.MatchLdfld(AccessTools.Field(typeof(UIPalette), nameof(UIPalette.CurrentThemeColours)))
+			x => x.MatchCall(() => UIPalette.Instance),
+			x => x.MatchLdfld(() => UIPalette.__instance().CurrentThemeColours)
 		);
 		c.MoveAfterLabels();
 		c.Emit(OpCodes.Ldarg_0);

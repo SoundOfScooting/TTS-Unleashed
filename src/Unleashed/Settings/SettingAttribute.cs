@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Unleashed.Util;
 
 namespace Unleashed.Settings;
 

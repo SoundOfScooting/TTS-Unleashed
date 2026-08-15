@@ -58,10 +58,10 @@ static class CameraControls
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// x += zInput.GetAxis("Camera Horizontal") * 100f * -1f * Time.deltaTime * xLookMulti;
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(CameraController), nameof(CameraController.xLookMulti))),
+			x => x.MatchCall(() => CameraController.__instance().xLookMulti),
 			x => x.MatchMul(),
 			x => x.MatchAdd(),
-			x => x.MatchStfld(AccessTools.Field(typeof(CameraController), nameof(CameraController.x)))
+			x => x.MatchStfld(() => CameraController.__instance().x)
 		);
 		c.Index -= 2;
 		c.Remove();
@@ -74,10 +74,10 @@ static class CameraControls
 
 		c.GotoNext(MoveType.After,
 			// y -= zInput.GetAxis("Camera Vertical") * 100f * -1f * Time.deltaTime * yLookMulti;
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(CameraController), nameof(CameraController.yLookMulti))),
+			x => x.MatchCall(() => CameraController.__instance().yLookMulti),
 			x => x.MatchMul(),
 			x => x.MatchSub(),
-			x => x.MatchStfld(AccessTools.Field(typeof(CameraController), nameof(CameraController.y)))
+			x => x.MatchStfld(() => CameraController.__instance().y)
 		);
 		c.Index -= 2;
 		c.Remove();
@@ -94,7 +94,7 @@ static class CameraControls
 			// zInput.GetButton("Camera Hold Rotate")
 			x => x.MatchLdstr("Camera Hold Rotate"),
 			x => x.MatchLdcI4(0),
-			x => x.MatchCall(AccessTools.Method(typeof(zInput), nameof(zInput.GetButton)))
+			x => x.MatchCall(zInput.GetButton)
 		)){
 			found++;
 			c.EmitDelegate(

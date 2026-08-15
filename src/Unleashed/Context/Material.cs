@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using I2.Loc;
 using Unleashed.Compat;
 
@@ -168,16 +167,16 @@ sealed class UZContextualMaterial : MonoBehaviour
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualGroup, CheckGroup());
-			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.CheckGroup))),
-			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.SetActive)))
+			x => x.MatchCall(Pointer.__instance().CheckGroup),
+			x => x.MatchCall(Pointer.__instance().SetActive)
 			// if ((InfoObject.tag == "Dice" || InfoObject.tag == "Domino" || InfoObject.tag == "Chess") && InfoObject.name != "Die_6_Rounded(Clone)" && (bool)InfoObject.GetComponent<MaterialSyncScript>())
 		);
 		var s = c.Index;
 		c.GotoNext(MoveType.After,
 			// SetActive(NetworkInstance.GUIContextualMaterial, enabled: false);
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMaterial))),
+			x => x.MatchLdfld(() => NetworkUI.__instance().GUIContextualMaterial),
 			x => x.MatchLdcI4(0),
-			x => x.MatchCall(AccessTools.Method(typeof(Pointer), nameof(Pointer.SetActive)))
+			x => x.MatchCall(Pointer.__instance().SetActive)
 		);
 		var e = c.Index;
 		c.Index = s;

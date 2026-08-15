@@ -31,7 +31,7 @@ static class Events
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// UnityEngine.Debug.LogException(exception);
-			x => x.MatchCall(AccessTools.Method(typeof(Debug), nameof(Debug.LogException), [typeof(Exception)]))
+			x => x.MatchCall((Action<Exception>) Debug.LogException)
 		);
 		// for some reason instructions can't be inserted before
 		c.Prev.OpCode  = OpCodes.Dup;
@@ -91,9 +91,9 @@ static class Events
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// NetworkInstance.GUIContextualMenu.SetActive(value: true);
-			x => x.MatchLdfld(AccessTools.Field(typeof(NetworkUI), nameof(NetworkUI.GUIContextualMenu))),
+			x => x.MatchLdfld(() => NetworkUI.__instance().GUIContextualMenu),
 			x => x.MatchLdcI4(1),
-			x => x.MatchCallvirt(AccessTools.Method(typeof(GameObject), nameof(GameObject.SetActive)))
+			x => x.MatchCallvirt(GameObject.__instance().SetActive)
 		);
 		c.Index--;
 		c.EmitDelegate(TriggerStartContextual);

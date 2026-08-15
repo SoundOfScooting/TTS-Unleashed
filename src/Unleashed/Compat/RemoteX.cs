@@ -1,5 +1,4 @@
 using System.Reflection;
-using Unleashed.Util;
 using MethodRPCSort = NewNet.NetworkView.MethodRPCSort;
 
 namespace Unleashed.Compat;
@@ -35,7 +34,7 @@ sealed class RemoteX : BaseNetworkAttribute
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// RPCMethods.Sort((MethodRPCSort x, MethodRPCSort y) => string.Compare(x.uniqueName, y.uniqueName, StringComparison.Ordinal));
-			x => x.MatchCallvirt(AccessTools.Method(typeof(List<MethodRPCSort>), nameof(List<>.Sort), [ typeof(Comparison<MethodRPCSort>) ]))
+			x => x.MatchCallvirt((Action<Comparison<MethodRPCSort>>) List<MethodRPCSort>.__instance().Sort)
 		);
 		c.MoveAfterLabels();
 		c.Remove();

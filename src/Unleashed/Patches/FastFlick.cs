@@ -29,8 +29,8 @@ static class FastFlick
 		c.GotoNext(MoveType.After,
 			// if (HighLightedObjects.Count == 0)
 			x => x.MatchLdarg   (0),
-			x => x.MatchCall    (AccessTools.PropertyGetter(typeof(Pointer), nameof(Pointer.HighLightedObjects))),
-			x => x.MatchCallvirt(AccessTools.PropertyGetter(typeof(List<NetPhysObject>), nameof(List<>.Count)))
+			x => x.MatchCall    (() => Pointer.__instance().HighLightedObjects),
+			x => x.MatchCallvirt(() => List<NetPhysObject>.__instance().Count)
 		);
 		c.Emit(OpCodes.Ldarg_2);
 		c.EmitDelegate(

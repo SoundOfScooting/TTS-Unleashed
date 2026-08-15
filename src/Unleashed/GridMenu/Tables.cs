@@ -62,7 +62,7 @@ static class Tables
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
 			// tablesButton.SpriteColor = ((tablesButton.Name == "None") ? Color.red : Color.white);
-			x => x.MatchCall(AccessTools.PropertyGetter(typeof(Color), nameof(Color.white))),
+			x => x.MatchCall(() => Color.white),
 			x => x.MatchBr(out _)
 		);
 		c.MoveAfterLabels();
