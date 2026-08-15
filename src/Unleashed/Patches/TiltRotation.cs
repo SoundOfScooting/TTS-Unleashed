@@ -10,7 +10,7 @@ static class TiltRotation
 		if      (zInput.GetButtonUp("Grab"))
 		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
 		if      (grabbableNPO.HeldByPlayerID == __instance.ID)
-		if      (grabbableNPO.HasData())
+		if      (grabbableNPO.HeldTiltRotationIndex != 0)
 			grabbableNPO.HeldTiltRotationIndex = 0;
 	}
 	[HarmonyILManipulator]
@@ -85,7 +85,7 @@ static class TiltRotation
 		c.Emit(OpCodes.Ldloc, 13);
 		c.EmitDelegate(
 			Quaternion(ManagerPhysicsObject __instance, NetPhysObject grabbedNPO, Quaternion identity)
-				=> !grabbedNPO.HasData()
+				=> grabbedNPO.HeldTiltRotationIndex == 0
 					? identity
 				: Quaternion.AngleAxis(
 					grabbedNPO.HeldTiltRotationIndex * ManagerPhysicsObject.MIN_ROTATION_DEG,

@@ -159,6 +159,9 @@ If the host is not modded, `Custom Tile` objects cannot have "Stretch to Aspect 
 `Show Hand` context option is available on objects in any hand, not just your own.\
 **BUG:** This feature is buggy *(just like the regular `Show Hand` button)*.
 
+**Host-only:** Added option *(new)* `Toggles` -> `Ephemeral`, which excludes an object from being saved to a saved game.\
+This is useful when combined with `Toggles` -> `Persistent`, which prevents an object from being deleted when loading saves.
+
 `Physics` context option is available *(formerly host-only)*.\
 **BUG:** The UI might not update client-side but it does apply server-side.
 

@@ -2,24 +2,40 @@ using Unleashed.Compat;
 
 namespace Unleashed.Extensions;
 
+static class PlayerActionX
+{
+	extension(PlayerAction)
+	{
+		// #todo: pick unique values, add to Player.Action (LuaGlobalPlayer.LuaAction)
+		public static PlayerAction TiltIncrementalRight => PlayerAction.FlipIncrementalRight;
+		public static PlayerAction TiltOver             => PlayerAction.FlipOver;
+		public static PlayerAction TiltIncrementalLeft  => PlayerAction.FlipIncrementalLeft;
+	}
+}
+
 static class NetPhysObjectX
 {
 	sealed class Data : MonoBehaviour
 	{
+		public bool Ephemeral;
 		public int HeldTiltRotationIndex;
 	}
 	extension(NetPhysObject @this)
 	{
-		Data Data => @this.gameObject.GetOrAddComponent<Data>();
-		public bool HasData() => @this.TryGetComponent<Data>(out _);
-		public ref int HeldTiltRotationIndex => ref @this.Data.HeldTiltRotationIndex;
+		Data TryData => @this.TryGetComponent<Data>(out var data) ? data : null;
+		Data NewData => @this.gameObject.GetOrAddComponent<Data>();
+
+		public bool Ephemeral
+		{
+			get => @this.TryData?.Ephemeral ?? default;
+			set => @this.NewData.Ephemeral = value;
+		}
+		public int HeldTiltRotationIndex
+		{
+			get => @this.TryData?.HeldTiltRotationIndex ?? default;
+			set => @this.NewData.HeldTiltRotationIndex = value;
+		}
 	}
-	// extension(PlayerAction) // #todo: would prefer string IDs on Lua side
-	// {
-	// 	public static PlayerAction TiltIncrementalRight => PlayerAction.Under+1;
-	// 	public static PlayerAction TiltOver             => PlayerAction.Under+2;
-	// 	public static PlayerAction TiltIncrementalLeft  => PlayerAction.Under+3;
-	// }
 	extension(Pointer @this)
 	{
 		[RemoteX(Permission.Owner, SendType.ReliableNoDelay)]
@@ -33,18 +49,27 @@ static class NetPhysObjectX
 					@this.RPC(RPCTarget.Server, @this.ChangeHeldTiltRotationIndex, tiltRotationDelta, touchId);
 				return;
 			}
-			// #todo: wrong
 			var action = tiltRotationDelta switch
 			{
-				>= 1 and <= 11 => PlayerAction.FlipIncrementalRight,
-				12             => PlayerAction.FlipOver,
-				_              => PlayerAction.FlipIncrementalLeft,
+				>= 1 and <= 11 => PlayerAction.TiltIncrementalRight,
+				12             => PlayerAction.TiltOver,
+				_              => PlayerAction.TiltIncrementalLeft,
 			};
 			if (!EventManager.CheckPlayerAction(@this.PointerColorLabel, action, @this.GetGrabbedLuaObjects(touchId)))
 				return;
 			foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
 			if      (grabbableNPO.HeldByPlayerID == @this.ID && grabbableNPO.HeldByTouchID == touchId)
 				ManagerPhysicsObject.Instance.SetHeldObjectTiltRotationIndex(grabbableNPO, tiltRotationDelta, @this.ID);
+		}
+
+		public void Ephemeral(bool ephemeral)
+		{
+			foreach (var npo in @this.GetSelectedNPOs())
+			if      (npo)
+			{
+				npo.Ephemeral = ephemeral;
+				npo.HighlightNotify(@this.PointerDarkColour);
+			}
 		}
 	}
 	extension(ManagerPhysicsObject @this)
