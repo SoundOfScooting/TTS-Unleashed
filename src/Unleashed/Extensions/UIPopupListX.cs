@@ -25,8 +25,7 @@ static class UIPopupListX
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.Before,
-			// #audit: comment is wrong
-			// Singleton<UIPalette>.Instance.InitTheme(this);
+			// Singleton<UIPalette>.Instance.SetColours(this, Singleton<UIPalette>.Instance.CurrentThemeColours, instant: true);
 			x => x.MatchCall(() => UIPalette.Instance),
 			x => x.MatchLdarg(0),
 			x => x.MatchCall(() => UIPalette.Instance),

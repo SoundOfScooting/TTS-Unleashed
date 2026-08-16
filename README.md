@@ -68,7 +68,7 @@ While in the color selection UI, if you right click a color/`Hand`, the camera h
 ## Turns
 
 **Admin-only:** The turn star icon next to a player's name that skips their turn can be clicked *(formerly host-only)*.\
-**Admin-only:** If you right click the turn star or end turn button, you will pass the turn to the previous player instead of the next one.
+If you right click the turn star or end turn button, you will pass the turn to the previous player instead of the next one.
 
 ## Name button context menu
 

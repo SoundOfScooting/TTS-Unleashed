@@ -39,7 +39,6 @@ static class Tables
 							);
 						@this.Close();
 					});
-					// #todo: is this correct?
 					Language.UpdateUILabel(UICustomImage.Instance.HeaderLabel, (
 						tableName == "Custom Square"
 							? "Custom Table Square"

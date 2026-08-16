@@ -24,7 +24,7 @@ class GUIEndTurnX : MonoBehaviour
 
 	void OnAltClick()
 	{
-		if (!Network.IsAdmin/* && !Turns.Instance.turnsState.PassTurns*/)
+		if (!Network.IsAdmin && !Turns.Instance.TurnsState.PassTurns)
 			return;
 		Turns.Instance.TurnsState.Reverse ^= true;
 		{
