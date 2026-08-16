@@ -1,10 +1,15 @@
 # dev
 
 * Updated to game version 14.2.1 (Hotfix 4)
+<!-- this space intentionally left blank -->
 * Added setting `Chat BBCode`
+<!-- this space intentionally left blank -->
 * Fixed swap/force in color selection
+* Added tilt rotation actions to `Player.Action`
+<!-- this space intentionally left blank -->
 * Added Ephemeral toggle to object context
 * Added ability to change GUID to object context
+<!-- this space intentionally left blank -->
 * Fixed commands being case-sensitive
 <!-- * Re-added Herobrine -->
 

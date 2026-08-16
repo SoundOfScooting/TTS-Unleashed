@@ -14,12 +14,7 @@ public static class EnumX
 			=> Enum.GetName(typeof(TEnum), value);
 		public static Type GetUnderlyingType<TEnum>() where TEnum: struct, Enum
 			=> Enum.GetUnderlyingType(typeof(TEnum));
-		public static TEnum[] GetValues<TEnum>() where TEnum: struct, Enum
-			=> (TEnum[]) Enum.GetValues(typeof(TEnum));
-		public static bool IsDefined<TEnum>(TEnum value) where TEnum: struct, Enum
-			=> Enum.IsDefined(typeof(TEnum), value);
-		public static bool IsDefined<TEnum>(object value) where TEnum: struct, Enum
-			=> Enum.IsDefined(typeof(TEnum), value);
+		// [CLSCompliant(false)]
 		public static TEnum ToObject<TEnum>(ulong value) where TEnum: struct, Enum
 			=> (TEnum) Enum.ToObject(typeof(TEnum), value);
 		// [CLSCompliant(false)]

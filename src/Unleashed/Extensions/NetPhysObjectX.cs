@@ -2,14 +2,15 @@ using Unleashed.Compat;
 
 namespace Unleashed.Extensions;
 
+[EnumExtension<PlayerAction>]
 static class PlayerActionX
 {
 	extension(PlayerAction)
 	{
-		// #todo: pick unique values, add to Player.Action (LuaGlobalPlayer.LuaAction)
-		public static PlayerAction TiltIncrementalRight => PlayerAction.FlipIncrementalRight;
-		public static PlayerAction TiltOver             => PlayerAction.FlipOver;
-		public static PlayerAction TiltIncrementalLeft  => PlayerAction.FlipIncrementalLeft;
+		// #want: extension const
+		public static PlayerAction TiltIncrementalRight => (PlayerAction) (-1);
+		public static PlayerAction TiltOver             => (PlayerAction) (-2);
+		public static PlayerAction TiltIncrementalLeft  => (PlayerAction) (-3);
 	}
 }
 
@@ -51,9 +52,9 @@ static class NetPhysObjectX
 			}
 			var action = tiltRotationDelta switch
 			{
-				>= 1 and <= 11 => PlayerAction.TiltIncrementalRight,
-				12             => PlayerAction.TiltOver,
-				_              => PlayerAction.TiltIncrementalLeft,
+				> 0 and < ManagerPhysicsObject.HALF_ROTATION_INDEX => PlayerAction.TiltIncrementalRight,
+				ManagerPhysicsObject.HALF_ROTATION_INDEX           => PlayerAction.TiltOver,
+				_                                                  => PlayerAction.TiltIncrementalLeft,
 			};
 			if (!EventManager.CheckPlayerAction(@this.PointerColorLabel, action, @this.GetGrabbedLuaObjects(touchId)))
 				return;
@@ -80,7 +81,7 @@ static class NetPhysObjectX
 			var heldFlipRotationIndex = npo.HeldFlipRotationIndex;
 			var heldSpinRotationIndex = npo.HeldSpinRotationIndex;
 			var heldTiltRotationIndex = npo.HeldTiltRotationIndex;
-			var num = (heldTiltRotationIndex + tiltDelta) % 24;
+			var num = (heldTiltRotationIndex + tiltDelta) % ManagerPhysicsObject.MAX_ROTATION_INDEX;
 
 			var lua = npo.Lua;
 			var playerColor = PlayerManager.Instance.PlayerStateFromID(id)?.ColorLabel;

@@ -47,7 +47,7 @@ static class TiltRotation
 		c.Index = 0;
 		c.GotoNext(MoveType.After,
 			// ChangeHeldFlipRotationIndex(12);
-			x => x.MatchLdcI4(12),
+			x => x.MatchLdcI4(ManagerPhysicsObject.HALF_ROTATION_INDEX),
 			x => x.MatchLdcI4(-1),
 			x => x.MatchCall(Pointer.__instance().ChangeHeldFlipRotationIndex)
 		);

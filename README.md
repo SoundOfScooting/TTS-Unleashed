@@ -107,7 +107,8 @@ If you hold Shift/Ctrl when clicking `Change Color` on yourself, you will remain
 
 ### Grab tool
 
-**Modded host and client:** Held objects can be rotated in all 3 directions.
+**Modded host and client:** Held objects can be rotated in all 3 directions.\
+This adds 3 new entries to the `Player.Action` enum: `TiltIncrementalRight`, `TiltOver`, `TiltIncrementalLeft`
 | Held keys    | Axis of rotation       |
 | ------------ | ---------------------- |
 | -            | Spin (Y axis)          |
