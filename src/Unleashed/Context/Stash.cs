@@ -19,7 +19,7 @@ sealed class UZContextualStash : MonoBehaviour
 	UILabel Label;
 
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 	{

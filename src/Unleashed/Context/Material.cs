@@ -155,7 +155,7 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 sealed class UZContextualMaterial : MonoBehaviour
 {
 	// [ModuleInitializer]
-	// internal static void Initializer()
+	// internal static void ModuleInitializer()
 	// 	=> Events.OnStartConnected += OnStartConnected;
 	// static void OnStartConnected()
 	// 	=> NetworkUI.Instance.GUIContextualMaterial.GetOrAddComponent<UZContextualMaterial>();

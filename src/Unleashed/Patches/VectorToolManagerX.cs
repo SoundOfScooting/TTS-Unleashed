@@ -8,7 +8,7 @@ namespace Unleashed.Patches;
 static class VectorToolManagerX
 {
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 		=> Wait.Frames(UpdateUI);

@@ -19,7 +19,7 @@ static class Scripting
 	}
 
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnStartContextual += OnStartContextual;
 	static void OnStartContextual()
 	{

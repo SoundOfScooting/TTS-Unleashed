@@ -6,7 +6,7 @@ namespace Unleashed.Extensions;
 static class PlayerStateX
 {
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 	{
 		Events.OnStartConnected    += OnStartConnected;
 		Events.OnStartDisconnected += OnStartDisconnected;

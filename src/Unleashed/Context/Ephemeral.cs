@@ -9,7 +9,7 @@ sealed class UZContextualEphemeral : MonoBehaviour
 		=> Instantiate(original, original.parent);
 
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 		=> InstantiateSibling(NetworkUI.Instance.GUIContextualDestroyableBool.transform.parent)

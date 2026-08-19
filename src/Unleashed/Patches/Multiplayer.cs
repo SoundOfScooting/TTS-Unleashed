@@ -123,7 +123,7 @@ static class Multiplayer
 	static void TriggerServerInitializedPrefix() => UpdateNickname();
 
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnPlayersAddOther += OnPlayersAddOther;
 	static void OnPlayersAddOther(PlayerState playerState)
 	{

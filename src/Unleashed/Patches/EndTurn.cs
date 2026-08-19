@@ -6,7 +6,7 @@ namespace Unleashed.Patches;
 class GUIEndTurnX : MonoBehaviour
 {
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 		=> NetworkUI.Instance.GUIEndTurn.GetOrAddComponent<GUIEndTurnX>();

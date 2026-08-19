@@ -102,7 +102,7 @@ static class Events
 	static bool addingAllPlayers; // annoying
 
 	[ModuleInitializer]
-	internal static void Initializer()
+	internal static void ModuleInitializer()
 	{
 		NetworkEvents.OnServerInitialized += OnServerInitialized;
 		NetworkEvents.OnConnectedToServer += OnConnectedToServer;
