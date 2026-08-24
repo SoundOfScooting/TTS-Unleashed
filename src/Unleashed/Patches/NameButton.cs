@@ -164,7 +164,7 @@ sealed class UINameButtonX : MonoBehaviour
 					return false;
 				}
 
-				if (playerID != Network.ID || zInput.GetButton("Ctrl") || zInput.GetButton("Shift"))
+				if (playerID != Network.ID || zInput.GetButton(Inputs.Ctrl) || zInput.GetButton(Inputs.Shift))
 				{
 					UIColorSelection.id = playerID;
 					__instance.bNeedToPickColour = true;

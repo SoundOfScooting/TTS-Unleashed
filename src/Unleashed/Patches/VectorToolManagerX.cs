@@ -186,7 +186,7 @@ static class VectorToolManagerX
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
 			// if (zInput.GetButtonDown("Tap") && drawing)
-			x => x.MatchLdstr("Tap"),
+			x => x.MatchLdstr(Inputs.Tap),
 			x => x.MatchLdcI4(0),
 			x => x.MatchCall(zInput.GetButtonDown)
 		);

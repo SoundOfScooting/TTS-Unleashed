@@ -39,14 +39,14 @@ static class ChatPatches
 	{
 		var c = new ILCursor(il);
 		c.GotoNext(MoveType.After,
-			x => x.MatchLdstr("Help"),
+			x => x.MatchLdstr(Inputs.Help),
 			x => x.MatchLdcI4((int) ControlType.Keyboard),
 			x => x.MatchCall(zInput.GetButtonDown)
 		);
 		c.EmitDelegate(
 			bool(bool helpDown) =>
 			{
-				if (!helpDown || !Enabled.Value || zInput.GetButton("Shift"))
+				if (!helpDown || !Enabled.Value || zInput.GetButton(Inputs.Shift))
 					return helpDown;
 				if (!UICamera.SelectIsInput())
 				{

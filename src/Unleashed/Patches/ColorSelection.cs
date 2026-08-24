@@ -74,16 +74,16 @@ sealed class UIColorSelectionX : MonoBehaviour
 	void Update()
 	{
 		if (restartTooltip ||
-			zInput.GetButtonChanged("Ctrl") ||
-			zInput.GetButtonChanged("Shift")
+			zInput.GetButtonChanged(Inputs.Ctrl) ||
+			zInput.GetButtonChanged(Inputs.Shift)
 		){
 			restartTooltip = false;
 			tooltip.ChangeTooltip(originalTooltip);
 			if (!UZCameraHome.NeedToPickHome && Network.IsAdmin)
 			{
-				if (zInput.GetButton("Shift"))
+				if (zInput.GetButton(Inputs.Shift))
 					tooltip.ChangeTooltip("[SWAP]\n"  + tooltip.Tooltip);
-				else if (zInput.GetButton("Ctrl"))
+				else if (zInput.GetButton(Inputs.Ctrl))
 					tooltip.ChangeTooltip("[FORCE]\n" + tooltip.Tooltip);
 			}
 		}
@@ -99,7 +99,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 			return false;
 		}
 		if (!Network.IsAdmin ||
-			!zInput.GetButton("Ctrl") && !zInput.GetButton("Shift") ||
+			!zInput.GetButton(Inputs.Ctrl) && !zInput.GetButton(Inputs.Shift) ||
 			!PlayerManager.Instance.ColourInUse(__instance.label)
 		) return true;
 
@@ -112,7 +112,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 			$"""
 			local target = { PlayerManager.Instance.PlayersDictionary[targetID] }
 			local seated = { PlayerManager.Instance.PlayersDictionary[seatedID] }
-			local swap   = { zInput.GetButton("Shift") }
+			local swap   = { zInput.GetButton(Inputs.Shift) }
 			{ Lua.ChangePlayerColorSeated }(target, seated, swap)
 			"""
 		);
@@ -138,7 +138,7 @@ sealed class UIColorSelectionX : MonoBehaviour
 				return false;
 			return !PlayerManager.Instance.ColourInUse(label) || (
 				Network.IsAdmin &&
-				(zInput.GetButton("Ctrl") || zInput.GetButton("Shift")) &&
+				(zInput.GetButton(Inputs.Ctrl) || zInput.GetButton(Inputs.Shift)) &&
 				(label != PlayerManager.Instance.ColourLabelFromID(Network.ToID(UIColorSelection.id)))
 			);
 		}

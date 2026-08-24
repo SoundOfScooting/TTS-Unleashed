@@ -7,7 +7,7 @@ static class TiltRotation
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.Update))]
 	static void UpdatePrefix(Pointer __instance) // #hack
 	{
-		if      (zInput.GetButtonUp("Grab"))
+		if      (zInput.GetButtonUp(Inputs.Grab))
 		foreach (var grabbableNPO in ManagerPhysicsObject.Instance.GrabbableNPOs)
 		if      (grabbableNPO.HeldByPlayerID == __instance.ID)
 		if      (grabbableNPO.HeldTiltRotationIndex != 0)
@@ -36,7 +36,7 @@ static class TiltRotation
 			c.EmitDelegate(
 				void(Pointer __instance, int spinRotationDelta, int touchId) =>
 				{
-					if (zInput.GetButton("Ctrl"))
+					if (zInput.GetButton(Inputs.Ctrl))
 						__instance.ChangeHeldTiltRotationIndex(spinRotationDelta, touchId);
 					else
 						__instance.ChangeHeldSpinRotationIndex(spinRotationDelta, touchId);
@@ -57,7 +57,7 @@ static class TiltRotation
 		c.EmitDelegate(
 			void(Pointer __instance, int flipRotationDelta, int touchId) =>
 			{
-				if (zInput.GetButton("Ctrl"))
+				if (zInput.GetButton(Inputs.Ctrl))
 					__instance.ChangeHeldTiltRotationIndex(flipRotationDelta, touchId);
 				else
 					__instance.ChangeHeldFlipRotationIndex(flipRotationDelta, touchId);

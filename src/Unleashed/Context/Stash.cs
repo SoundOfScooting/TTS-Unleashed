@@ -99,8 +99,8 @@ sealed class UZContextualStash : MonoBehaviour
 
 		var player = LuaGlobal.Instance.GlobalPlayer.GetPlayer(Network.ID);
 		target     = player;
-		ctrlDown   = zInput.GetButton("Ctrl");
-		shiftDown  = zInput.GetButton("Shift");
+		ctrlDown   = zInput.GetButton(Inputs.Ctrl);
+		shiftDown  = zInput.GetButton(Inputs.Shift);
 		switch (act)
 		{
 			default: throw new UnreachableException();
