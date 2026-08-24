@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 namespace Unleashed.Context;
@@ -69,41 +70,53 @@ sealed class UZContextualEphemeral : UZMonoBehaviour
 		);
 	}
 
-	readonly ref struct InvisibleCache()
-	{
-		public sealed class Empty { }
-		public readonly ConditionalWeakTable<NetPhysObject, Empty> Invisible = [];
-		public readonly ConditionalWeakTable<NetPhysObject, Empty> Obscured  = [];
-	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(ScreenshotUtility), nameof(ScreenshotUtility.SaveThumbnail), [typeof(string)])]
 	// #audit: attached objects, mp3 players being weird
-	static void SaveThumbnailPrefix(ref InvisibleCache __state)
+	static void SaveThumbnailPrefix(ref List<NetPhysObject> __state)
 	{
-		__state = new();
+		__state = [];
 		foreach (var npo in ManagerPhysicsObject.Instance.GrabbableNPOs)
 		if      (npo.Ephemeral)
 		{
-			if (!npo.OverrideIsInvisible)
-			{
-				__state.Invisible.GetOrCreateValue(npo);
-				npo.ForceInvisible(true);
-			}
-			if (!npo.OverrideIsObscured)
-			{
-				__state.Obscured.GetOrCreateValue(npo);
-				npo.ForceObscured(true);
-			}
+			ForceUpdateInvisibility(npo);
+			__state.Add(npo);
 		}
 	}
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(ScreenshotUtility), nameof(ScreenshotUtility.SaveThumbnail), [typeof(string)])]
-	static void SaveThumbnailPostfix(ref InvisibleCache __state)
+	static void SaveThumbnailPostfix(ref List<NetPhysObject> __state)
 	{
-		foreach (var (npo, _) in __state.Invisible)
-			npo.ForceInvisible(false);
-		foreach (var (npo, _) in __state.Obscured)
-			npo.ForceObscured(false);
+		foreach (var npo in __state)
+			npo.UpdateVisiblity(true);
+	}
+	[HarmonyReversePatch]
+	[HarmonyPatch(typeof(NetPhysObject), nameof(NetPhysObject.UpdateVisiblity))]
+	static void ForceUpdateInvisibility(NetPhysObject __instance)
+	{
+		static void ILManipulator(ILContext il)
+		{
+			var c = new ILCursor(il);
+			c.GotoNext(MoveType.After,
+				// bool isHidden = IsHidden;
+				x => x.MatchCall(() => NetPhysObject.__instance().IsHidden)
+			);
+			c.EmitDelegate(bool(bool _) => true);
+
+			c.GotoNext(MoveType.After,
+				// bool isInvisible = IsInvisible;
+				x => x.MatchCall(() => NetPhysObject.__instance().IsInvisible)
+			);
+			c.EmitDelegate(bool(bool _) => true);
+
+			c.GotoNext(MoveType.Before,
+				// Hide.Hide(isHidden, forceRefresh);
+				x => x.MatchLdarg(1)
+			);
+			c.Next.OpCode = OpCodes.Ldc_I4_0;
+		}
+		_ = ((object) ILManipulator, __instance);
+		throw new UnreachableException();
 	}
 
 	[HarmonyILManipulator]
