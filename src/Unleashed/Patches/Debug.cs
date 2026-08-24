@@ -17,7 +17,7 @@ static class Debug
 	{
 		Key       = "All Kickstarter Rewards",
 		Default   = false,
-		OnChanged = UpdateRewards,
+		OnChanged = _ => UpdateRewards(),
 	};
 	// [PowerSetting]
 	// static readonly DebugSetting<bool> AllDLC = new()
@@ -25,7 +25,7 @@ static class Debug
 	// 	Key     = "All DLC",
 	// 	Default = false,
 	// };
-	static void UpdateRewards(bool value)
+	static void UpdateRewards()
 	{
 		SteamManager.IsKickstarterPointer = SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
 		SteamManager.IsKickstarterGold    = SteamApps.BIsSubscribedApp(SteamManager.KickstarterGold);
@@ -41,25 +41,47 @@ static class Debug
 		return true;
 	}
 
+	[HarmonyPostfix]
+	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.Awake))]
+	static void AwakePostfix()
+	{
+		if (Offline.NoSteam && !SteamManager.isEverInitialized)
+			UpdateRewards();
+	}
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(SteamApps), nameof(SteamApps.BIsSubscribedApp))]
 	static bool BIsSubscribedAppPrefix(AppId_t appID, ref bool __result)
+	{
+		if (OverrideIsSubscribed(appID))
+			return (false, __result = true).Item1;
+		if (Offline.NoSteam)
+			return (false, __result = false).Item1;
+		return true;
+	}
+	[HarmonyPrefix]
+	[HarmonyPatch(typeof(SteamManager), nameof(SteamManager.IsSubscribedApp))]
+	static bool IsSubscribedAppPrefix(int appId, ref bool __result)
+	{
+		if (OverrideIsSubscribed(new((uint) appId)))
+			return (false, __result = true).Item1;
+		if (Offline.NoSteam)
+			return (false, __result = false).Item1;
+		return true;
+	}
+	static bool OverrideIsSubscribed(AppId_t appID)
 	{
 		switch (appID)
 		{
 			case var a1 when a1 == SteamManager.KickstarterPointer:
 			case var a2 when a2 == SteamManager.KickstarterGold:
 				if (AllRewards.Value)
-					return (false, __result = true).Item1;
-				break;
-			// default:
-			// 	if (ALLDLC.Value)
-			// 		return (false, __result = true).Item1;
-			// 	break;
+					return true;
+				return false;
+			default:
+				// if (ALLDLC.Value)
+				// 	return true;
+				return false;
 		}
-		if (Offline.NoSteam)
-			return (false, __result = false).Item1;
-		return true;
 	}
 
 	// [HarmonyPostfix]
