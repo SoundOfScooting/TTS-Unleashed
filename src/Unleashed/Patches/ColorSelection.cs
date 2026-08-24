@@ -30,14 +30,14 @@ static class UIColorSelectionExtensions
 	}
 }
 [HarmonyPatch]
-sealed class UIColorSelectionX : MonoBehaviour
+sealed class UIColorSelectionX : UZMonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIColorSelection), nameof(UIColorSelection.Start))]
 	static void StartPostfix(UIColorSelection __instance)
 	{
 		__instance.gameObject.SetActive(true);
-		__instance.gameObject.GetOrAddComponent<UIColorSelectionX>();
+		__instance.GetOrAddComponent<UIColorSelectionX>();
 	}
 
 	bool   restartTooltip;

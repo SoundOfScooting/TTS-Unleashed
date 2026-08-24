@@ -1,12 +1,12 @@
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-sealed class UIPointerRotationSnapX : MonoBehaviour
+sealed class UIPointerRotationSnapX : UZMonoBehaviour
 {
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIPointerRotationSnap), nameof(UIPointerRotationSnap.Awake))]
 	static void AwakePostfix(UIPointerRotationSnap __instance)
-		=> __instance.gameObject.GetOrAddComponent<UIPointerRotationSnapX>();
+		=> __instance.GetOrAddComponent<UIPointerRotationSnapX>();
 
 	UIPointerRotationSnap @base;
 	void Awake()

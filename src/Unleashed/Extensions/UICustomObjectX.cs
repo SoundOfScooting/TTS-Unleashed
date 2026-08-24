@@ -15,7 +15,7 @@ static class UICustomObjectX
 	}
 	extension<T>(T @this) where T : UICustomObject<T>
 	{
-		Data Data => @this.gameObject.GetOrAddComponent<Data>();
+		Data Data => @this.GetOrAddComponent<Data>();
 		List<Delegate> OnImportFakeQueue => @this.Data.OnImportFakeQueue;
 
 		public bool TargettingFake()

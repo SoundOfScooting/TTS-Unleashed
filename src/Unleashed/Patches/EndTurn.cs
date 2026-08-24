@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-class GUIEndTurnX : MonoBehaviour
+class GUIEndTurnX : UZMonoBehaviour
 {
 	[ModuleInitializer]
 	internal static void ModuleInitializer()
@@ -39,7 +39,7 @@ sealed class UIStarTurnX : GUIEndTurnX
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.Awake))]
 	static void AwakePostfix(UIStarTurn __instance)
-		=> __instance.gameObject.GetOrAddComponent<UIStarTurnX>();
+		=> __instance.GetOrAddComponent<UIStarTurnX>();
 
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(UIStarTurn), nameof(UIStarTurn.OnClick))]

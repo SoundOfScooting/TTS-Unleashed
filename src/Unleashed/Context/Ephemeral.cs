@@ -3,23 +3,18 @@ using System.Runtime.CompilerServices;
 namespace Unleashed.Context;
 
 [HarmonyPatch]
-sealed class UZContextualEphemeral : MonoBehaviour
+sealed class UZContextualEphemeral : UZMonoBehaviour
 {
-	static Transform InstantiateSibling(Transform original)
-		=> Instantiate(original, original.parent);
-
 	[ModuleInitializer]
 	internal static void ModuleInitializer()
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
-		=> InstantiateSibling(NetworkUI.Instance.GUIContextualDestroyableBool.transform.parent)
-			.Find("Persistent Toggle").gameObject
+		=> InstantiateX(NetworkUI.Instance.GUIContextualDestroyableBool.transform.parent)
+			.Find("Persistent Toggle")
 			.GetOrAddComponent<UZContextualEphemeral>()
 			.Initialize();
 	void Initialize()
 	{
-		NetworkUI.Instance.GUIContextualToggles.GetComponent<UIHoverEnableObjects>().HoverEnableObjects.Add(gameObject);
-
 		var parent = transform.parent;
 		parent.SetSiblingIndex(parent.GetSiblingIndex()-1);
 		parent.name = "Ephemeral";
@@ -27,8 +22,10 @@ sealed class UZContextualEphemeral : MonoBehaviour
 
 		name = $"{parent.name} Toggle";
 		GetComponent<UIButton>().onClick = [new(this, nameof(OnClickContextual))];
-		GetComponent<I2.Loc.Localize>().enabled = false;
 		GetComponent<UITooltipObject>().Tooltip = "Should the object be excluded from saved games?";
+		GetComponent<I2.Loc.Localize>().enabled = false; // #loc
+
+		NetworkUI.Instance.GUIContextualToggles.GetComponent<UIHoverEnableObjects>().HoverEnableObjects.Add(gameObject);
 
 		Events.OnStartContextual += OnStartContextual;
 	}
@@ -53,8 +50,7 @@ sealed class UZContextualEphemeral : MonoBehaviour
 			Pointer.MyPointer.Ephemeral(GetComponent<UIToggle>().value);
 		}
 	}
-
-	// #todo: copy-paste
+	// #idea: copy-paste? (Persistent doesn't transfer either)
 
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(ManagerPhysicsObject), nameof(ManagerPhysicsObject.CurrentState))]
@@ -79,7 +75,6 @@ sealed class UZContextualEphemeral : MonoBehaviour
 		public readonly ConditionalWeakTable<NetPhysObject, Empty> Invisible = [];
 		public readonly ConditionalWeakTable<NetPhysObject, Empty> Obscured  = [];
 	}
-	[HarmonyWrapSafe]
 	[HarmonyPrefix]
 	[HarmonyPatch(typeof(ScreenshotUtility), nameof(ScreenshotUtility.SaveThumbnail), [typeof(string)])]
 	// #audit: attached objects, mp3 players being weird
@@ -101,7 +96,6 @@ sealed class UZContextualEphemeral : MonoBehaviour
 			}
 		}
 	}
-	[HarmonyWrapSafe]
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(ScreenshotUtility), nameof(ScreenshotUtility.SaveThumbnail), [typeof(string)])]
 	static void SaveThumbnailPostfix(ref InvisibleCache __state)

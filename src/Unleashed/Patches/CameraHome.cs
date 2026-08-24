@@ -1,7 +1,9 @@
+using System.Runtime.CompilerServices;
+
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-sealed class UZCameraHome : MonoBehaviour
+sealed class UZCameraHome : UZMonoBehaviour
 {
 	// public const string HomePref = $"{Main.PLUGIN_GUID}/{nameof(UZCameraHome)}";
 
@@ -67,37 +69,37 @@ sealed class UZCameraHome : MonoBehaviour
 		}
 	}
 
-	[HarmonyPostfix]
-	[HarmonyPatch(typeof(UITopBar), nameof(UITopBar.Awake))]
-	static void AwakePostfix()
-		=> _ = new GameObject("02 CameraHome", typeof(UZCameraHome));
-	void Awake()
-	{
-		CreateComponents();
-		Instance = this;
-
-		// Current = (Home) PlayerPrefs.GetInt(HomePref, (int) Value.Hand);
-		Current = Home.Hand;
-	}
-	void CreateComponents()
+	[ModuleInitializer]
+	internal static void ModuleInitializer()
+		=> Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected()
 	{
 		var @base = Resources
 			.FindObjectsOfTypeAll<UIPointerRotationSnap>()
 			.FirstOrDefault();
+		InstantiateX(@base.transform, active: false, name: "02 CameraHome")
+			.GetOrAddComponent<UZCameraHome>()
+			.Initialize(@base);
+	}
+	void Initialize(UIPointerRotationSnap @base)
+	{
+		transform.localPosition += new Vector3(56f, 0f, 0f);
+		Destroy(GetComponent<UIPointerRotationSnap>());
+		Destroy(GetComponent<UIPointerRotationSnapX>()); // #todo: avoid these kinds of issues
+		GetComponent<UITooltipObject>().Tooltip = "Camera Home";
+		GetComponent<I2.Loc.Localize>().enabled = false; // #loc
 
-		gameObject.CopyParent(@base).localPosition += new Vector3(56f, 0f, 0f);
-		gameObject.CopyComponent<BoxCollider2D>(@base);
-		gameObject.CopyComponent<UISprite>(@base);
-		gameObject.CopyComponent<UIButton>(@base);
-		gameObject.AddComponent <UITooltipObject>().Tooltip = "Camera Home";
-		gameObject.AddComponent <TweenColor>();
-		// I2.Loc.Localize
+		var labelObject = transform.Find(@base.ThisLabelObject.name);
+		labelObject.localPosition = new(0f, -2f, 0f);
+		Label = labelObject.GetComponent<UILabel>();
 
-		var labelObject = new GameObject(@base.ThisLabelObject.name);
-		labelObject.CopyParent(@base.ThisLabelObject);
-		labelObject.transform.parent        = transform;
-		labelObject.transform.localPosition = new(0f, -2f, 0f);
-		Label = labelObject.CopyComponent<UILabel>(@base.ThisLabelObject);
+		gameObject.SetActive(@base.gameObject.activeSelf);
+	}
+	void Awake()
+	{
+		Instance = this;
+		// Current = (Home) PlayerPrefs.GetInt(HomePref, (int) Value.Hand);
+		Current = Home.Hand;
 	}
 
 	void OnClick()

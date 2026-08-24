@@ -152,7 +152,7 @@ public readonly record struct MaterialClass(MaterialSlot[] Slots, Dictionary<(in
 }
 
 // [HarmonyPatch]
-sealed class UZContextualMaterial : MonoBehaviour
+sealed class UZContextualMaterial : UZMonoBehaviour
 {
 	// [ModuleInitializer]
 	// internal static void ModuleInitializer()

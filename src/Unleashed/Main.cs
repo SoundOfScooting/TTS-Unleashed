@@ -120,10 +120,11 @@ public sealed class Main : BaseUnityPlugin
 				.Find("Version/Version Number")
 				.GetComponent<UILabel>();
 
-			var gameObject = new GameObject("Version Modded");
-			gameObject.CopyParent(numberLabel);
+			var gameObject = UZMonoBehaviour.InstantiateX(numberLabel.gameObject, active: false, name: $"Version {PLUGIN_NAME}");
+			Destroy(gameObject.GetComponent<PropertyBinding>());
+			gameObject.GetComponent<UIOpenURL>().URL = PLUGIN_URL;
 
-			var moddedLabel   = gameObject.CopyComponent(numberLabel);
+			var moddedLabel   = gameObject.GetComponent<UILabel>();
 			moddedLabel.color = loadErrors is null ? PluginColour : ErrorColour;
 			moddedLabel.text  = $"+{PLUGIN_ABBR} v{PLUGIN_VERSION}";
 			moddedLabel.SetAnchor(NetworkUI.Instance.GUIUIRoot,
@@ -141,11 +142,7 @@ public sealed class Main : BaseUnityPlugin
 			numberLabel.topAnchor   .absolute -= dy;
 			numberLabel.ResetAndUpdateAnchors();
 
-			gameObject.CopyComponent<BoxCollider2D>(numberLabel);
-			gameObject.CopyComponent<UIButton>(numberLabel);
-			gameObject.CopyComponent<UIOpenURL>(numberLabel)
-				.URL = PLUGIN_URL;
-			gameObject.AddComponent <TweenColor>();
+			gameObject.SetActive(true);
 		}
 	}
 	static class PatchMenuCursor

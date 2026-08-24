@@ -26,12 +26,12 @@ static class Scripting
 		// #idea: support editor (possibly read-only)
 		NetworkUI.Instance.GUIContextualGUID
 			.transform.parent.Find("01 Editor")
-			.gameObject.GetOrAddComponent<UIDisableIfNotServer>();
+			.GetOrAddComponent<UIDisableIfNotServer>();
 		NetworkUI.Instance.GUIContextualGUID
 			.GetOrAddComponent<UZContextualGuid>();
 	}
 }
-sealed class UZContextualGuid : MonoBehaviour
+sealed class UZContextualGuid : UZMonoBehaviour
 {
 	void OnAltClick()
 	{

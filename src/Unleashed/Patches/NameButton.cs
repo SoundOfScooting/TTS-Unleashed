@@ -3,7 +3,7 @@ using Unleashed.Settings;
 namespace Unleashed.Patches;
 
 [HarmonyPatch]
-sealed class UINameButtonX : MonoBehaviour
+sealed class UINameButtonX : UZMonoBehaviour
 {
 	[Setting]
 	static readonly DebugSetting<bool> DebugChangeName = new()
@@ -15,7 +15,7 @@ sealed class UINameButtonX : MonoBehaviour
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(UINameButton), nameof(UINameButton.Start))]
 	static void StartPostfix(UINameButton __instance)
-		=> __instance.gameObject.GetOrAddComponent<UINameButtonX>();
+		=> __instance.GetOrAddComponent<UINameButtonX>();
 
 	UINameButton @base;
 	UIButton button;

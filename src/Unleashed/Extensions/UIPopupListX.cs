@@ -9,8 +9,8 @@ static class UIPopupListX
 	}
 	extension(UIPopupList @this)
 	{
-		Data Data => @this.gameObject.GetOrAddComponent<Data>();
-		bool HasData() => @this.gameObject.TryGetComponent<Data>(out _);
+		Data Data => @this.GetOrAddComponent<Data>();
+		bool HasData() => @this.TryGetComponent<Data>(out _);
 		public ref Event<Action> OnPopupListShow => ref @this.Data.OnPopupListShow;
 		public void TriggerPopupListShow()
 		{

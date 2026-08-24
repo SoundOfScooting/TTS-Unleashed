@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Unleashed.Context;
 
-sealed class UZContextualStash : MonoBehaviour
+sealed class UZContextualStash : UZMonoBehaviour
 {
 	enum Act
 	{
@@ -23,45 +23,38 @@ sealed class UZContextualStash : MonoBehaviour
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 	{
-		// after 04 Paste
-		// new GameObject("04 Pb |SORT| Unlock Stash")
-		// 	.AddComponent<UZContextualStash>()
-		// 	.CreateComponents(Act.GlobalUnlock);
-		new GameObject("04 Pc |SORT| Draw Stash")
-			.AddComponent<UZContextualStash>()
-			.CreateComponents(Act.GlobalDraw);
+		var parent = NetworkUI.Instance.GUIContextualMenu.transform.Find("Table");
+		var @base  = NetworkUI.Instance.GUIContextualGlobalMenu.transform.Find("Table/04 Paste");
 
-		// after 06 Draw
-		// new GameObject("06 Ds |SORT| Draw Stash")
-		// 	.AddComponent<UZContextualStash>()
-		// 	.CreateComponents(Act.ObjectDraw);
-		new GameObject("06 Ds |SORT| Stash")
-			.AddComponent<UZContextualStash>()
-			.CreateComponents(Act.ObjectStash);
+		// Global: After 04 Paste
+		// InstantiateX(@base, parent: null, active: false, name: "04 Pb |SORT| Unlock Stash")
+		// 	.GetOrAddComponent<UZContextualStash>()
+		// 	.Initialize(Act.GlobalUnlock);
+		InstantiateX(@base, parent: null, active: false, name: "04 Pc |SORT| Draw Stash")
+			.GetOrAddComponent<UZContextualStash>()
+			.Initialize(Act.GlobalDraw);
+
+		// Object: After 06 Draw
+		// InstantiateX(@base, parent: parent, active: false, name: "06 Ds |SORT| Draw Stash")
+		// 	.GetOrAddComponent<UZContextualStash>()
+		// 	.Initialize(Act.ObjectDraw);
+		InstantiateX(@base, parent: parent, active: false, name: "06 Ds |SORT| Stash")
+			.GetOrAddComponent<UZContextualStash>()
+			.Initialize(Act.ObjectStash);
 	}
-
-	void CreateComponents(Act act)
+	void Initialize(Act act)
 	{
 		this.act = act;
 
-		var @base = NetworkUI.Instance.GUIContextualGlobalMenu.transform.Find("Table/04 Paste");
-		transform.CopyParent(@base);
-		if (!IsGlobal)
-			transform.parent = NetworkUI.Instance.GUIContextualMenu.transform.Find("Table");
+		Label = GetComponent<UILabel>();
+		Label.text = Contextual.LABEL_PADDING + "???";
 
-		(Label = gameObject.CopyComponent<UILabel>(@base))
-			.text = Contextual.LABEL_PADDING + "???";
-		gameObject.CopyComponent(@base.GetComponents<UIButton>()[0])
-			.onClick = [new(OnClickContextual)];
-		gameObject.CopyComponent<BoxCollider2D>(@base);
-		gameObject.AddComponent <TweenColor>();
+		GetComponent<UIButton>().onClick = [new(OnClickContextual)];
+		Destroy(GetComponents<UIButton>()[1..]);
+		GetComponent<I2.Loc.Localize>().enabled = false; // #loc
 
-		var baseImages   = @base.Find("Images");
-		var imagesObject = new GameObject(baseImages.name);
-		imagesObject.CopyParent(baseImages).parent = transform;
-
-		(Icon = imagesObject.CopyComponent<UISprite>(baseImages))
-			.spriteName = "???";
+		Icon = transform.Find("Images").GetComponent<UISprite>();
+		Icon.spriteName = "???";
 
 		if (IsGlobal)
 			Events.OnStartGlobalContextual += OnStartContextual;

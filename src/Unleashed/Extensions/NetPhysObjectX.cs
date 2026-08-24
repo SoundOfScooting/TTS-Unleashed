@@ -23,8 +23,8 @@ static class NetPhysObjectX
 	}
 	extension(NetPhysObject @this)
 	{
-		Data TryData => @this.TryGetComponent<Data>(out var data) ? data : null;
-		Data NewData => @this.gameObject.GetOrAddComponent<Data>();
+		Data TryData => @this.GetComponent<Data>();
+		Data NewData => @this.GetOrAddComponent<Data>();
 
 		public bool Ephemeral
 		{

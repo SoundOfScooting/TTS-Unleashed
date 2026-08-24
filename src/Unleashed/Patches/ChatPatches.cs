@@ -62,7 +62,7 @@ static class ChatPatches
 	[HarmonyPatch(typeof(UIChatInput), nameof(UIChatInput.Start))]
 	static void StartPostfix(UIChatInput __instance)
 	{
-		// __instance.gameObject.GetOrAddComponent<UIInputBBCode>().Awake();
+		// __instance.GetOrAddComponent<UIInputBBCode>().Awake();
 
 		// #todo: make input box grow and log shrink like MultilineName
 		__instance.transform.Find("Label").GetComponent<UILabel>().multiLine = true;
