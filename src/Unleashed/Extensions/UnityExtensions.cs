@@ -1,3 +1,5 @@
+using UnityEngine.Events;
+
 namespace Unleashed.Extensions;
 
 static class UnityExtensions
@@ -15,6 +17,17 @@ static class UnityExtensions
 			@this.GetPositions(positions);
 			return positions;
 		}
+	}
+
+	extension(UnityEvent @this)
+	{
+		public void operator +=(UnityAction rhs) => @this.AddListener(rhs);
+		public void operator -=(UnityAction rhs) => @this.RemoveListener(rhs);
+	}
+	extension<T0>(UnityEvent<T0> @this)
+	{
+		public void operator +=(UnityAction<T0> rhs) => @this.AddListener(rhs);
+		public void operator -=(UnityAction<T0> rhs) => @this.RemoveListener(rhs);
 	}
 }
 

@@ -32,13 +32,13 @@ public sealed class Main : BaseUnityPlugin
 		=> Try(() =>
 		{
 			action.Invoke();
-			return default(object);
+			return ValueTuple.Create();
 		}, tab);
 	public static void Catch(Action action, ChatMessageType tab = ChatMessageType.Game)
 		=> Catch(() =>
 		{
 			action.Invoke();
-			return default(object);
+			return ValueTuple.Create();
 		}, tab);
 	public static T Try<T>(Func<T> func, ChatMessageType tab = ChatMessageType.Game)
 		=> Wrap(func, true, tab);

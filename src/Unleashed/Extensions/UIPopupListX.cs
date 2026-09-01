@@ -1,3 +1,5 @@
+using UnityEngine.Events;
+
 namespace Unleashed.Extensions;
 
 [HarmonyPatch]
@@ -5,17 +7,17 @@ static class UIPopupListX
 {
 	sealed class Data : MonoBehaviour
 	{
-		public Event<Action> OnPopupListShow;
+		public UnityEvent OnPopupListShow = new();
 	}
 	extension(UIPopupList @this)
 	{
 		Data Data => @this.GetOrAddComponent<Data>();
 		bool HasData() => @this.TryGetComponent<Data>(out _);
-		public ref Event<Action> OnPopupListShow => ref @this.Data.OnPopupListShow;
+		public ref UnityEvent OnPopupListShow => ref @this.Data.OnPopupListShow;
 		public void TriggerPopupListShow()
 		{
 			if (@this.HasData())
-				@this.OnPopupListShow.Trigger?.Invoke();
+				Main.Catch(@this.OnPopupListShow.Invoke);
 		}
 	}
 

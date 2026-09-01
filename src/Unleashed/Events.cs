@@ -1,22 +1,7 @@
 using System.Runtime.CompilerServices;
+using UnityEngine.Events;
 
 namespace Unleashed;
-
-// terrible
-interface IEvent<T> where T : Delegate
-{
-	T Trigger { get; }
-	void operator +=(T listener);
-	void operator -=(T listener);
-}
-record struct Event<T>(T Trigger = null) : IEvent<T> where T : Delegate
-{
-	public T Trigger { get; private set; } = Trigger;
-	public void operator +=(T listener)
-		=> Trigger = (T) Delegate.Combine(Trigger, listener);
-	public void operator -=(T listener)
-		=> Trigger = (T) Delegate.Remove(Trigger, listener);
-}
 
 [HarmonyPatch]
 static class Events
@@ -45,45 +30,26 @@ static class Events
 		);
 	}
 
-	public static event Action OnStartConnected;
-	public static event Action OnStartDisconnected;
-	public static event Action<PlayerState> OnPlayersAddOther;
-	public static event Action OnStartGlobalContextual;
-	public static event Action OnStartContextual;
+	public static UnityEvent OnStartConnected = new();
+	public static UnityEvent OnStartDisconnected = new();
+	public static UnityEvent<PlayerState> OnPlayersAddOther = new();
+	public static UnityEvent OnStartGlobalContextual = new();
+	public static UnityEvent OnStartContextual = new();
 
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.Start))]
 	static void TriggerStartDisconnected()
-	{
-		if (OnStartDisconnected is {} action)
-			Main.Catch(action, ChatMessageType.System);
-	}
+		=> Main.Catch(OnStartDisconnected.Invoke, ChatMessageType.System);
 	static void TriggerStartConnected()
-	{
-		if (OnStartConnected is {} action)
-			Main.Catch(action);
-	}
+		=> Main.Catch(OnStartConnected.Invoke);
 	static void TriggerPlayersAddOther(PlayerState playerState)
-	{
-		if (OnPlayersAddOther is {} action)
-			Main.Catch(() =>
-			{
-				action.Invoke(playerState);
-				return default(object);
-			});
-	}
+		=> Main.Catch(() => OnPlayersAddOther.Invoke(playerState));
 	[HarmonyPostfix]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartGlobalContextual))]
 	static void TriggerStartGlobalContextual()
-	{
-		if (OnStartGlobalContextual is {} action)
-			Main.Catch(action);
-	}
+		=> Main.Catch(OnStartGlobalContextual.Invoke);
 	static void TriggerStartContextual()
-	{
-		if (OnStartContextual is {} action)
-			Main.Catch(action);
-	}
+		=> Main.Catch(OnStartContextual.Invoke);
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(Pointer), nameof(Pointer.StartContextual))]
 	static void StartContextualIL(ILContext il)
