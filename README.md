@@ -28,14 +28,14 @@ Bugfix: Singleplayer and hotseat games can actually be started when using the `-
 ### Components
 
 **Modded host and client:** *(new)* Added object `Cards/Specific Card`, which opens a dialog window to enter a card name.\
-The format is `[symbol][suit]`, where `[symbol]` is one of `A`, `K`, `Q`, `J`, `10` through `2`, and `[suit]` is one of `C`, `D`, `S`, `H`.\
+The format is `[rank][suit]`, where `[rank]` is one of `A`, `K`, `Q`, `J`, `10` through `2`, and `[suit]` is one of `C`, `D`, `S`, `H`.\
 For example: `AS` for Ace of Spades.
 
 **Modded host and client:** *(new)* Added objects `Chess/Gold/* Gold` and `Dice/Gold/D* Gold` if you have the Kickstarter Gold reward.\
 *(Gold material doesn't work if the host doesn't have the Kickstarter Gold reward.)*
 
 **Modded host and client:** *(new)* Added object `Miscellaneous/Specific Domino`, which opens a dialog window to enter a domino type.\
-The format is `[top]/[bottom] (material)`, where `[top]` and `[bottom]` are integers 0-6, and `(material)` is optional and one of `Plastic`, `Metal`, `Gold`.\
+The format is `[0-6]/[0-6] (material)`, where `[0-6]`s are integers 0-6, and `(material)` is optional and one of `Plastic`, `Metal`, `Gold`.\
 For example: `3/2 Metal` for a metal domino with 3 on the top and 2 on the bottom.\
 *(Gold material doesn't work if the host doesn't have the Kickstarter Gold reward.)*
 

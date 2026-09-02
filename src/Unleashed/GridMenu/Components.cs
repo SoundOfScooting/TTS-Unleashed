@@ -5,13 +5,24 @@ namespace Unleashed.GridMenu;
 [HarmonyPatch]
 static class Components
 {
-	static readonly List<string> RandomNames =
+	static readonly HashSet<string> RandomNames =
 	[
+		with(StringComparer.OrdinalIgnoreCase),
 		"RANDOM", "RAND",
 	];
+	static bool TryParseRandom(string input, out int index, int minInclusive, int maxExclusive)
+	{
+		if (RandomNames.Contains(input))
+		{
+			index = UnityEngine.Random.Range(minInclusive, maxExclusive);
+			return true;
+		}
+		index = default;
+		return false;
+	}
 
 	const int CardCardIDLimit = 52;
-	static readonly Dictionary<string, int> CardCardID = new()
+	static readonly Dictionary<string, int> CardCardID = new(StringComparer.OrdinalIgnoreCase)
 	{
 		{ "KC", 0  }, { "QC", 1  }, { "JC", 2  }, { "AC", 3  }, { "10C", 4  }, { "9C", 10 }, { "8C", 11 }, { "7C", 12 }, { "6C", 13 }, { "5C", 14 }, { "4C", 20 }, { "3C", 21 }, { "2C", 22 },
 		{ "KD", 5  }, { "QD", 6  }, { "JD", 7  }, { "AD", 8  }, { "10D", 9  }, { "9D", 15 }, { "8D", 16 }, { "7D", 17 }, { "6D", 18 }, { "5D", 19 }, { "4D", 25 }, { "3D", 23 }, { "2D", 24 },
@@ -34,9 +45,9 @@ static class Components
 		{ "6/0", 11 }, { "6/1", 27 }, { "6/2", 6  }, { "6/3", 19 }, { "6/4", 14 }, { "6/5", 13 }, { "6/6", 8 },
 	};
 	const int DominoMatIndexLimit = 2;
-	static readonly Dictionary<string, int> DominoMatIndex = new()
+	static readonly Dictionary<string, int> DominoMatIndex = new(StringComparer.OrdinalIgnoreCase)
 	{
-		{ "PLASTIC", 0 }, { "METAL", 1 }, { "GOLD", 2 },
+		{ "Plastic", 0 }, { "Metal", 1 }, { "Gold", 2 },
 	};
 	static string DominoSpawnName(int meshIndex, int matIndex)
 		=> $"{Main.PLUGIN_GUID}/Domino/{SpawnName.SET_OBJECT}/{matIndex != 0}/{meshIndex}/{matIndex}";
@@ -46,7 +57,7 @@ static class Components
 	static string ChessGoldSpawnName(string type)
 		=> $"{Main.PLUGIN_GUID}/Chess_{type}/{SpawnName.SET_OBJECT}/{false}/{-1}/{ChessMaterialGold}";
 
-	static readonly string[] DiceType  = ["4", "6", "8", "10", "12", "20"];
+	static readonly string[] DiceType = ["4", "6", "8", "10", "12", "20"];
 	const int DiceMaterialGold = 2;
 	static string DiceGoldSpawnName(string type)
 		=> $"{Main.PLUGIN_GUID}/Die_{type}/{SpawnName.SET_OBJECT}/{true}/{-1}/{DiceMaterialGold}";
@@ -64,17 +75,14 @@ static class Components
 				SpawnName = CardSpawnName(CardCardID["AS"]),
 
 				OnSpawn = GridButtonOnSpawn.ShowInput(
-					Placeholder: "[A/K/Q/J/10/#][C/D/S/H]",
+					Placeholder: "[A/K/Q/J/10-2][C/D/S/H]",
 					ParseSpawnName: input => {
-						input = input.Trim().ToUpperInvariant();
+						input = input.Trim();
 
-						int front_id;
-						if (RandomNames.Contains(input))
-							front_id = UnityEngine.Random.Range(0, CardCardIDLimit);
-						else if (
-							!int.TryParse(input, out front_id) &&
-							!CardCardID.TryGetValue(input, out front_id)
-						) return null;
+						if (!int.TryParse(input, out var front_id))
+						if (!CardCardID.TryGetValue(input, out front_id))
+						if (!TryParseRandom(input, out front_id, 0, CardCardIDLimit))
+							return null;
 
 						return CardSpawnName(front_id);
 					}
@@ -126,33 +134,27 @@ static class Components
 				SpawnName = DominoSpawnName(DominoMeshIndex["6/6"], 0),
 
 				OnSpawn = GridButtonOnSpawn.ShowInput(
-					Placeholder: "[high]/[low] (material)",
+					Placeholder: "[0-6]/[0-6] (material)",
 					ParseSpawnName: input => {
-						var parts = input.ToUpperInvariant().Split([' '], StringSplitOptions.RemoveEmptyEntries);
+						var parts = input.Split([' '], StringSplitOptions.RemoveEmptyEntries);
 						if (parts is [])
 							return null;
 
 						var meshIndex = 0;
-						if (parts is [ var mesh, .. ] &&
-							!int.TryParse(mesh, out meshIndex) &&
-							!DominoMeshIndex.TryGetValue(mesh, out meshIndex) &&
-							!DominoMeshIndex.TryGetValue(new([.. mesh.Reverse()]), out meshIndex) // bad
-						){
-							if (RandomNames.Contains(mesh))
-								meshIndex = UnityEngine.Random.Range(0, DominoMeshIndexLimit);
-							else
-								return null;
-						}
+						if (parts is [ var mesh, .. ])
+						if (!int.TryParse(mesh, out meshIndex))
+						if (!DominoMeshIndex.TryGetValue(mesh, out meshIndex))
+						if (!DominoMeshIndex.TryGetValue(new([.. mesh.Reverse()]), out meshIndex)) // bad
+						if (!TryParseRandom(mesh, out meshIndex, 0, DominoMeshIndexLimit))
+							return null;
+
 						var matIndex = 0;
-						if (parts is [ _, var mat, .. ] &&
-							!int.TryParse(mat, out matIndex) &&
-							!DominoMatIndex.TryGetValue(mat, out matIndex)
-						){
-							if (RandomNames.Contains(mat))
-								matIndex = UnityEngine.Random.Range(0, DominoMatIndexLimit);
-							else
-								return null;
-						}
+						if (parts is [ _, var mat, .. ])
+						if (!int.TryParse(mat, out matIndex))
+						if (!DominoMatIndex.TryGetValue(mat, out matIndex))
+						if (!TryParseRandom(mat, out matIndex, 0, DominoMatIndexLimit))
+							return null;
+
 						return DominoSpawnName(meshIndex, matIndex);
 					}
 				),
