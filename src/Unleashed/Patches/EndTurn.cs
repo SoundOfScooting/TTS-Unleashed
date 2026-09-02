@@ -27,9 +27,7 @@ class GUIEndTurnX : UZMonoBehaviour
 		if (!Network.IsAdmin && !Turns.Instance.TurnsState.PassTurns)
 			return;
 		Turns.Instance.TurnsState.Reverse ^= true;
-		{
 			UICamera.SpoofOnClick(gameObject);
-		}
 		Turns.Instance.TurnsState.Reverse ^= true;
 	}
 }

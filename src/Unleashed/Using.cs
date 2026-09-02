@@ -5,3 +5,4 @@ global using NewNet;
 global using UnityEngine;
 global using Unleashed.Extensions;
 global using Unleashed.Util;
+global using static Unleashed.Util.TopLevel;

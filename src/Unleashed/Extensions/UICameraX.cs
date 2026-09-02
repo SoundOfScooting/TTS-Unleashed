@@ -18,12 +18,9 @@ static class UICameraX
 	{
 		public static void SpoofOnClick(GameObject go, int touchID = UICameraTouch.LEFT)
 		{
-			var      currentTouchID = UICamera.currentTouchID;
-			UICamera.currentTouchID = touchID;
-			{
+			Swap(ref UICamera.currentTouchID, ref touchID);
 				UICamera.Notify(go, "OnClick", null);
-			}
-			UICamera.currentTouchID = currentTouchID;
+			Swap(ref UICamera.currentTouchID, ref touchID);
 		}
 	}
 }

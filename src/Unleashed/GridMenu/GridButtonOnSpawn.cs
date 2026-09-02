@@ -8,9 +8,9 @@ sealed class GridButtonOnSpawn : GridButtonComponent
 {
 	public required OnSpawnEvent OnSpawn;
 	public sealed override void InteractiveSpawn(Vector3 spawnPos)
-		=> OnSpawn(this, spawnPos, base.InteractiveSpawn);
+		=> OnSpawn.Invoke(this, spawnPos, base.InteractiveSpawn);
 	public sealed override void Spawn(Vector3 spawnPos)
-		=> OnSpawn(this, spawnPos, base.Spawn);
+		=> OnSpawn.Invoke(this, spawnPos, base.Spawn);
 
 	public static OnSpawnEvent ShowInput(Func<string, string> ParseSpawnName, string Placeholder = "")
 		=> (@this, SpawnPos, Spawn)
@@ -21,15 +21,14 @@ sealed class GridButtonOnSpawn : GridButtonComponent
 			leftButtonText: "OK",
 			leftButtonFunc: input =>
 			{
-				var origName = @this.SpawnName;
+				if (ParseSpawnName.Invoke(input) is not {} spawnName)
 				{
-					@this.SpawnName = ParseSpawnName?.Invoke(input);
-					if (@this.SpawnName is null)
-						Chat.LogError("Failed to parse input!");
-					else
-						Spawn(SpawnPos);
+					Chat.LogError("Failed to parse input!");
+					return;
 				}
-				@this.SpawnName = origName;
+				Swap(ref @this.SpawnName, ref spawnName);
+					Spawn.Invoke(SpawnPos);
+				Swap(ref @this.SpawnName, ref spawnName);
 			},
 			rightButtonText: "Cancel",
 			rightButtonFunc: null
