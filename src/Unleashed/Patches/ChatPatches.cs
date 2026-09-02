@@ -64,8 +64,7 @@ static class ChatPatches
 	{
 		// __instance.GetOrAddComponent<UIInputBBCode>().Awake();
 
-		// #todo: make input box grow and log shrink like MultilineName
-		__instance.transform.Find("Label").GetComponent<UILabel>().multiLine = true;
+		NGUITools.GetChildLabel(__instance.gameObject).multiLine = true;
 	}
 
 	[HarmonyILManipulator]

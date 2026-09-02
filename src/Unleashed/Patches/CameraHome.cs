@@ -79,9 +79,9 @@ sealed class UZCameraHome : UZMonoBehaviour
 			.FirstOrDefault();
 		InstantiateX(@base.transform, active: false, name: "02 CameraHome")
 			.GetOrAddComponent<UZCameraHome>()
-			.Initialize(@base);
+			.Initialize();
 	}
-	void Initialize(UIPointerRotationSnap @base)
+	void Initialize()
 	{
 		transform.localPosition += new Vector3(56f, 0f, 0f);
 		Destroy(GetComponent<UIPointerRotationSnap>());
@@ -89,11 +89,10 @@ sealed class UZCameraHome : UZMonoBehaviour
 		GetComponent<UITooltipObject>().Tooltip = "Camera Home";
 		GetComponent<I2.Loc.Localize>().enabled = false; // #loc
 
-		var labelObject = transform.Find(@base.ThisLabelObject.name);
-		labelObject.localPosition = new(0f, -2f, 0f);
-		Label = labelObject.GetComponent<UILabel>();
+		Label = NGUITools.GetChildLabel(gameObject);
+		Label.transform.localPosition = new(0f, -2f, 0f);
 
-		gameObject.SetActive(@base.gameObject.activeSelf);
+		gameObject.SetActive(true);
 	}
 	void Awake()
 	{
