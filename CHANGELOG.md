@@ -1,6 +1,6 @@
-# dev
+# v0.4.0
 
-* Updated to game version 14.2.1 (Hotfix 4)
+* Updated to game version 14.2.2
 <!-- this space intentionally left blank -->
 * Added setting `Chat BBCode`
 <!-- this space intentionally left blank -->

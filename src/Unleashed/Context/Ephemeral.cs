@@ -79,8 +79,8 @@ sealed class UZContextualEphemeral : UZMonoBehaviour
 		foreach (var npo in ManagerPhysicsObject.Instance.GrabbableNPOs)
 		if      (npo.Ephemeral)
 		{
-			ForceUpdateInvisibility(npo);
 			__state.Add(npo);
+			ForceUpdateInvisibility(npo);
 		}
 	}
 	[HarmonyPostfix]

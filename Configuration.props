@@ -35,8 +35,8 @@
 	</ItemDefinitionGroup>
 
 	<PropertyGroup>
-		<PolyStringInterpolation>true</PolyStringInterpolation>
 		<PolyArgumentExceptions>true</PolyArgumentExceptions>
+		<PolyStringInterpolation>true</PolyStringInterpolation>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- NOTE: Copy/symlink these from Managed/ to lib/ -->

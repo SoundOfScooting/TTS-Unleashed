@@ -9,7 +9,7 @@
 			"type": "shell",
 			"args": [
 				"build",
-				"/property:GenerateFullPaths=true",
+				"/property:GenerateFullPaths=false",
 				"/consoleloggerparameters:NoSummary",
 				"-c",
 				"Release"

@@ -19,12 +19,6 @@ static class Debug
 		Default   = false,
 		OnChanged = _ => UpdateRewards(),
 	};
-	// [PowerSetting]
-	// static readonly DebugSetting<bool> AllDLC = new()
-	// {
-	// 	Key     = "All DLC",
-	// 	Default = false,
-	// };
 	static void UpdateRewards()
 	{
 		SteamManager.IsKickstarterPointer = SteamApps.BIsSubscribedApp(SteamManager.KickstarterPointer);
@@ -78,8 +72,6 @@ static class Debug
 					return true;
 				return false;
 			default:
-				// if (ALLDLC.Value)
-				// 	return true;
 				return false;
 		}
 	}
