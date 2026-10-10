@@ -292,8 +292,9 @@ For example, you can say `[ff0000]this is a [b]red[/b] message[-]`.
 
 `Intercept Lua Virus` *(default `true`)*\
 **Host-only:** Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.\
-**NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:\
-https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
+**NOTE:** This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop.\
+CleanerBlock (basic): https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892 \
+DeepCleanerBlock EX: https://steamcommunity.com/sharedfiles/filedetails/?id=3588725959
 
 `Nickname`\
 A nickname used instead of your Steam display name.\

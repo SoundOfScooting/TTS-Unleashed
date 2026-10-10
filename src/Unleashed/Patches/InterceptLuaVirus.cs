@@ -5,6 +5,9 @@ namespace Unleashed.Patches;
 [HarmonyPatch]
 static class InterceptLuaVirus
 {
+	const string InfectedTag = "tcejbo gninwapS";
+	const string ImmunityTag = $"-- {InfectedTag} <- DO NOT DELETE THIS. This single comment protects against a lua exploit/script of the same name.";
+
 	[Setting]
 	static readonly Setting<bool> Enabled = new()
 	{
@@ -17,8 +20,9 @@ static class InterceptLuaVirus
 		Description =
 			"""
 			Host-only: Intercepts the \"tcejbo gninwapS\" Lua virus before it can spread to any other objects.
-			NOTE: This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop:
-			https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
+			NOTE: This does not actually disinfect objects; consider additionally subscribing to CleanerBlock on the Workshop.
+			CleanerBlock (basic): https://steamcommunity.com/sharedfiles/filedetails/?id=2967684892
+			DeepCleanerBlock EX: https://steamcommunity.com/sharedfiles/filedetails/?id=3588725959
 			""",
 	};
 
@@ -30,8 +34,11 @@ static class InterceptLuaVirus
 	[HarmonyPatch(typeof(LuaBase), nameof(LuaBase.ExecuteScript))]
 	static bool ExecuteScriptPrefix(LuaBase __instance, string script)
 	{
-		if (!Enabled.Value || !script.Contains("tcejbo gninwapS", StringComparison.OrdinalIgnoreCase))
-			return true;
+		if (!Enabled.Value
+			||  script.Contains(ImmunityTag, StringComparison.Ordinal)
+			|| !script.Contains(InfectedTag, StringComparison.Ordinal)
+		) return true;
+
 		Chat.SendChat(
 			$"Infected Lua script {__instance.GetScriptName()} intercepted by {Main.PluginColour.RGBHex}{Main.PLUGIN_NAME}[-]",
 			Main.ErrorColour

@@ -1,3 +1,7 @@
+# dev
+
+* Added compatibility with DeepCleanerBlock EX: https://steamcommunity.com/sharedfiles/filedetails/?id=3588725959
+
 # v0.4.0
 
 * Updated to game version 14.2.2
