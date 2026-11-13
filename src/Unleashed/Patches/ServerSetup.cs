@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using BepInEx.Configuration;
 using Unleashed.Settings;
+using System.Runtime.CompilerServices;
 
 namespace Unleashed.Patches;
 
@@ -20,6 +21,17 @@ static class ServerSetup
 		Description =
 			"""
 			The initial player color after server creation, or Choose/Dialog to open the color selection UI/dialog window.
+			""",
+	};
+	[Setting]
+	static readonly Setting<bool> InitialColourOnConnect = new()
+	{
+		Section     = Section.Setup,
+		Key         = "Initial Player Color On Connect",
+		Default     = false,
+		Description =
+			"""
+			Makes you automatically pick a color on joining a server (same color as used on Initial Player Color)
 			""",
 	};
 	[Setting]
@@ -81,7 +93,31 @@ static class ServerSetup
 		[Description("Random++")]
 		RandomPlusPlus = -1,
 	}
-
+	[ModuleInitializer]
+	internal static void ModuleInitializer()
+		=> Events.OnStartConnected += OnStartConnected;
+	static void OnStartConnected()
+	{
+		PlayerState seated = null;
+		string      color  = null;
+		if (InitialColour.Value != Colour.GreyLabel)
+			seated = PlayerManager.Instance.PlayersList.Find(seated => seated.ColorLabel == color);
+		if (!Network.IsServer && InitialColourOnConnect.Value && seated is null)
+		{
+			switch (InitialColour.Value)
+			{
+				case "Choose":
+					break;
+				case "Dialog":
+					NetworkUI.Instance.bNeedToPickColour = false;
+					UIColorSelection.ShowDialog();
+					break;
+				default:
+					NetworkUI.Instance.ClientRequestColor(InitialColour.Value);
+					break;
+			}
+		}
+	}
 	[HarmonyILManipulator]
 	[HarmonyPatch(typeof(NetworkUI), nameof(NetworkUI.ServerInitialized))]
 	static void ServerInitializedIL(ILContext il)
@@ -170,4 +206,3 @@ static class ServerSetup
 		);
 	}
 }
-
