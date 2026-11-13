@@ -98,7 +98,11 @@ static class ServerSetup
 		=> Events.OnStartConnected += OnStartConnected;
 	static void OnStartConnected()
 	{
-		if (!Network.IsServer && InitialColourOnConnect.Value)
+		PlayerState seated = null;
+		string      color  = null;
+		if (InitialColour.Value != Colour.GreyLabel)
+			seated = PlayerManager.Instance.PlayersList.Find(seated => seated.ColorLabel == color);
+		if (!Network.IsServer && InitialColourOnConnect.Value && seated is null)
 		{
 			switch (InitialColour.Value)
 			{
@@ -202,4 +206,3 @@ static class ServerSetup
 		);
 	}
 }
-
